@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import './App.css'
-
-const myStyle = {
-  display: 'flex',
-  flexDirection: 'row',
-  listStyle: 'none',
-}
+import { cloneDeep } from 'lodash'
+// const myStyle = {
+//   display: 'flex',
+//   flexDirection: 'row',
+//   listStyle: 'none',
+// }
 
 /**
  * @param {int} min
@@ -20,9 +20,9 @@ function getRandom(value) {
   return Math.round(Math.random() * value)
 }
 
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
+// function sleep(ms) {
+//   return new Promise((resolve) => setTimeout(resolve, ms))
+// }
 
 // TODO get as much logic in here as possible
 function Player({ player }) {
@@ -66,7 +66,7 @@ function MonsterCharacter(
 
 // Twe cannot render this all the time (but we have to?) - move the items that should render into components
 function App() {
-  // console.log('render screen')
+  console.log('render screen')
   const [levelCount, setLevelCount] = useState(1)
 
   // TODO move this into some sort of object
@@ -90,6 +90,8 @@ function App() {
 
   const [trainingDisabled, setTrainingDisabled] = useState(true)
   const [cardsDisabled, setCardsDisabled] = useState(false)
+
+  const [cardsInHand, setCardsInHand] = useState([])
 
   // TODO neither of these are much use
   let player = {
@@ -149,15 +151,27 @@ function App() {
     console.log(player)
   }
 
-  const allCards = []
-
   // get 3 cards from allCards that aren't in cardsOwned to add to
   const cardsToPick = []
 
+  // start with 3 - get to pick at start of game
   const cardsOwned = []
 
-  // we be random
-  const cardsInHand = [
+  // will be random
+  const allCards = [
+    {
+      name: 'sword',
+      attack: function () {
+        setPlayerAttack((attack) => attack + 5)
+      },
+      agility: function () {
+        setPlayerAgility((agility) => agility + 300)
+      },
+      init: function () {
+        this.attack()
+        this.agility()
+      },
+    },
     {
       name: 'axe',
       attack: function () {
@@ -195,6 +209,15 @@ function App() {
     },
     {
       name: 'health potion',
+      life: function () {
+        setPlayerLife((life) => life + 40)
+      },
+      init: function () {
+        this.life()
+      },
+    },
+    {
+      name: 'poison potion',
       life: function () {
         setPlayerLife((life) => life + 40)
       },
@@ -295,7 +318,30 @@ function App() {
     setMonsterTimer(monsterTimer)
   }
 
+  let chosen = []
+  function getRandomUnchosenNumber() {
+    let random = getRandomArbitrary(0, allCards.length - 1)
+    if (chosen.includes(random)) {
+      getRandomUnchosenNumber()
+    } else {
+      chosen.push(random)
+    }
+
+    return random
+  }
+
   function startGame() {
+    let cards = cloneDeep(allCards)
+
+    // add cards to hand
+    setCardsInHand([
+      cards.splice(getRandomArbitrary(0, cards.length - 1), 1)[0],
+      cards.splice(getRandomArbitrary(0, cards.length - 1), 1)[0],
+      cards.splice(getRandomArbitrary(0, cards.length - 1), 1)[0],
+      cards.splice(getRandomArbitrary(0, cards.length - 1), 1)[0],
+      cards.splice(getRandomArbitrary(0, cards.length - 1), 1)[0],
+    ])
+
     setTrainingDisabled(true)
     setCardsDisabled(false)
     console.log('game start')
@@ -407,18 +453,20 @@ function App() {
       <h3>Discard pile</h3>
       <h3>Choose a new card</h3>
       <h3>Playing Cards</h3>
-      {cardsInHand.map(function (card) {
-        return (
-          <button
-            disabled={cardsDisabled}
-            key={card.name}
-            style={{ marginRight: '5px' }}
-            onClick={() => playCard(card)}
-          >
-            {card.name}
-          </button>
-        )
-      })}
+
+      {cardsInHand.length > 0 &&
+        cardsInHand.map(function (card) {
+          return (
+            <button
+              disabled={cardsDisabled}
+              key={card.name}
+              style={{ marginRight: '5px' }}
+              onClick={() => playCard(card)}
+            >
+              {card.name}
+            </button>
+          )
+        })}
 
       <div>
         <h1>Train</h1>
