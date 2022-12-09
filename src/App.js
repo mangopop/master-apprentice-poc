@@ -24,6 +24,7 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
+// TODO get as much logic in here as possible
 function Player({ player }) {
   // console.log('render player')
   return (
@@ -34,6 +35,7 @@ function Player({ player }) {
   )
 }
 
+// TODO get as much logic in here as possible
 function Monster({ monster }) {
   // console.log('render monster')
   return (
@@ -62,11 +64,12 @@ function MonsterCharacter(
   this.life = life
 }
 
-// TODO we cannot render this all the time (but we have to?) - move the items that should render into components
+// Twe cannot render this all the time (but we have to?) - move the items that should render into components
 function App() {
   // console.log('render screen')
   const [levelCount, setLevelCount] = useState(1)
 
+  // TODO move this into some sort of object
   const [playerAttack, setPlayerAttack] = useState(7)
   const [playerStrength, setPlayerStrength] = useState(7)
   const [playerDefence, setPlayerDefence] = useState(7)
@@ -86,7 +89,9 @@ function App() {
   const [monsterTimerId, setMonsterTimer] = useState(null)
 
   const [trainingDisabled, setTrainingDisabled] = useState(true)
+  const [cardsDisabled, setCardsDisabled] = useState(false)
 
+  // TODO neither of these are much use
   let player = {
     attack: playerAttack, // plus weapon is max attack
     defence: playerDefence, // plus defence is max defence, attack must be higher
@@ -108,21 +113,11 @@ function App() {
     monsterLife
   )
 
-  // let monster = {
-  //   attack: 7,
-  //   defence: 5,
-  //   strength: 5,
-  //   agility: 1800,
-  //   life: monsterLife,
-  //   armour: 1.05,
-  //   weapon: 1.05,
-  // }
-
   // this won't fire unless it see's deps change
   // player
   useEffect(() => {
     console.log('player', player) // why is this 100 and 60
-    console.log(' -|>>>>>>> ')
+    // console.log(' -|>>>>>>> ')
     // had to move here as not updating in attack function?
     if (playerStamina < 5) {
       setPlayerAgility((agility) => agility - 100) // this is like a rest - an actual pause would be better
@@ -130,7 +125,7 @@ function App() {
     } else {
       setPlayerStamina((stamina) => stamina - 2)
     }
-    if (player.life < 0) {
+    if (player.life < 1) {
       stopGame()
       console.log(`monster killed player in ${monsterCount} moves`)
     }
@@ -139,10 +134,10 @@ function App() {
   // monster
   useEffect(() => {
     console.log('monster', monster)
-    console.log(' -|******* ')
+    // console.log(' -|******* ')
     // if get critical (some modifier) quiz the user to complete?
     // const age = prompt("How old are you? ");
-    if (monsterLife < 0) {
+    if (monsterLife < 1) {
       stopGame()
       console.log('player killed monster in this moves:', playerCount)
     }
@@ -154,14 +149,22 @@ function App() {
     console.log(player)
   }
 
-  const cards = [
+  const allCards = []
+
+  // get 3 cards from allCards that aren't in cardsOwned to add to
+  const cardsToPick = []
+
+  const cardsOwned = []
+
+  // we be random
+  const cardsInHand = [
     {
       name: 'axe',
       attack: function () {
-        player.attack += 10
+        setPlayerAttack((attack) => attack + 5)
       },
       agility: function () {
-        player.agility += 200
+        setPlayerAgility((agility) => agility + 300)
       },
       init: function () {
         this.attack()
@@ -171,10 +174,10 @@ function App() {
     {
       name: 'plate',
       defence: function () {
-        player.defence += 10
+        setPlayerDefence((defence) => defence + 5)
       },
       agility: function () {
-        player.agility -= 500
+        setPlayerAgility((agility) => agility + 300)
       },
       init: function () {
         this.defence()
@@ -184,13 +187,24 @@ function App() {
     {
       name: 'steroids',
       strength: function () {
-        player.strength += 10
+        setPlayerStrength((strength) => strength + 5)
       },
       init: function () {
         this.strength()
       },
     },
+    {
+      name: 'health potion',
+      life: function () {
+        setPlayerLife((life) => life + 40)
+      },
+      init: function () {
+        this.life()
+      },
+    },
   ]
+
+  // TODO this is POC but at this point the code needs cleaning
 
   // is re-rendering functions bad?
   // todo - can we move that in to monster - that will still re-render?
@@ -205,25 +219,28 @@ function App() {
 
     const playerFinalAttack = player.attack * player.weapon
     console.log('PLAYER ATTACK')
+
     const monsterFinalDefence = monster.defence * monster.armour
     let attackMove = getRandomArbitrary(player.strength, playerFinalAttack)
     if (attackMove === player.attack) {
-      // console.log('critical attack!')
+      console.log('critical attack!')
       attackMove += player.strength
     }
     let blockMove = getRandom(monsterFinalDefence)
     if (blockMove === monster.defence) {
-      // console.log('critical block!')
+      console.log('critical block!')
       blockMove *= monster.armour
     }
     // console.log('player attack move', attackMove)
     // console.log('monster block move', blockMove)
+    // TODO need some sort of attack strength modifier - like a roll?
     const strike = Math.max(0, attackMove - monsterFinalDefence)
     console.log('damage', strike)
 
     // because this is aysynch we cannot read the life so have to move read into useEffect
     // the page reload will call this again but the sleep should still work
     // if we don't pass function it doesn't work - something to do with the sync?
+    // TODO add some accuracy modifier
     setPlayerCount((count) => count + 1)
     setMonsterLife((life) => Math.round(life - strike))
     // TODO could get bonus stamina from final blow?
@@ -280,12 +297,14 @@ function App() {
 
   function startGame() {
     setTrainingDisabled(true)
+    setCardsDisabled(false)
     console.log('game start')
     startTimers()
   }
 
   function stopGame() {
     console.log('stop game')
+    setCardsDisabled(true)
     clearInterval(playerTimerId)
     clearInterval(monsterTimerId)
   }
@@ -338,11 +357,14 @@ function App() {
 
   function nextLevel() {
     setTrainingDisabled(false)
+    setCardsDisabled(true)
     monster = monsterCreator()
     setMonsterLife(50)
     setMonsterCount(0)
     setLevelCount((level) => level + 1)
-    setPlayerStamina((stamina) => stamina + 25)
+    if (playerStamina < 74) {
+      setPlayerStamina((stamina) => stamina + 25)
+    }
   }
 
   function train(type) {
@@ -360,7 +382,9 @@ function App() {
           setPlayerDefence(playerDefence + 2)
           break
         case 'agility':
-          setPlayerAgility(playerAgility + 50)
+          if (playerAgility > 500) {
+            setPlayerAgility(playerAgility - 100)
+          }
           break
         default:
           break
@@ -368,6 +392,7 @@ function App() {
     }
   }
 
+  // TODO get some more feedback in here
   return (
     <div className="App">
       <h1>Master and Apprentice testing grounds</h1>
@@ -378,10 +403,14 @@ function App() {
       <Player player={player} />
       <Monster monster={monster} />
 
-      <h1>Cards</h1>
-      {cards.map(function (card) {
+      <h3>Draw pile</h3>
+      <h3>Discard pile</h3>
+      <h3>Choose a new card</h3>
+      <h3>Playing Cards</h3>
+      {cardsInHand.map(function (card) {
         return (
           <button
+            disabled={cardsDisabled}
             key={card.name}
             style={{ marginRight: '5px' }}
             onClick={() => playCard(card)}
