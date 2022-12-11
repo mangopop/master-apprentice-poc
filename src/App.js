@@ -5,6 +5,8 @@ import useSound from 'use-sound'
 import hit3 from './sounds/hit3.mp3'
 import metal from './sounds/metal.mp3'
 import monsterDie from './sounds/monsterDie.wav'
+import miss1 from './sounds/miss1.wav'
+import miss2 from './sounds/miss2.wav'
 
 /**
  * @param {int} min
@@ -116,6 +118,8 @@ function App() {
   const [punchHit] = useSound(hit3, { volume: 0.25 })
   const [metalHit] = useSound(metal, { volume: 0.25 })
   const [monsterDiePlay] = useSound(monsterDie, { volume: 0.25 })
+  const [miss1Play] = useSound(miss1, { volume: 0.25 })
+  const [miss2Play] = useSound(miss2, { volume: 0.25 })
 
   // this won't fire unless it see's deps change
   // player
@@ -289,7 +293,10 @@ function App() {
       console.log('critical attack!')
       attackMove += player.strength
     }
-    let blockMove = getRandom(monsterFinalDefence)
+    let blockMove = getRandomArbitrary(
+      monsterFinalDefence / 2,
+      monsterFinalDefence
+    )
     if (blockMove === monster.defence) {
       console.log('critical block!')
       blockMove *= monster.armour
@@ -297,7 +304,7 @@ function App() {
     // console.log('player attack move', attackMove)
     // console.log('monster block move', blockMove)
     // TODO need some sort of attack strength modifier - like a roll?
-    const strike = Math.max(0, attackMove - monsterFinalDefence)
+    const strike = Math.max(0, attackMove - blockMove)
     console.log('damage', strike)
 
     // because this is aysynch we cannot read the life so have to move read into useEffect
@@ -305,8 +312,13 @@ function App() {
     // if we don't pass function it doesn't work - something to do with the sync?
     // TODO add some accuracy modifier
     setPlayerCount((count) => count + 1)
-    setMonsterLife((life) => Math.round(life - strike))
-    metalHit()
+    if (strike > 0) {
+      metalHit()
+      setMonsterLife((life) => Math.round(life - strike))
+    } else {
+      miss2Play()
+    }
+
     // cannot clear timers here
     // TODO could get bonus stamina from final blow?
   }
@@ -326,13 +338,16 @@ function App() {
     console.log('MONSTER ATTACK')
     const playerFinalDefence = player.defence * player.armour
     let attackMove = getRandomArbitrary(monster.strength, monsterFinalAttack)
-    console.log('monster attack', attackMove)
+    console.log('monster attack pre critical', attackMove)
     // the attack is 12
     if (attackMove === monster.attack) {
-      console.debug('critical attack!')
+      console.log('critical attack!')
       attackMove += monster.strength
     }
-    let blockMove = getRandom(playerFinalDefence) // this is sometimes 0
+    let blockMove = getRandomArbitrary(
+      playerFinalDefence / 2,
+      playerFinalDefence
+    ) // TODO this is sometimes 0 - probably too low
     console.log('player defence', blockMove)
     if (blockMove === player.defence) {
       console.log('critical block!')
@@ -341,15 +356,19 @@ function App() {
       }
     }
 
-    // console.log('monster attack move', attackMove)
-    // console.log('player block move', blockMove)
-    const strike = attackMove - blockMove
+    console.log('monster attack move', attackMove)
+    console.log('player block move', blockMove)
+    const strike = Math.max(0, attackMove - blockMove)
     console.log('damage', strike)
 
     // because this is synch we cannot read the life so have to move read into useEffect
     setMonsterCount((count) => count + 1)
-    setPlayerLife((life) => Math.round(life - strike))
-    punchHit()
+    if (strike > 0) {
+      punchHit()
+      setPlayerLife((life) => Math.round(life - strike))
+    } else {
+      miss1Play() // todo makes the miss metal only when plate is worn
+    }
   }
 
   let playerTimer = null
