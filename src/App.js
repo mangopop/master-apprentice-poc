@@ -7,6 +7,9 @@ import metal from './sounds/metal.mp3'
 import monsterDie from './sounds/monsterDie.wav'
 import miss1 from './sounds/miss1.wav'
 import miss2 from './sounds/miss2.wav'
+import Player from './components/Player'
+import Monster from './components/Monster'
+import Train from './components/Train'
 
 /**
  * @param {int} min
@@ -24,26 +27,6 @@ function getRandom(value) {
 // function sleep(ms) {
 //   return new Promise((resolve) => setTimeout(resolve, ms))
 // }
-
-// TODO get as much logic in here as possible
-function Player({ player }) {
-  // console.log('render player')
-  return (
-    <div>
-      <p style={{ fontSize: '40px' }}>😇 {player.life}</p>
-    </div>
-  )
-}
-
-// TODO get as much logic in here as possible
-function Monster({ monster }) {
-  // console.log('render monster')
-  return (
-    <div>
-      <p style={{ fontSize: '40px' }}>👿 {monster.life}</p>
-    </div>
-  )
-}
 
 function MonsterCharacter(
   attack,
@@ -68,7 +51,7 @@ function App() {
   // console.log('render screen')
   const [levelCount, setLevelCount] = useState(1)
 
-  // TODO move this into some sort of object
+  // TODO move this into some sort of object, and move into player component?
   const [playerAttack, setPlayerAttack] = useState(7)
   const [playerStrength, setPlayerStrength] = useState(7)
   const [playerDefence, setPlayerDefence] = useState(7)
@@ -77,6 +60,8 @@ function App() {
   const [playerLife, setPlayerLife] = useState(100)
   const [playerCount, setPlayerCount] = useState(0)
 
+  const [playerTimerId, setPlayerTimer] = useState(null)
+
   const [monsterAttack, setMonsterAttack] = useState(3)
   const [monsterStrength, setMonsterStrength] = useState(3)
   const [monsterDefence, setMonsterDefence] = useState(3)
@@ -84,7 +69,6 @@ function App() {
   const [monsterLife, setMonsterLife] = useState(30)
   const [monsterCount, setMonsterCount] = useState(0)
 
-  const [playerTimerId, setPlayerTimer] = useState(null)
   const [monsterTimerId, setMonsterTimer] = useState(null)
 
   const [trainingDisabled, setTrainingDisabled] = useState(true)
@@ -481,7 +465,7 @@ function App() {
     }
   }
 
-  function train(type) {
+  function trainHandler(type) {
     if (playerStamina >= 15) {
       // setPlayerStamina(playerStamina - 20)
       setPlayerStamina((stamina) => stamina - 15)
@@ -542,26 +526,11 @@ function App() {
           })}
       </div>
 
-      <div>
-        <h1>Train</h1>
-        <h4>Stamina / {player.stamina}</h4>
-        <p>Strength / {player.strength}</p>
-        <button disabled={trainingDisabled} onClick={() => train('strength')}>
-          Train Strength
-        </button>
-        <p>Attack / {player.attack}</p>
-        <button disabled={trainingDisabled} onClick={() => train('attack')}>
-          Train Attack
-        </button>
-        <p>Agility / {player.agility}</p>
-        <button disabled={trainingDisabled} onClick={() => train('agility')}>
-          Train Agility
-        </button>
-        <p>Defence / {player.defence}</p>
-        <button disabled={trainingDisabled} onClick={() => train('defence')}>
-          Train Defence
-        </button>
-      </div>
+      <Train
+        player={player}
+        trainingDisabled={trainingDisabled}
+        train={trainHandler}
+      />
 
       <h1>Level {levelCount}/20</h1>
       <button onClick={nextLevel}>Next level</button>
