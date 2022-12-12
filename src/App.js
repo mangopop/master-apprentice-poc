@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import './App.css'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, range } from 'lodash'
 import useSound from 'use-sound'
 import hit3 from './sounds/hit3.mp3'
 import metal from './sounds/metal.mp3'
@@ -10,64 +10,49 @@ import miss2 from './sounds/miss2.wav'
 import Player from './components/Player'
 import Monster from './components/Monster'
 import Train from './components/Train'
-
-/**
- * @param {int} min
- * @param {int} max
- * @returns
- */
-function getRandomArbitrary(min, max) {
-  return Math.round(Math.random() * (max - min) + min)
-}
-
-function getRandom(value) {
-  return Math.round(Math.random() * value)
-}
+import AllCards from './components/Cards/AllCards'
+// import { AllCards as AllCardsMutate } from './components/Cards/AllCards?first'
+// import AllCardsStatic from './components/Cards/AllCards'
+import CardsHand from './components/Cards/CardsHand'
+import { getRandomArbitrary, shuffle } from './services/utilities'
 
 // function sleep(ms) {
 //   return new Promise((resolve) => setTimeout(resolve, ms))
 // }
 
-function MonsterCharacter(
-  attack,
-  defence,
-  strength,
-  agility,
-  armour,
-  weapon,
-  life
-) {
-  this.attack = attack
-  this.defence = defence
-  this.strength = strength
-  this.agility = agility
-  this.armour = armour
-  this.weapon = weapon
-  this.life = life
+let playerStartStats = {
+  attack: 7, // plus weapon is max attack
+  defence: 7, // plus defence is max defence, attack must be higher
+  strength: 7, // determines min attack and critical bonus
+  agility: 2000, // speed of attack
+  life: 100,
+  armour: 1.05, // should be armour class with properties, determines critical bonus
+  weapon: 1.05, // should be weapon class with properties
+  stamina: 100,
+  count: 0,
 }
 
+let monsterStartStats = {
+  attack: 3, // plus weapon is max attack
+  defence: 3, // plus defence is max defence, attack must be higher
+  strength: 3, // determines min attack and critical bonus
+  agility: 2000, // speed of attack
+  life: 50,
+  armour: 1.05, // should be armour class with properties, determines critical bonus
+  weapon: 1.05, // should be weapon class with properties
+  stamina: 100,
+  count: 0,
+}
 // Twe cannot render this all the time (but we have to?) - move the items that should render into components
 function App() {
   // console.log('render screen')
   const [levelCount, setLevelCount] = useState(1)
 
   // TODO move this into some sort of object, and move into player component?
-  const [playerAttack, setPlayerAttack] = useState(7)
-  const [playerStrength, setPlayerStrength] = useState(7)
-  const [playerDefence, setPlayerDefence] = useState(7)
-  const [playerAgility, setPlayerAgility] = useState(1800)
-  const [playerStamina, setPlayerStamina] = useState(100)
-  const [playerLife, setPlayerLife] = useState(100)
-  const [playerCount, setPlayerCount] = useState(0)
+  const [player, setPlayer] = useState(playerStartStats)
+  const [monster, setMonster] = useState(monsterStartStats)
 
   const [playerTimerId, setPlayerTimer] = useState(null)
-
-  const [monsterAttack, setMonsterAttack] = useState(3)
-  const [monsterStrength, setMonsterStrength] = useState(3)
-  const [monsterDefence, setMonsterDefence] = useState(3)
-  const [monsterAgility, setMonsterAgility] = useState(2000)
-  const [monsterLife, setMonsterLife] = useState(30)
-  const [monsterCount, setMonsterCount] = useState(0)
 
   const [monsterTimerId, setMonsterTimer] = useState(null)
 
@@ -77,28 +62,7 @@ function App() {
   const [cardsInHand, setCardsInHand] = useState([])
   const [started, setStarted] = useState(null)
 
-  // TODO neither of these are much use
-  let player = {
-    attack: playerAttack, // plus weapon is max attack
-    defence: playerDefence, // plus defence is max defence, attack must be higher
-    strength: playerStrength, // determines min attack and critical bonus
-    agility: playerAgility, // speed of attack
-    life: playerLife,
-    armour: 1.05, // should be armour class with properties, determines critical bonus
-    weapon: 1.05, // should be weapon class with properties
-    stamina: playerStamina,
-  }
-
-  var monster = new MonsterCharacter(
-    monsterAttack,
-    monsterStrength,
-    monsterDefence,
-    monsterAgility,
-    1.05,
-    1.05,
-    monsterLife
-  )
-
+  // sounds
   const [punchHit] = useSound(hit3, { volume: 0.25 })
   const [metalHit] = useSound(metal, { volume: 0.25 })
   const [monsterDiePlay] = useSound(monsterDie, { volume: 0.25 })
@@ -111,21 +75,27 @@ function App() {
     console.log('useEffect from playerCount')
     console.log('player stats from useEffect', player) // why is this 100 and 60
     // had to move here as not updating in attack function?
-    if (playerStamina < 5) {
-      setPlayerAgility((agility) => agility + 100) // this is like a rest - an actual pause would be better
-      setPlayerStamina((stamina) => stamina + 10)
+    if (player.stamina < 5) {
+      setPlayer((player) => {
+        return { ...player, agility: player.agility + 100 }
+      }) // this is like a rest - an actual pause would be better
+      setPlayer((player) => {
+        return { ...player, stamina: player.stamina + 10 }
+      })
     } else {
-      setPlayerStamina((stamina) => stamina - 2)
+      setPlayer((player) => {
+        return { ...player, stamina: player.stamina - 2 }
+      })
     }
     if (player.life < 1 || monster.life < 1) {
-      stopGame() // todo won't stop with the restarts
+      stopGame() // TODO won't stop with the restarts
       clearInterval(playerTimerId)
-      console.log(`monster killed player in ${monsterCount} moves`)
+      console.log(`monster killed player in ${monster.count} moves`)
     } else if (started) {
       clearInterval(playerTimerId)
       startPlayerTimers()
     }
-  }, [playerCount])
+  }, [player.count])
 
   // monster
   useEffect(() => {
@@ -135,18 +105,9 @@ function App() {
     if (player.life < 1 || monster.life < 1) {
       stopGame()
       monsterDiePlay()
-      console.log('player killed monster in this moves:', playerCount)
+      console.log('player killed monster in this moves:', player.count)
     }
-  }, [monsterCount])
-
-  function playCard(card) {
-    // TODO if we are adding stats from card we to store then remove them
-    // TODO put card in discard pile or disable
-    console.log(card.name)
-    card.init()
-    // discardPile.push(card)
-    console.log(player)
-  }
+  }, [monster.count])
 
   // get 3 cards from allCards that aren't in cardsOwned to add to
   const cardsToPick = []
@@ -154,116 +115,8 @@ function App() {
   // start with 3 - get to pick at start of game
   const cardsOwned = []
 
-  // will be random
-  // todo turn this into objects to create quicker?
-  const allCards = [
-    {
-      name: 'sword',
-      description: 'increase attack and agility',
-      disabled: false,
-      attack: function () {
-        setPlayerAttack((attack) => attack + 5)
-      },
-      agility: function () {
-        setPlayerAgility((agility) => agility + 300)
-      },
-      init: function () {
-        this.attack()
-        this.agility()
-        this.disabled = true
-      },
-    },
-    {
-      name: 'axe',
-      description: 'increase attack and reduces agility',
-      disabled: false,
-      attack: function () {
-        setPlayerAttack((attack) => attack + 5)
-      },
-      agility: function () {
-        setPlayerAgility((agility) => agility + 300)
-      },
-      init: function () {
-        this.attack()
-        this.agility()
-        this.disabled = true
-      },
-    },
-    {
-      name: 'plate',
-      description: 'increase defence and reduces agility',
-      disabled: false,
-      defence: function () {
-        setPlayerDefence((defence) => defence + 5)
-      },
-      agility: function () {
-        setPlayerAgility((agility) => agility + 300)
-      },
-      init: function () {
-        this.defence()
-        this.agility()
-        this.disabled = true
-      },
-    },
-    {
-      name: 'steroids',
-      description: 'increase strength',
-      disabled: false,
-      strength: function () {
-        setPlayerStrength((strength) => strength + 5)
-      },
-      init: function () {
-        this.strength()
-        this.disabled = true
-      },
-    },
-    {
-      name: 'health potion',
-      description: 'increase health',
-      life: function () {
-        setPlayerLife((life) => life + 40)
-      },
-      init: function () {
-        this.life()
-      },
-    },
-    {
-      name: 'poison potion',
-      disabled: false,
-      life: function () {
-        setPlayerLife((life) => life + 40)
-      },
-      init: function () {
-        this.life()
-        this.disabled = true
-      },
-    },
-    {
-      name: 'fire potion',
-      disabled: false,
-      life: function () {
-        setPlayerLife((life) => life + 40)
-      },
-      init: function () {
-        this.life()
-        this.disabled = true
-      },
-    },
-    {
-      name: 'Angelina Jolie',
-      life: function () {
-        setPlayerLife((life) => life + 40)
-      },
-      init: function () {
-        this.life()
-      },
-    },
-  ]
-
-  // TODO this is POC but at this point the code needs cleaning
-
   // is re-rendering functions bad?
-  // todo - can we move that in to monster - that will still re-render?
+  // TODO - can we move that in to monster - that will still re-render?
   // TODO - monster always getting last hit in
   function attackMonster() {
     console.log('attacking monster', monster)
@@ -289,16 +142,20 @@ function App() {
     // console.log('monster block move', blockMove)
     // TODO need some sort of attack strength modifier - like a roll?
     const strike = Math.max(0, attackMove - blockMove)
-    console.log('damage', strike)
+    console.log('damage monster', strike)
 
     // because this is aysynch we cannot read the life so have to move read into useEffect
     // the page reload will call this again but the sleep should still work
     // if we don't pass function it doesn't work - something to do with the sync?
     // TODO add some accuracy modifier
-    setPlayerCount((count) => count + 1)
+    setPlayer((player) => {
+      return { ...player, count: player.count + 1 }
+    })
     if (strike > 0) {
       metalHit()
-      setMonsterLife((life) => Math.round(life - strike))
+      setMonster((monster) => {
+        return { ...monster, life: Math.round(monster.life - strike) }
+      })
     } else {
       miss2Play()
     }
@@ -310,13 +167,9 @@ function App() {
   //
   function attackPlayer() {
     console.log('attacking player', player)
-    // todo if stamina hits zero reduce agility
-    // todo monster should get tired too
-    // todo monster should not have hit if dead (both attacks happen before useEffect)
-    if (monsterLife < 1) {
-      return
-    }
-    // await sleep(monster.agility)
+    // TODO if stamina hits zero reduce agility
+    // TODO monster should get tired too
+    // TODO monster should not have hit if dead (both attacks happen before useEffect)
     const monsterFinalAttack = monster.attack * monster.weapon
     console.log('monsterFinalAttack', monsterFinalAttack)
     console.log('MONSTER ATTACK')
@@ -346,19 +199,22 @@ function App() {
     console.log('damage', strike)
 
     // because this is synch we cannot read the life so have to move read into useEffect
-    setMonsterCount((count) => count + 1)
+    setMonster((monster) => {
+      return { ...monster, count: monster.count + 1 }
+    })
     if (strike > 0) {
       punchHit()
-      setPlayerLife((life) => Math.round(life - strike))
+      setPlayer((player) => {
+        return { ...player, life: Math.round(player.life - strike) }
+      })
     } else {
-      miss1Play() // todo makes the miss metal only when plate is worn
+      miss1Play() // TODO makes the miss metal only when plate is worn
     }
   }
 
   let playerTimer = null
   let monsterTimer = null
 
-  // todo every hit we could change the timer slightly
   function startTimers() {
     startPlayerTimers()
     startMonsterTimers()
@@ -382,17 +238,12 @@ function App() {
 
   function startGame() {
     // TODO should be from owned - but we need to pick to have that.
-    let cards = cloneDeep(allCards)
     setStarted(true)
 
+    shuffle(AllCards)
+
     // add cards to hand
-    setCardsInHand([
-      cards.splice(getRandomArbitrary(0, cards.length - 1), 1)[0],
-      cards.splice(getRandomArbitrary(0, cards.length - 1), 1)[0],
-      cards.splice(getRandomArbitrary(0, cards.length - 1), 1)[0],
-      cards.splice(getRandomArbitrary(0, cards.length - 1), 1)[0],
-      cards.splice(getRandomArbitrary(0, cards.length - 1), 1)[0],
-    ])
+    setCardsInHand([AllCards[0], AllCards[1], AllCards[2]])
 
     setTrainingDisabled(true)
     setCardsDisabled(false)
@@ -408,20 +259,8 @@ function App() {
   }
 
   function resetGame() {
-    setPlayerStamina(100)
-    setPlayerDefence(5)
-    setPlayerStrength(5)
-    setPlayerAgility(1000)
-    setPlayerAttack(10)
-    setPlayerLife(100)
-    setPlayerCount(0)
-
-    setMonsterLife(30)
-    setMonsterAttack(5)
-    setMonsterDefence(5)
-    setMonsterStrength(5)
-    setMonsterAgility(1000)
-    setMonsterCount(0)
+    setPlayer(playerStartStats)
+    setPlayer(monsterStartStats)
 
     clearInterval(playerTimerId)
     clearInterval(monsterTimerId)
@@ -429,59 +268,54 @@ function App() {
     setLevelCount(1)
   }
 
-  function monsterCreator() {
-    setMonsterAttack(getRandomArbitrary(monster.attack + 1, monster.attack + 1))
-    setMonsterDefence(
-      getRandomArbitrary(monster.defence + 1, monster.defence + 1)
-    )
-    setMonsterStrength(
-      getRandomArbitrary(monster.strength + 1, monster.strength + 1)
-    )
-    setMonsterAgility(
-      getRandomArbitrary(monster.agility + 100, monster.agility + 200)
-    )
-    getRandomArbitrary(1.05, 1.1)
-    getRandomArbitrary(1.05, 1.1)
-
-    return new MonsterCharacter(
-      monster.attack,
-      monster.defence,
-      monster.strength,
-      monster.agility,
-      monster.armour,
-      monster.weapon
-    )
-  }
-
   function nextLevel() {
     setTrainingDisabled(false)
     setCardsDisabled(true)
-    monster = monsterCreator()
-    setMonsterLife(50)
-    setMonsterCount(0)
+    setMonster({
+      attack: getRandomArbitrary(monster.attack + 1, monster.attack + 1), // plus weapon is max attack
+      defence: getRandomArbitrary(monster.defence + 1, monster.defence + 1), // plus defence is max defence, attack must be higher
+      strength: getRandomArbitrary(monster.strength + 1, monster.strength + 1), // determines min attack and critical bonus
+      agility: getRandomArbitrary(monster.agility + 100, monster.agility + 200), // speed of attack
+      life: 50,
+      armour: getRandomArbitrary(1.05, 1.1), // should be armour class with properties, determines critical bonus
+      weapon: getRandomArbitrary(1.05, 1.1), // should be weapon class with properties
+      stamina: 100,
+      count: 0,
+    })
     setLevelCount((level) => level + 1)
-    if (playerStamina < 74) {
-      setPlayerStamina((stamina) => stamina + 25)
+    if (player.stamina < 74) {
+      setPlayer((player) => {
+        return { ...player, stamina: player.stamina + 25 }
+      })
     }
   }
 
   function trainHandler(type) {
-    if (playerStamina >= 15) {
-      // setPlayerStamina(playerStamina - 20)
-      setPlayerStamina((stamina) => stamina - 15)
+    if (player.stamina >= 15) {
+      setPlayer((player) => {
+        return { ...player, stamina: player.stamina - 15 }
+      })
       switch (type) {
         case 'strength':
-          setPlayerStrength(playerStrength + 2)
+          setPlayer((player) => {
+            return { ...player, strength: player.strength + 2 }
+          })
           break
         case 'attack':
-          setPlayerAttack(playerAttack + 2)
+          setPlayer((player) => {
+            return { ...player, attack: player.attack + 2 }
+          })
           break
         case 'defence':
-          setPlayerDefence(playerDefence + 2)
+          setPlayer((player) => {
+            return { ...player, defence: player.defence + 2 }
+          })
           break
         case 'agility':
-          if (playerAgility > 500) {
-            setPlayerAgility(playerAgility - 100)
+          if (player.agility > 500) {
+            setPlayer((player) => {
+              return { ...player, agility: player.agility - 100 }
+            })
           }
           break
         default:
@@ -504,27 +338,13 @@ function App() {
       {/* <h3>Draw pile</h3> */}
       {/* <h3>Discard pile</h3> */}
       <h3>Choose a new card</h3>
-      <h3>Playing Cards</h3>
 
-      <div className="CardContainer">
-        {cardsInHand.length > 0 &&
-          cardsInHand.map(function (card) {
-            return (
-              <div className="Card">
-                <h4>{card.name}</h4>
-                <p>{card.description}</p>
-                <button
-                  disabled={cardsDisabled || card.disabled}
-                  key={card.name}
-                  style={{ marginRight: '5px' }}
-                  onClick={() => playCard(card)}
-                >
-                  {card.name}
-                </button>
-              </div>
-            )
-          })}
-      </div>
+      <CardsHand
+        cardsInHand={cardsInHand}
+        cardsDisabled={cardsDisabled}
+        setPlayerHandler={setPlayer}
+        player={player}
+      />
 
       <Train
         player={player}
