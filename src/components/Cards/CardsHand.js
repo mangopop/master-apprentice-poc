@@ -12,6 +12,7 @@ function CardsHand({ cardsInHand, setPlayerHandler, cardsDisabled, player }) {
   //     },
   //     [onNameChange]
   //   )
+
   function playCard(card) {
     // TODO if we are adding stats from card we to store then remove them
     console.log(card.name)

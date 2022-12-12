@@ -1,10 +1,12 @@
 const AllCards = [
   {
-    name: 'sword',
+    name: 'sword of kings',
     description: 'increase attack and agility',
     disabled: false,
+    folklore: 'human',
     attack: 5,
     agility: 300,
+    weapon: 1.1,
     // attack: function () {
     //   setPlayer((player) => {
     //     return { ...player, ...(player.attack + 5) }
@@ -19,8 +21,10 @@ const AllCards = [
     name: 'axe',
     description: 'increase attack and reduces agility',
     disabled: false,
+    folklore: 'dwarf',
     attack: 5,
     agility: 300,
+    weapon: 1.1,
     init: function () {
       this.disabled = true
     },

@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import './App.css'
-import { cloneDeep, range } from 'lodash'
 import useSound from 'use-sound'
 import hit3 from './sounds/hit3.mp3'
 import metal from './sounds/metal.mp3'
@@ -33,16 +32,17 @@ let playerStartStats = {
 }
 
 let monsterStartStats = {
-  attack: 3, // plus weapon is max attack
-  defence: 3, // plus defence is max defence, attack must be higher
-  strength: 3, // determines min attack and critical bonus
-  agility: 2000, // speed of attack
+  attack: 3,
+  defence: 3,
+  strength: 3,
+  agility: 2000,
   life: 50,
-  armour: 1.05, // should be armour class with properties, determines critical bonus
-  weapon: 1.05, // should be weapon class with properties
+  armour: 1.05,
+  weapon: 1.05,
   stamina: 100,
   count: 0,
 }
+
 // Twe cannot render this all the time (but we have to?) - move the items that should render into components
 function App() {
   // console.log('render screen')
@@ -151,13 +151,29 @@ function App() {
     setPlayer((player) => {
       return { ...player, count: player.count + 1 }
     })
-    if (strike > 0) {
+
+    const weapon = monster.weapon ? monster.weapon : 1
+    const chanceToHit = Math.min(
+      Math.max(monster.stamina * weapon + (monster.attack + 10), 1),
+      100
+    )
+
+    let hit = getRandomArbitrary(0, 100) < chanceToHit
+
+    if (hit && strike > 0) {
       metalHit()
       setMonster((monster) => {
-        return { ...monster, life: Math.round(monster.life - strike) }
+        return {
+          ...monster,
+          life: Math.round(monster.life - strike),
+          lastAttack: 'hit',
+        }
       })
     } else {
       miss2Play()
+      setPlayer((monster) => {
+        return { ...monster, lastAttack: 'missed' }
+      })
     }
 
     // cannot clear timers here
@@ -176,15 +192,17 @@ function App() {
     const playerFinalDefence = player.defence * player.armour
     let attackMove = getRandomArbitrary(monster.strength, monsterFinalAttack)
     console.log('monster attack pre critical', attackMove)
-    // the attack is 12
+
+    // attack power will be attackMove - which is -  attack(10) * weapon(0.05) = 10.05 (rand strength(5) - 10.05 ) = 10 + strength(5) - defence (10)
     if (attackMove === monster.attack) {
       console.log('critical attack!')
       attackMove += monster.strength
     }
+    // TODO may need tweaking
     let blockMove = getRandomArbitrary(
       playerFinalDefence / 2,
       playerFinalDefence
-    ) // TODO this is sometimes 0 - probably too low
+    )
     console.log('player defence', blockMove)
     if (blockMove === player.defence) {
       console.log('critical block!')
@@ -192,6 +210,17 @@ function App() {
         blockMove *= player.armour
       }
     }
+
+    // TODO chance to hit should be combination of stamina - attack - weapon turned into 1-100
+    // can't get worse if stats are low as might never hit?
+    // could calc the opponents block and compare?
+    const weapon = player.weapon ? player.weapon : 1
+    const chanceToHit = Math.min(
+      Math.max(player.stamina * weapon + (player.attack + 10), 1),
+      100
+    )
+
+    let hit = getRandomArbitrary(0, 100) < chanceToHit
 
     console.log('monster attack move', attackMove)
     console.log('player block move', blockMove)
@@ -202,13 +231,20 @@ function App() {
     setMonster((monster) => {
       return { ...monster, count: monster.count + 1 }
     })
-    if (strike > 0) {
+    if (hit && strike > 0) {
       punchHit()
       setPlayer((player) => {
-        return { ...player, life: Math.round(player.life - strike) }
+        return {
+          ...player,
+          life: Math.round(player.life - strike),
+          lastAttack: 'hit',
+        }
       })
     } else {
       miss1Play() // TODO makes the miss metal only when plate is worn
+      setPlayer((player) => {
+        return { ...player, lastAttack: 'missed' }
+      })
     }
   }
 
@@ -231,13 +267,14 @@ function App() {
   function startMonsterTimers() {
     monsterTimer = setInterval(() => {
       attackPlayer()
-    }, monster.agility)
+    }, getRandomArbitrary(monster.agility - 500, monster.agility + 500))
 
     setMonsterTimer(monsterTimer)
   }
 
   function startGame() {
     // TODO should be from owned - but we need to pick to have that.
+    // TODO set arena
     setStarted(true)
 
     shuffle(AllCards)
@@ -269,6 +306,10 @@ function App() {
   }
 
   function nextLevel() {
+    cardsInHand.forEach((card) => {
+      card.disabled = false
+    })
+
     setTrainingDisabled(false)
     setCardsDisabled(true)
     setMonster({
@@ -332,6 +373,9 @@ function App() {
       <button onClick={stopGame}>Stop game</button>
       <button onClick={resetGame}>Reset game</button>
 
+      <h1>Level {levelCount}/20</h1>
+      <button onClick={nextLevel}>Next level</button>
+
       <Player player={player} />
       <Monster monster={monster} />
 
@@ -351,9 +395,6 @@ function App() {
         trainingDisabled={trainingDisabled}
         train={trainHandler}
       />
-
-      <h1>Level {levelCount}/20</h1>
-      <button onClick={nextLevel}>Next level</button>
     </div>
   )
 }
