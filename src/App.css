@@ -1,17 +1,3 @@
 .App {
   text-align: center;
 }
-
-.Card {
-  height: 140px;
-  width: 110px;
-  border: solid 1px black;
-  padding: 5px;
-  margin: 5px;
-  box-shadow: 4px 4px 7px -8px black;
-}
-
-.CardContainer {
-  display: flex;
-  flex-direction: row;
-}

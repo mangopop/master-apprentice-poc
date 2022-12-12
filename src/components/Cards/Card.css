@@ -1,0 +1,21 @@
+
+.Card {
+    height: 140px;
+    width: 110px;
+    border: solid 1px black;
+    padding: 5px;
+    margin: 5px;
+    box-shadow: 4px 4px 7px -8px black;
+    cursor: pointer;
+  }
+
+.Disabled {
+  color: grey;
+  border: solid 1px grey;
+  cursor: pointer;
+}
+
+  .CardContainer {
+    display: flex;
+    flex-direction: row;
+  }

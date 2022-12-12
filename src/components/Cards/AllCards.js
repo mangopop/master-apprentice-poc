@@ -6,7 +6,7 @@ const AllCards = [
     folklore: 'human',
     attack: 5,
     agility: 300,
-    weapon: 1.1,
+    weapon: 1.4,
     // attack: function () {
     //   setPlayer((player) => {
     //     return { ...player, ...(player.attack + 5) }
@@ -24,7 +24,7 @@ const AllCards = [
     folklore: 'dwarf',
     attack: 5,
     agility: 300,
-    weapon: 1.1,
+    weapon: 1.6,
     init: function () {
       this.disabled = true
     },
@@ -50,16 +50,27 @@ const AllCards = [
   },
   {
     name: 'health potion',
-    description: 'increase health',
-    life: 50,
+    description: 'Add 20 to health',
+    disabled: false,
+    life: 15,
     init: function () {
       this.disabled = true
     },
   },
   {
     name: 'poison potion',
+    description: 'Poison for 3 every 3 seconds',
     disabled: false,
     poison: 5,
+    init: function () {
+      this.disabled = true
+    },
+  },
+  {
+    name: 'stamina potion',
+    description: 'Add 20 stamina',
+    disabled: false,
+    stamina: 20,
     init: function () {
       this.disabled = true
     },
