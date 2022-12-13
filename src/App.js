@@ -43,6 +43,53 @@ let monsterStartStats = {
   count: 0,
 }
 
+// would have to map this on the actual map
+let arenas = [
+  { name: 'mountains', type: 'dwarf' },
+  { name: 'riverdale', type: 'elf' },
+  { name: 'desert', type: 'none' },
+  { name: 'hell', type: 'none' },
+  { name: 'ice caves', type: 'none' },
+  { name: 'forest tree tops', type: 'elf' },
+  { name: 'deep mountains', type: 'dwarf' },
+  { name: 'tall grass fields', type: 'human' },
+  { name: 'grimy city streets', type: 'human' },
+]
+
+// let arenas = [
+//   { name: 'mountains', type: 'human' },
+//   { name: 'riverdale', type: 'human' },
+//   { name: 'desert', type: 'human' },
+//   { name: 'hell', type: 'human' },
+//   { name: 'ice caves', type: 'human' },
+//   { name: 'forest tree tops', type: 'human' },
+//   { name: 'deep mountains', type: 'human' },
+//   { name: 'tall grass fields', type: 'human' },
+//   { name: 'grimy city streets', type: 'human' },
+// ]
+
+function getTypeBonus(types) {
+  const matching = types.every((type) => {
+    return type === types[0]
+  })
+
+  if (matching) {
+    switch (types[0]) {
+      case 'dwarf':
+        // 3 matching dwarf items - give 20 strength bonus
+        return { strength: 10 }
+      case 'human':
+        // 3 matching dwarf items - give 20 strength bonus
+        return { attack: 10 }
+      case 'elf':
+        // 3 matching dwarf items - give 20 strength bonus
+        return { agility: -500 }
+      default:
+        return false
+    }
+  }
+}
+
 // Twe cannot render this all the time (but we have to?) - move the items that should render into components
 function App() {
   // console.log('render screen')
@@ -61,12 +108,33 @@ function App() {
   const [cardsInHand, setCardsInHand] = useState([])
   const [started, setStarted] = useState(null)
 
+  const [arena, setArena] = useState('')
+
   // cards
   const [cardsUsed, setCardsUsed] = useState([])
 
   useEffect(() => {
     if (cardsUsed.length === 3) {
       setCardsDisabled(true)
+
+      let typeMatch = []
+      cardsUsed.forEach((element) => {
+        typeMatch.push(element.type)
+      })
+
+      let bonus = getTypeBonus(typeMatch)
+
+      // TODO this will need to reset
+      if (bonus) {
+        let modifier = Object.keys(bonus)[0]
+        bonus = { [modifier]: player[modifier] + bonus[modifier] }
+        setPlayer((player) => {
+          return {
+            ...player,
+            ...bonus,
+          }
+        })
+      }
     }
   }, [cardsUsed])
 
@@ -349,8 +417,8 @@ function App() {
   }
 
   function startGame() {
-    // TODO set arena
     setStarted(true)
+    setArena(shuffle(arenas)[0])
     setCardsUsed([])
 
     // TODO can we clone the player to reset after card changes

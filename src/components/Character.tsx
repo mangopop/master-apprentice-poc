@@ -9,7 +9,7 @@ function Character({ character, type }: ICharacterProps) {
     <div style={{ margin: '20px' }}>
       {Object.entries(character).map(([key, value]) => {
         return (
-          <span>
+          <span key={key}>
             {key} : {value} /{' '}
           </span>
         )

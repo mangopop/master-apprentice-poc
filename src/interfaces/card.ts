@@ -11,4 +11,5 @@ export default interface ICard {
   stamina: number
   disabled: boolean
   init: Function
+  type: string
 }

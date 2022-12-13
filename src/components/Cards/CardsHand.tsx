@@ -41,6 +41,7 @@ function CardsHand({
     // }
 
     // this is adding permanently (handled)
+    // TODO how to handle arena and synergy?
     const update = (player: ICharacter, card: ICard) => {
       return {
         ...player,
@@ -97,6 +98,7 @@ function CardsHand({
                 onClick={() => playCard(card)}
               >
                 <h4>{card.name}</h4>
+                <h4>{card.type && <span>type: {card.type}</span>}</h4>
                 <p>{card.description}</p>
               </div>
             )
