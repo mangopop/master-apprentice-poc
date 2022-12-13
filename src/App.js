@@ -5,6 +5,7 @@ import { cloneDeep } from 'lodash'
 import hit3 from './sounds/hit3.mp3'
 import hit4 from './sounds/hit4.wav'
 import metal from './sounds/metal.mp3'
+import playerDeath from './sounds/playerDeath.wav'
 import monsterDie from './sounds/monsterDie.wav'
 import miss1 from './sounds/miss1.wav'
 import miss2 from './sounds/miss2.wav'
@@ -61,7 +62,7 @@ function App() {
   const [cardsInHand, setCardsInHand] = useState([])
   const [started, setStarted] = useState(null)
 
-  // TODO cards
+  // cards
   const [cardsUsed, setCardsUsed] = useState([])
 
   useEffect(() => {
@@ -77,20 +78,20 @@ function App() {
   const [monsterDiePlay] = useSound(monsterDie, { volume: 0.25 })
   const [miss1Play] = useSound(miss1, { volume: 0.25 })
   const [miss2Play] = useSound(miss2, { volume: 0.25 })
+  const [playerDeathPlay] = useSound(playerDeath, { volume: 0.25 })
 
-  // this won't fire unless it see's deps change
-  // player
+  // ***** player attacking ****** //
   useEffect(() => {
     console.log('useEffect from playerCount')
     console.log('player stats from useEffect', player) // why is this 100 and 60
     // had to move here as not updating in attack function?
-    if (player.stamina < 5) {
+    if (player.stamina < 10) {
       // agility reduces if you over work
       // this is like a rest - an actual pause would be better
       setPlayer((player) => {
         return {
           ...player,
-          agility: player.agility + 100,
+          agility: player.agility + 100, // TODO this might be going on forever?
           stamina: player.stamina + 10,
         }
       })
@@ -100,22 +101,34 @@ function App() {
       })
     }
 
-    if (player.life < 1 || monster.life < 1) {
+    if (monster.life < 1) {
       stopGame() // TODO won't stop with the restarts
-      clearInterval(playerTimerId)
-      console.log(`monster killed player in ${monster.count} moves`)
+      if (monster.life < -15) {
+        // TODO death blow bonus!
+        setPlayer((player) => {
+          return {
+            ...player,
+            life: player.life + 20,
+            stamina: player.stamina + 20,
+          }
+        })
+      }
+
+      monsterDiePlay()
+      // clearInterval(playerTimerId)
+      console.log(`player killed monster in ${player.count} moves`)
     } else if (started) {
       clearInterval(playerTimerId)
       startPlayerTimers()
     }
   }, [player.count])
 
-  // monster
+  // ***** monster attacking ****** //
   useEffect(() => {
     console.log('useEffect from monsterCount')
     console.log('monster stat from useEffect', monster)
 
-    if (monster.stamina < 5) {
+    if (monster.stamina < 10) {
       // agility reduces if you over work // this is like a rest - an actual pause would be better
       setMonster((monster) => {
         return {
@@ -126,13 +139,13 @@ function App() {
       })
     } else {
       setMonster((monster) => {
-        return { ...monster, stamina: monster.stamina - 2 }
+        return { ...monster, stamina: monster.stamina - 3 }
       })
     }
 
-    if (player.life < 1 || monster.life < 1) {
+    if (player.life < 1) {
       stopGame()
-      monsterDiePlay()
+      playerDeathPlay()
       console.log('player killed monster in this moves:', player.count)
     }
   }, [monster.count])
@@ -157,14 +170,30 @@ function App() {
     let attackMove = getRandomArbitrary(player.strength, playerFinalAttack)
     if (attackMove === player.attack) {
       console.log('critical attack!')
+      // TODO this still might not do damage
       attackMove += player.strength
+      setMonster((monster) => {
+        return {
+          ...monster,
+          critical: true,
+        }
+      })
+    } else {
+      setMonster((monster) => {
+        return {
+          ...monster,
+          critical: false,
+        }
+      })
     }
+
     let blockMove = getRandomArbitrary(
       monsterFinalDefence / 2,
       monsterFinalDefence
     )
     if (blockMove === monster.defence) {
       console.log('critical block!')
+
       blockMove *= monster.armour
     }
     // console.log('player attack move', attackMove)
@@ -203,6 +232,7 @@ function App() {
         }
       })
     } else if (strike < 1) {
+      // TODO would be cool if this reduced stamina more?
       metalHit()
       setMonster((monster) => {
         return { ...monster, lastAttack: 'deflected' }
@@ -326,6 +356,7 @@ function App() {
 
     // TODO can we clone the player to reset after card changes
     playerBeforeCardsPlayed = cloneDeep(player)
+    console.log('playerBeforeCardsPlayed at start', playerBeforeCardsPlayed)
 
     // TODO should be from cardsOwned - but we need to pick to have that.
     shuffle(AllCards)
@@ -365,18 +396,21 @@ function App() {
     setCardsDisabled(true)
 
     setMonster({
-      attack: getRandomArbitrary(monster.attack + 1, monster.attack + 2), // plus weapon is max attack
-      defence: getRandomArbitrary(monster.defence + 1, monster.defence + 2), // plus defence is max defence, attack must be higher
-      strength: getRandomArbitrary(monster.strength + 1, monster.strength + 2), // determines min attack and critical bonus
-      agility: getRandomArbitrary(monster.agility - 50, monster.agility - 100), // speed of attack
+      attack: getRandomArbitrary(monster.attack + 1, monster.attack + 2),
+      defence: getRandomArbitrary(monster.defence + 1, monster.defence + 2),
+      strength: getRandomArbitrary(monster.strength + 1, monster.strength + 2),
+      agility: getRandomArbitrary(monster.agility - 50, monster.agility - 100),
       life: 50,
-      armour: getRandomArbitrary(1.05, 1.1), // should be armour class with properties, determines critical bonus
-      weapon: getRandomArbitrary(1.05, 1.1), // should be weapon class with properties
+      armour: getRandomArbitrary(1.05, 1.1),
+      weapon: getRandomArbitrary(1.05, 1.1),
       stamina: 100,
       count: 0,
     })
 
     setLevelCount((level) => level + 1)
+
+    // TODO this is blank if wait too long!?
+    console.log('playerBeforeCardsPlayed', playerBeforeCardsPlayed)
 
     // this resets the players stats, whilst keeping training, but not card effects
     setPlayer((player) => {
@@ -386,6 +420,7 @@ function App() {
         defence: playerBeforeCardsPlayed.defence,
         strength: playerBeforeCardsPlayed.strength,
         agility: playerBeforeCardsPlayed.agility,
+        stamina: player.stamina + 20,
         armour: 1.05,
         weapon: 1.05,
         count: 0,
@@ -437,7 +472,7 @@ function App() {
   // TODO get some more feedback in here
   return (
     <div className="App">
-      <h1>Master and Apprentice testing grounds</h1>
+      <h1>Master and Apprentice testing grounds!</h1>
       <button onClick={startGame}>Start game</button>
       <button onClick={stopGame}>Stop game</button>
       <button onClick={resetGame}>Reset game</button>

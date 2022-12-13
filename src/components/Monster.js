@@ -15,6 +15,7 @@ function Monster({ monster }) {
         👿 {monster.life} <span style={{ fontSize: '10px' }}>/ 100</span>
       </h6>
       {monster.lastAttack && <span>was {monster.lastAttack}</span>}
+      {monster.critical && <p>CRITICAL!</p>}
     </div>
   )
 }
