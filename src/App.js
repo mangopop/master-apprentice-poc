@@ -9,8 +9,7 @@ import playerDeath from './sounds/playerDeath.wav'
 import monsterDie from './sounds/monsterDie.wav'
 import miss1 from './sounds/miss1.wav'
 import miss2 from './sounds/miss2.wav'
-import Player from './components/Player'
-import Monster from './components/Monster'
+import Character from './components/Character'
 import Train from './components/Train'
 import AllCards from './components/Cards/AllCards'
 // import { AllCards as AllCardsMutate } from './components/Cards/AllCards?first'
@@ -482,8 +481,9 @@ function App() {
         Next level
       </button>
 
-      <Player player={player} />
-      <Monster monster={monster} />
+      <Character character={player} type={'player'} />
+      <Character character={monster} type={'monster'} />
+      {/* <Monster monster={monster} /> */}
 
       <div>
         <button onClick={addHealth}>health</button>
