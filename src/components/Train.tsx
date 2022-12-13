@@ -1,5 +1,7 @@
+import ITrainProps from '../interfaces/trainProps'
+
 //dumb comp
-function Train({ train, player, trainingDisabled }) {
+function Train({ train, player, trainingDisabled }: ITrainProps) {
   return (
     <div>
       <h1>Train</h1>

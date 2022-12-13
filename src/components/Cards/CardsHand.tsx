@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import ICharacter from '../../interfaces/character'
+import ICard from '../../interfaces/card'
 import './Card.css'
+import ICardHandProps from '../../interfaces/cardHandProps'
 
 // TODO this ends as list view and prop drill medium
 function CardsHand({
@@ -9,7 +11,7 @@ function CardsHand({
   cardsUsed,
   setCardsUsedHandler,
   player,
-}) {
+}: ICardHandProps) {
   // TODO check useCallback technique out.
   //   const handleInputChange = useCallback(
   //     (event) => {
@@ -23,12 +25,12 @@ function CardsHand({
   //     [onNameChange]
   //   )
 
-  function playCard(card) {
+  function playCard(card: ICard) {
     if (card.disabled || cardsDisabled) {
       return
     }
 
-    setCardsUsedHandler((cardsUsed) => [...cardsUsed, card])
+    setCardsUsedHandler((cardsUsed: Array<ICard>) => [...cardsUsed, card])
 
     // TODO remove cardsInHand
 
@@ -39,7 +41,7 @@ function CardsHand({
     // }
 
     // this is adding permanently (handled)
-    const update = (player, card) => {
+    const update = (player: ICharacter, card: ICard) => {
       return {
         ...player,
         agility: player.agility + card.agility || player.agility,
@@ -63,11 +65,11 @@ function CardsHand({
 
       <div className="CardContainer">
         {cardsUsed.length > 0 &&
-          cardsUsed.map(function (card) {
+          cardsUsed.map(function (card: ICard) {
             return (
               <div
                 className={'Card Disabled'}
-                disabled={true}
+                data-disabled={true}
                 key={card.name}
                 style={{ marginRight: '5px' }}
                 onClick={() => playCard(card)}
@@ -83,13 +85,13 @@ function CardsHand({
 
       <div className="CardContainer">
         {cardsInHand.length > 0 &&
-          cardsInHand.map(function (card) {
+          cardsInHand.map(function (card: ICard) {
             return (
               <div
                 className={`Card ${
                   cardsDisabled || card.disabled ? 'Disabled' : ''
                 }`}
-                disabled={cardsDisabled || card.disabled}
+                data-disabled={cardsDisabled || card.disabled}
                 key={card.name}
                 style={{ marginRight: '5px' }}
                 onClick={() => playCard(card)}
