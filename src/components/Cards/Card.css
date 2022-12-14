@@ -1,13 +1,17 @@
-
 .Card {
-    height: 140px;
-    width: 110px;
-    border: solid 1px black;
-    padding: 5px;
-    margin: 5px;
-    box-shadow: 4px 4px 7px -8px black;
-    cursor: pointer;
-  }
+  height: 140px;
+  width: 110px;
+  border: solid 1px black;
+  padding: 5px;
+  margin: 5px;
+  box-shadow: 4px 4px 7px -8px black;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+.synergy-dwarf {
+  box-shadow: inset 0px 0px 0px 1px #eb0f0f;
+}
 
 .Disabled {
   color: grey;
@@ -15,7 +19,12 @@
   cursor: pointer;
 }
 
-  .CardContainer {
-    display: flex;
-    flex-direction: row;
-  }
+.CardContainer {
+  display: flex;
+  flex-direction: row;
+}
+
+.CardContainer p {
+  font-size: 12px;
+  margin: 3px 10px;
+}

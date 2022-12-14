@@ -7,6 +7,7 @@ import hit4 from './sounds/hit4.wav'
 import metal from './sounds/metal.mp3'
 import playerDeath from './sounds/playerDeath.wav'
 import monsterDie from './sounds/monsterDie.wav'
+
 import miss1 from './sounds/miss1.wav'
 import miss2 from './sounds/miss2.wav'
 import Character from './components/Character'
@@ -17,7 +18,9 @@ import AllCards from './components/Cards/AllCards'
 import CardsHand from './components/Cards/CardsHand'
 import { getRandomArbitrary, shuffle } from './services/utilities'
 
+let firstGame = true
 // TODO move all this into Battle component
+let monsterClone = {}
 let playerBeforeCardsPlayed = {}
 let playerStartStats = {
   attack: 7, // plus weapon is max attack
@@ -92,7 +95,7 @@ function getTypeBonus(types) {
 
 // Twe cannot render this all the time (but we have to?) - move the items that should render into components
 function App() {
-  // console.log('render screen')
+  console.log('render app')
   const [levelCount, setLevelCount] = useState(1)
 
   const [player, setPlayer] = useState(playerStartStats)
@@ -114,6 +117,10 @@ function App() {
   const [cardsUsed, setCardsUsed] = useState([])
 
   useEffect(() => {
+    firstGame && setUp()
+  }, [])
+
+  useEffect(() => {
     if (cardsUsed.length === 3) {
       setCardsDisabled(true)
 
@@ -124,7 +131,7 @@ function App() {
 
       let bonus = getTypeBonus(typeMatch)
 
-      // TODO this will need to reset
+      // TODO this will need to reset??
       if (bonus) {
         let modifier = Object.keys(bonus)[0]
         bonus = { [modifier]: player[modifier] + bonus[modifier] }
@@ -416,23 +423,32 @@ function App() {
     setMonsterTimer(monsterTimer)
   }
 
-  function startGame() {
-    setStarted(true)
+  function setUp() {
     setArena(shuffle(arenas)[0])
     setCardsUsed([])
-
-    // TODO can we clone the player to reset after card changes
-    playerBeforeCardsPlayed = cloneDeep(player)
-    console.log('playerBeforeCardsPlayed at start', playerBeforeCardsPlayed)
 
     // TODO should be from cardsOwned - but we need to pick to have that.
     shuffle(AllCards)
     AllCards.length = 5
     setCardsInHand(AllCards)
 
+    monsterClone = cloneDeep(monster)
+  }
+
+  function startGame() {
+    console.log('game start')
+    setStarted(true)
+
+    // firstGame && setUp()
+    firstGame = false
+
+    // TODO can we clone the player to reset after card changes
+    playerBeforeCardsPlayed = cloneDeep(player)
+
+    console.log('playerBeforeCardsPlayed at start', playerBeforeCardsPlayed)
+
     setTrainingDisabled(true)
     setCardsDisabled(false)
-    console.log('game start')
     startTimers()
   }
 
@@ -455,13 +471,6 @@ function App() {
   }
 
   function nextLevel() {
-    cardsInHand.forEach((card) => {
-      card.disabled = false
-    })
-
-    setTrainingDisabled(false)
-    setCardsDisabled(true)
-
     setMonster({
       attack: getRandomArbitrary(monster.attack + 1, monster.attack + 2),
       defence: getRandomArbitrary(monster.defence + 1, monster.defence + 2),
@@ -474,10 +483,22 @@ function App() {
       count: 0,
     })
 
+    // setUp()
+    cardsInHand.forEach((card) => {
+      card.disabled = false
+    })
+
+    setTrainingDisabled(false)
+    setCardsDisabled(true)
+
     setLevelCount((level) => level + 1)
 
     // TODO this is blank if wait too long!?
     console.log('playerBeforeCardsPlayed', playerBeforeCardsPlayed)
+
+    if (player.stamina < 80) {
+      let staminaBoost = player.stamina + 20
+    }
 
     // this resets the players stats, whilst keeping training, but not card effects
     setPlayer((player) => {
@@ -487,7 +508,7 @@ function App() {
         defence: playerBeforeCardsPlayed.defence,
         strength: playerBeforeCardsPlayed.strength,
         agility: playerBeforeCardsPlayed.agility,
-        stamina: player.stamina + 20,
+        stamina: staminaBoost,
         armour: 1.05,
         weapon: 1.05,
         count: 0,
@@ -530,6 +551,7 @@ function App() {
     }
   }
 
+  // god mode debugger
   function addHealth() {
     setPlayer((player) => {
       return { ...player, life: player.life + 100 }
@@ -544,13 +566,19 @@ function App() {
       <button onClick={stopGame}>Stop game</button>
       <button onClick={resetGame}>Reset game</button>
 
+      <h2>{arena.name}</h2>
+
       <h1>Level {levelCount}/20</h1>
       <button disabled={started} onClick={nextLevel}>
         Next level
       </button>
 
       <Character character={player} type={'player'} />
-      <Character character={monster} type={'monster'} />
+      <Character
+        character={monster}
+        monsterLife={monsterClone.life}
+        type={'monster'}
+      />
       {/* <Monster monster={monster} /> */}
 
       <div>

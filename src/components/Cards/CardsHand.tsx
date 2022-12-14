@@ -2,6 +2,10 @@ import ICharacter from '../../interfaces/character'
 import ICard from '../../interfaces/card'
 import './Card.css'
 import ICardHandProps from '../../interfaces/cardHandProps'
+import cardPickUp from './../../sounds/cardPickUp.mp3'
+import { useSound } from 'use-sound'
+import { useEffect, useState } from 'react'
+import '../../tooltip.css'
 
 // TODO this ends as list view and prop drill medium
 function CardsHand({
@@ -12,6 +16,10 @@ function CardsHand({
   setCardsUsedHandler,
   player,
 }: ICardHandProps) {
+  const [duplicateCardType, setDuplicateCardType] = useState(false)
+  console.log('render cards hand')
+
+  useEffect(() => {}, [duplicateCardType])
   // TODO check useCallback technique out.
   //   const handleInputChange = useCallback(
   //     (event) => {
@@ -25,23 +33,34 @@ function CardsHand({
   //     [onNameChange]
   //   )
 
+  const [cardPickupPlay] = useSound(cardPickUp, { volume: 0.5 })
+
+  let duplicatePlay = false
+
   function playCard(card: ICard) {
-    if (card.disabled || cardsDisabled) {
+    if (card.disabled || cardsDisabled || duplicatePlay) {
       return
     }
 
+    // TODO could be better logic
+    cardsUsed.forEach((cardUsed) => {
+      if (cardUsed.hasOwnProperty('weapon') && card.hasOwnProperty('weapon')) {
+        duplicatePlay = true
+        setDuplicateCardType(true)
+      }
+    })
+
+    if (duplicatePlay) {
+      return
+    }
+
+    cardPickupPlay()
+
     setCardsUsedHandler((cardsUsed: Array<ICard>) => [...cardsUsed, card])
 
-    // TODO remove cardsInHand
-
-    // was one behind
-    // if (cardsUsed === 3) {
-    //   setCardsDisabledHandler(true)
-    //   return
-    // }
+    // TODO remove cardsInHand from view instead of disabling
 
     // this is adding permanently (handled)
-    // TODO how to handle arena and synergy?
     const update = (player: ICharacter, card: ICard) => {
       return {
         ...player,
@@ -83,7 +102,6 @@ function CardsHand({
       </div>
 
       <h3>Playing Cards</h3>
-
       <div className="CardContainer">
         {cardsInHand.length > 0 &&
           cardsInHand.map(function (card: ICard) {
@@ -91,15 +109,22 @@ function CardsHand({
               <div
                 className={`Card ${
                   cardsDisabled || card.disabled ? 'Disabled' : ''
-                }`}
-                data-disabled={cardsDisabled || card.disabled}
+                } ${duplicateCardType ? 'tooltip' : ''}`}
+                data-disabled={
+                  cardsDisabled || card.disabled || duplicateCardType
+                }
                 key={card.name}
                 style={{ marginRight: '5px' }}
                 onClick={() => playCard(card)}
               >
                 <h4>{card.name}</h4>
-                <h4>{card.type && <span>type: {card.type}</span>}</h4>
+                <h5>{card.type && <span>type: {card.type}</span>}</h5>
                 <p>{card.description}</p>
+                {duplicateCardType && (
+                  <span className={`${duplicateCardType ? 'tooltiptext' : ''}`}>
+                    You can only play one weapon
+                  </span>
+                )}
               </div>
             )
           })}
