@@ -82,10 +82,10 @@ function getTypeBonus(types) {
         // 3 matching dwarf items - give 20 strength bonus
         return { strength: 10 }
       case 'human':
-        // 3 matching dwarf items - give 20 strength bonus
+        // 3 matching human items - give 20 attack bonus
         return { attack: 10 }
       case 'elf':
-        // 3 matching dwarf items - give 20 strength bonus
+        // 3 matching elf items - give 20 agility bonus
         return { agility: -500 }
       default:
         return false
@@ -118,9 +118,12 @@ function App() {
 
   useEffect(() => {
     firstGame && setUp()
+    monsterClone = cloneDeep(monster)
   }, [])
 
   useEffect(() => {
+    // TODO if any card type matches the arena - boost that card by 20%
+
     if (cardsUsed.length === 3) {
       setCardsDisabled(true)
 
@@ -284,6 +287,7 @@ function App() {
       return { ...player, count: player.count + 1 }
     })
 
+    // randAttackModifier(player)
     const weapon = player.weapon ? player.weapon : 1
     const chanceToHit = Math.min(
       Math.max(player.stamina * weapon + (player.attack + 10), 1),
@@ -353,9 +357,8 @@ function App() {
       }
     }
 
-    // TODO chance to hit should be combination of stamina - attack - weapon turned into 1-100
-    // can't get worse if stats are low as might never hit?
-    // could calc the opponents block and compare?
+    //TODO lift this duplicated logic into function
+    // randAttackModifier(monster)
     const weapon = monster.weapon ? monster.weapon : 1
     const chanceToHit = Math.min(
       Math.max(monster.stamina * weapon + (monster.attack + 10), 1),
@@ -431,8 +434,6 @@ function App() {
     shuffle(AllCards)
     AllCards.length = 5
     setCardsInHand(AllCards)
-
-    monsterClone = cloneDeep(monster)
   }
 
   function startGame() {
@@ -442,7 +443,12 @@ function App() {
     // firstGame && setUp()
     firstGame = false
 
-    // TODO can we clone the player to reset after card changes
+    // TODO cards played after, so not reset
+    // current
+    // setup - play cards - start game - CLONE - p/m damage - next level - new monster - train
+    // required
+    // setup - CLONE - play cards - start game - p/m damage - next level - new monster - train
+
     playerBeforeCardsPlayed = cloneDeep(player)
 
     console.log('playerBeforeCardsPlayed at start', playerBeforeCardsPlayed)
@@ -483,7 +489,7 @@ function App() {
       count: 0,
     })
 
-    // setUp()
+    setUp()
     cardsInHand.forEach((card) => {
       card.disabled = false
     })
@@ -496,8 +502,10 @@ function App() {
     // TODO this is blank if wait too long!?
     console.log('playerBeforeCardsPlayed', playerBeforeCardsPlayed)
 
+    var staminaBoost = player.stamina
+
     if (player.stamina < 80) {
-      let staminaBoost = player.stamina + 20
+      staminaBoost += 20
     }
 
     // this resets the players stats, whilst keeping training, but not card effects
@@ -589,6 +597,7 @@ function App() {
       {/* <h3>Discard pile</h3> */}
 
       <CardsHand
+        arena={arena}
         cardsInHand={cardsInHand}
         cardsDisabled={cardsDisabled}
         setPlayerHandler={setPlayer}

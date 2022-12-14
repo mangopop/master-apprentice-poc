@@ -2,6 +2,7 @@ import ICard from './card'
 import ICharacter from './character'
 
 export default interface ICardHandProps {
+  arena: { name: string; type: string }
   cardsInHand: Array<ICard>
   setPlayerHandler: (params: any) => void
   cardsDisabled: boolean

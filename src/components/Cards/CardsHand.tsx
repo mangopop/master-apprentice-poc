@@ -9,6 +9,7 @@ import '../../tooltip.css'
 
 // TODO this ends as list view and prop drill medium
 function CardsHand({
+  arena,
   cardsInHand,
   setPlayerHandler,
   cardsDisabled,
@@ -20,7 +21,7 @@ function CardsHand({
   console.log('render cards hand')
 
   useEffect(() => {}, [duplicateCardType])
-  // TODO check useCallback technique out.
+  // TODO checkout useCallback technique out.
   //   const handleInputChange = useCallback(
   //     (event) => {
   //       setPlayerHandler((player) => {
@@ -32,7 +33,6 @@ function CardsHand({
   //     },
   //     [onNameChange]
   //   )
-
   const [cardPickupPlay] = useSound(cardPickUp, { volume: 0.5 })
 
   let duplicatePlay = false
@@ -40,6 +40,12 @@ function CardsHand({
   function playCard(card: ICard) {
     if (card.disabled || cardsDisabled || duplicatePlay) {
       return
+    }
+
+    let arenaBoost = { agility: 1, other: 1 }
+
+    if (card.type === arena.type) {
+      arenaBoost = { agility: 0.9, other: 1.25 }
     }
 
     // TODO could be better logic
@@ -64,14 +70,24 @@ function CardsHand({
     const update = (player: ICharacter, card: ICard) => {
       return {
         ...player,
-        agility: player.agility + card.agility || player.agility,
-        attack: player.attack + card.attack || player.attack,
-        strength: player.strength + card.strength || player.strength,
-        defence: player.defence + card.defence || player.defence,
-        life: player.life + card.life || player.life,
-        stamina: player.stamina + card.stamina || player.stamina,
-        weapon: card.weapon || player.weapon,
-        armour: card.armour || player.armour,
+        agility:
+          Math.round((player.agility + card.agility) * arenaBoost.agility) ||
+          player.agility,
+        attack:
+          Math.round((player.attack + card.attack) * arenaBoost.other) ||
+          player.attack,
+        strength:
+          Math.round((player.strength + card.strength) * arenaBoost.other) ||
+          player.strength,
+        defence:
+          Math.round((player.defence + card.defence) * arenaBoost.other) ||
+          player.defence,
+        life: (player.life + card.life) * arenaBoost.other || player.life,
+        stamina:
+          Math.round((player.stamina + card.stamina) * arenaBoost.other) ||
+          player.stamina,
+        weapon: card.weapon * arenaBoost.other || player.weapon,
+        armour: card.armour * arenaBoost.other || player.armour,
       }
     }
 
