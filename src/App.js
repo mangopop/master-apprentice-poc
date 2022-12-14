@@ -7,6 +7,7 @@ import hit4 from './sounds/hit4.wav'
 import metal from './sounds/metal.mp3'
 import playerDeath from './sounds/playerDeath.wav'
 import monsterDie from './sounds/monsterDie.wav'
+import innMusic from './sounds/medieval-inn-music.mp3'
 
 import miss1 from './sounds/miss1.wav'
 import miss2 from './sounds/miss2.wav'
@@ -17,6 +18,10 @@ import AllCards from './components/Cards/AllCards'
 // import AllCardsStatic from './components/Cards/AllCards'
 import CardsHand from './components/Cards/CardsHand'
 import { getRandomArbitrary, shuffle } from './services/utilities'
+
+import { BsTriangle } from 'react-icons/bs'
+import { BsSquare } from 'react-icons/bs'
+import { BsCircle } from 'react-icons/bs'
 
 let firstGame = true
 // TODO move all this into Battle component
@@ -48,15 +53,35 @@ let monsterStartStats = {
 
 // would have to map this on the actual map
 let arenas = [
-  { name: 'mountains', type: 'dwarf' },
-  { name: 'riverdale', type: 'elf' },
-  { name: 'desert', type: 'none' },
-  { name: 'hell', type: 'none' },
-  { name: 'ice caves', type: 'none' },
-  { name: 'forest tree tops', type: 'elf' },
-  { name: 'deep mountains', type: 'dwarf' },
-  { name: 'tall grass fields', type: 'human' },
-  { name: 'grimy city streets', type: 'human' },
+  { name: 'Mountains', description: 'Home of the Dwarfs', type: 'dwarf' },
+  { name: 'Riverdale', description: 'Home of the Elves', type: 'elf' },
+  {
+    name: 'Desert',
+    description: 'Through fair for no sane folk',
+    type: 'none',
+  },
+  {
+    name: 'Hell',
+    description: 'Monsters battled here are immune to your fire attacks',
+    type: 'none',
+  },
+  {
+    name: 'Ice caves',
+    description: 'Monsters battled here are immune to your ice attacks',
+    type: 'none',
+  },
+  { name: 'Forest tree tops', description: 'Home of the Elves', type: 'elf' },
+  { name: 'Deep mountains', description: 'Home of the Dwarfs', type: 'dwarf' },
+  {
+    name: 'Tall grass fields',
+    description: 'Monsters here have agility bonus',
+    type: 'none',
+  },
+  {
+    name: 'Grimy city streets',
+    description: 'Home of the Humans',
+    type: 'human',
+  },
 ]
 
 // let arenas = [
@@ -156,6 +181,7 @@ function App() {
   const [miss1Play] = useSound(miss1, { volume: 0.25 })
   const [miss2Play] = useSound(miss2, { volume: 0.25 })
   const [playerDeathPlay] = useSound(playerDeath, { volume: 0.25 })
+  const [innMusicPlay, innMusicSoundObj] = useSound(innMusic, { volume: 0.25 })
 
   // ***** player attacking ****** //
   useEffect(() => {
@@ -432,13 +458,16 @@ function App() {
 
     // TODO should be from cardsOwned - but we need to pick to have that.
     shuffle(AllCards)
-    AllCards.length = 5
-    setCardsInHand(AllCards)
+
+    let copyAllCards = cloneDeep(AllCards)
+    copyAllCards.length = 5
+    setCardsInHand(copyAllCards)
   }
 
   function startGame() {
     console.log('game start')
     setStarted(true)
+    innMusicSoundObj.stop()
 
     // firstGame && setUp()
     firstGame = false
@@ -460,6 +489,7 @@ function App() {
 
   function stopGame() {
     console.log('stop game')
+    innMusicPlay()
     setStarted(false)
     setCardsDisabled(true)
     clearInterval(playerTimerId)
@@ -575,6 +605,12 @@ function App() {
       <button onClick={resetGame}>Reset game</button>
 
       <h2>{arena.name}</h2>
+      <p>{arena.description} </p>
+      <p>
+        {arena.type === 'dwarf' && <BsSquare />}
+        {arena.type === 'elf' && <BsCircle />}
+        {arena.type === 'human' && <BsTriangle />}
+      </p>
 
       <h1>Level {levelCount}/20</h1>
       <button disabled={started} onClick={nextLevel}>

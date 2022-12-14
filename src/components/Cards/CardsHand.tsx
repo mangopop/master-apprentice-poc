@@ -138,8 +138,8 @@ function CardsHand({
               >
                 <h4>{card.name}</h4>
                 <h5>
-                  {card.type === 'dwarf' && <BsTriangle />}
-                  {card.type === 'human' && <BsSquare />}
+                  {card.type === 'dwarf' && <BsSquare />}
+                  {card.type === 'human' && <BsTriangle />}
                   {card.type === 'elf' && <BsCircle />}
                 </h5>
                 <p>{card.description}</p>
