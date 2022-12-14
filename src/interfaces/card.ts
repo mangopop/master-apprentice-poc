@@ -12,4 +12,5 @@ export default interface ICard {
   disabled: boolean
   init: Function
   type: string
+  element: string
 }

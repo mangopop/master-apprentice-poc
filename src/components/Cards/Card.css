@@ -9,8 +9,14 @@
   border-radius: 10px;
 }
 
-.synergy-dwarf {
-  box-shadow: inset 0px 0px 0px 1px #eb0f0f;
+.fire {
+  box-shadow: inset 0px 0px 0px 1px #f10808;
+}
+.ice {
+  box-shadow: inset 0px 0px 0px 1px #0f81eb;
+}
+.earth {
+  box-shadow: inset 0px 0px 0px 1px #7e4704;
 }
 
 .Disabled {
@@ -22,6 +28,7 @@
 .CardContainer {
   display: flex;
   flex-direction: row;
+  justify-content: center;
 }
 
 .CardContainer p {

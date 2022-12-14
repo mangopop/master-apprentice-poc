@@ -1,11 +1,14 @@
+import '../../tooltip.css'
+import './Card.css'
 import ICharacter from '../../interfaces/character'
 import ICard from '../../interfaces/card'
-import './Card.css'
 import ICardHandProps from '../../interfaces/cardHandProps'
 import cardPickUp from './../../sounds/cardPickUp.mp3'
 import { useSound } from 'use-sound'
 import { useEffect, useState } from 'react'
-import '../../tooltip.css'
+import { BsTriangle } from 'react-icons/bs'
+import { BsSquare } from 'react-icons/bs'
+import { BsCircle } from 'react-icons/bs'
 
 // TODO this ends as list view and prop drill medium
 function CardsHand({
@@ -123,7 +126,7 @@ function CardsHand({
           cardsInHand.map(function (card: ICard) {
             return (
               <div
-                className={`Card ${
+                className={`Card ${card.element} ${
                   cardsDisabled || card.disabled ? 'Disabled' : ''
                 } ${duplicateCardType ? 'tooltip' : ''}`}
                 data-disabled={
@@ -134,7 +137,11 @@ function CardsHand({
                 onClick={() => playCard(card)}
               >
                 <h4>{card.name}</h4>
-                <h5>{card.type && <span>type: {card.type}</span>}</h5>
+                <h5>
+                  {card.type === 'dwarf' && <BsTriangle />}
+                  {card.type === 'human' && <BsSquare />}
+                  {card.type === 'elf' && <BsCircle />}
+                </h5>
                 <p>{card.description}</p>
                 {duplicateCardType && (
                   <span className={`${duplicateCardType ? 'tooltiptext' : ''}`}>

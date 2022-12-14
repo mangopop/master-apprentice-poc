@@ -3,17 +3,11 @@ const AllCards = [
     name: 'Sword of Lost Kings',
     description: 'increase attack and agility',
     disabled: false,
-    type: 'human', // TODO not implemented - synergy & arena
+    type: 'human',
     attack: 5,
     agility: 300,
     weapon: 1.4,
-    // attack: function () {
-    //   setPlayer((player) => {
-    //     return { ...player, ...(player.attack + 5) }
-    //   })
-    // },
     init: function () {
-      //   this.attack()
       this.disabled = true
     },
   },
@@ -22,7 +16,7 @@ const AllCards = [
     description: 'increase attack and reduces agility',
     disabled: false,
     attack: 5,
-    type: 'fire', // TODO not implemented - synergy
+    element: 'fire',
     weapon: 1.6,
     init: function () {
       this.disabled = true
@@ -73,7 +67,7 @@ const AllCards = [
     name: 'Whetstone',
     description: 'Bonus to any sharp weapon',
     disabled: false,
-    attack: 5, // TODO not implemented - check for weapon
+    // attack: 5, // TODO not implemented - check for weapon
     init: function () {
       this.disabled = true
     },
@@ -85,7 +79,7 @@ const AllCards = [
     damage: 5, // TODO not implemented
     duration: 5, // TODO not implemented
     rarity: 5, // TODO not implemented
-    type: 'fire',
+    element: 'fire',
     init: function () {
       this.disabled = true
     },
@@ -96,6 +90,7 @@ const AllCards = [
     disabled: false,
     damage: 30, // TODO not implemented
     rarity: 5, // TODO not implemented
+    element: 'fire',
     init: function () {
       this.disabled = true
     },
@@ -106,6 +101,7 @@ const AllCards = [
     disabled: false,
     damage: 5, // TODO not implemented
     duration: 5, // TODO not implemented
+    element: 'ice',
     init: function () {
       this.disabled = true
     },
