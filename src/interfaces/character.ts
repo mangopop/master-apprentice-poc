@@ -1,4 +1,5 @@
 export default interface ICharacter {
+  type: string
   attack: number
   defence: number
   strength: number

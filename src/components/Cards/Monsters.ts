@@ -1,6 +1,6 @@
 // overall rating would help figure out the monster toughness
 
-const monsters = [
+export const monsters = [
   {
     name: 'Goblin',
     attack: 5,

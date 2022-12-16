@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react'
 import { BsTriangle } from 'react-icons/bs'
 import { BsSquare } from 'react-icons/bs'
 import { BsCircle } from 'react-icons/bs'
+import Card from './Card'
 
 // TODO this ends as list view and prop drill medium
 function CardsHand({
@@ -59,6 +60,10 @@ function CardsHand({
       }
     })
 
+    if (card.agility) {
+      const thing = 'test'
+    }
+
     if (duplicatePlay) {
       return
     }
@@ -69,28 +74,40 @@ function CardsHand({
 
     // TODO remove cardsInHand from view instead of disabling
 
+    // function calculateSkill(
+    //   cardSkill: number,
+    //   playerSkill: number,
+    //   arenaBoostSKill: number
+    // ) {
+    //   cardSkill
+    //     ? Math.round((playerSkill + cardSkill) * arenaBoostSKill)
+    //     : playerSkill
+    // }
+
     // this is adding permanently (handled)
     const update = (player: ICharacter, card: ICard) => {
       return {
         ...player,
-        agility:
-          Math.round((player.agility + card.agility) * arenaBoost.agility) ||
-          player.agility,
-        attack:
-          Math.round((player.attack + card.attack) * arenaBoost.other) ||
-          player.attack,
-        strength:
-          Math.round((player.strength + card.strength) * arenaBoost.other) ||
-          player.strength,
-        defence:
-          Math.round((player.defence + card.defence) * arenaBoost.other) ||
-          player.defence,
-        life: (player.life + card.life) * arenaBoost.other || player.life,
-        stamina:
-          Math.round((player.stamina + card.stamina) * arenaBoost.other) ||
-          player.stamina,
-        weapon: card.weapon * arenaBoost.other || player.weapon,
-        armour: card.armour * arenaBoost.other || player.armour,
+        agility: card.agility
+          ? Math.round((player.agility + card.agility) * arenaBoost.agility)
+          : player.agility,
+        attack: card.attack
+          ? Math.round((player.attack + card.attack) * arenaBoost.other)
+          : player.attack,
+        strength: card.strength
+          ? Math.round((player.strength + card.strength) * arenaBoost.other)
+          : player.strength,
+        defence: card.defence
+          ? Math.round((player.defence + card.defence) * arenaBoost.other)
+          : player.defence,
+        life: card.life
+          ? (player.life + card.life) * arenaBoost.other
+          : player.life,
+        stamina: card.stamina
+          ? Math.round((player.stamina + card.stamina) * arenaBoost.other)
+          : player.stamina,
+        weapon: card.weapon ? card.weapon * arenaBoost.other : player.weapon,
+        armour: card.armour ? card.armour * arenaBoost.other : player.armour,
       }
     }
 
@@ -106,16 +123,22 @@ function CardsHand({
         {cardsUsed.length > 0 &&
           cardsUsed.map(function (card: ICard) {
             return (
-              <div
-                className={'Card Disabled'}
-                data-disabled={true}
-                key={card.name}
-                style={{ marginRight: '5px' }}
-                onClick={() => playCard(card)}
-              >
-                <h4>{card.name}</h4>
-                <p>{card.description}</p>
-              </div>
+              // <div
+              //   className={'Card Disabled'}
+              //   data-disabled={true}
+              //   key={card.name}
+              //   style={{ marginRight: '5px' }}
+              //   onClick={() => playCard(card)}
+              // >
+              //   <h4>{card.name}</h4>
+              //   <p>{card.description}</p>
+              // </div>
+              <Card
+                card={card}
+                duplicateCardType={duplicateCardType}
+                cardsDisabled={cardsDisabled}
+                cardActionCallback={playCard}
+              />
             )
           })}
       </div>
@@ -125,30 +148,13 @@ function CardsHand({
         {cardsInHand.length > 0 &&
           cardsInHand.map(function (card: ICard) {
             return (
-              <div
-                className={`Card ${card.element} ${
-                  cardsDisabled || card.disabled ? 'Disabled' : ''
-                } ${duplicateCardType ? 'tooltip' : ''}`}
-                data-disabled={
-                  cardsDisabled || card.disabled || duplicateCardType
-                }
+              <Card
                 key={card.name}
-                style={{ marginRight: '5px' }}
-                onClick={() => playCard(card)}
-              >
-                <h4>{card.name}</h4>
-                <h5>
-                  {card.type === 'dwarf' && <BsSquare />}
-                  {card.type === 'human' && <BsTriangle />}
-                  {card.type === 'elf' && <BsCircle />}
-                </h5>
-                <p>{card.description}</p>
-                {duplicateCardType && (
-                  <span className={`${duplicateCardType ? 'tooltiptext' : ''}`}>
-                    You can only play one weapon
-                  </span>
-                )}
-              </div>
+                card={card}
+                duplicateCardType={duplicateCardType}
+                cardsDisabled={cardsDisabled}
+                cardActionCallback={playCard}
+              />
             )
           })}
       </div>

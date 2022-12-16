@@ -1,7 +1,4 @@
-// TODO this is the same as player, merge
-
 import ICharacterProps from '../interfaces/characterProps'
-import { cloneDeep } from 'lodash'
 
 function Character({ character, type, monsterLife }: ICharacterProps) {
   // console.log('render monster')
