@@ -6,9 +6,6 @@ import ICardHandProps from '../../interfaces/cardHandProps'
 import cardPickUp from './../../sounds/cardPickUp.mp3'
 import { useSound } from 'use-sound'
 import { useEffect, useState } from 'react'
-import { BsTriangle } from 'react-icons/bs'
-import { BsSquare } from 'react-icons/bs'
-import { BsCircle } from 'react-icons/bs'
 import Card from './Card'
 
 // TODO this ends as list view and prop drill medium

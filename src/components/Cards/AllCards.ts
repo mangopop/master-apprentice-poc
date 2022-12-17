@@ -5,51 +5,51 @@
 //   strength: 0,
 //   stamina: 0,
 // }
-class Card {
-  name: string
-  description: string
-  weapon?: number
-  attack?: number
-  armour?: number
-  defence?: number
-  strength?: number
-  disabled?: boolean
-  agility?: number
-  stamina?: number
-  type?: string
-  element?: string
+// class Card {
+//   name: string
+//   description: string
+//   weapon?: number
+//   attack?: number
+//   armour?: number
+//   defence?: number
+//   strength?: number
+//   disabled?: boolean
+//   agility?: number
+//   stamina?: number
+//   type?: string
+//   element?: string
 
-  constructor(
-    name: string,
-    description: string,
-    type?: string,
-    element?: string,
-    attack = 0,
-    defence = 0,
-    strength = 0,
-    weapon = 0,
-    armour = 0,
-    agility = 0,
-    stamina = 0,
-    disabled = false
-  ) {
-    this.name = name
-    this.description = description
-    this.type = type
-    this.element = element
-    this.attack = attack
-    this.defence = defence
-    this.strength = strength
-    this.disabled = disabled
-    this.agility = agility
-    this.stamina = stamina
-    this.armour = armour
-    this.weapon = weapon
-  }
-  init() {
-    this.disabled = true
-  }
-}
+//   constructor(
+//     name: string,
+//     description: string,
+//     type?: string,
+//     element?: string,
+//     attack = 0,
+//     defence = 0,
+//     strength = 0,
+//     weapon = 0,
+//     armour = 0,
+//     agility = 0,
+//     stamina = 0,
+//     disabled = false
+//   ) {
+//     this.name = name
+//     this.description = description
+//     this.type = type
+//     this.element = element
+//     this.attack = attack
+//     this.defence = defence
+//     this.strength = strength
+//     this.disabled = disabled
+//     this.agility = agility
+//     this.stamina = stamina
+//     this.armour = armour
+//     this.weapon = weapon
+//   }
+//   init() {
+//     this.disabled = true
+//   }
+// }
 
 // function CardObj(
 //   this: any,
@@ -66,18 +66,18 @@ class Card {
 
 // new CardObj('Sword of Lost Kings')
 
-new Card(
-  'Sword of Lost Kings',
-  'increase attack and agility',
-  'human',
-  '',
-  5,
-  0,
-  0,
-  1.4,
-  0,
-  300
-)
+// new Card(
+//   'Sword of Lost Kings',
+//   'increase attack and agility',
+//   'human',
+//   '',
+//   5,
+//   0,
+//   0,
+//   1.4,
+//   0,
+//   300
+// )
 
 const AllCards = [
   {

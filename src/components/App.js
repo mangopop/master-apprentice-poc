@@ -312,19 +312,20 @@ function App() {
     // setCardsDisabled(true)
 
     setLevelCount((level) => level + 1)
+    // setMonsterHandler(monsters[level])
 
     // TODO to remove
-    setMonster({
-      attack: getRandomArbitrary(monster.attack + 1, monster.attack + 2),
-      defence: getRandomArbitrary(monster.defence + 1, monster.defence + 2),
-      strength: getRandomArbitrary(monster.strength + 1, monster.strength + 2),
-      agility: getRandomArbitrary(monster.agility - 50, monster.agility - 100),
-      life: 50,
-      armour: getRandomArbitrary(1.05, 1.1),
-      weapon: getRandomArbitrary(1.05, 1.1),
-      stamina: 100,
-      count: 0,
-    })
+    // setMonster({
+    //   attack: getRandomArbitrary(monster.attack + 1, monster.attack + 2),
+    //   defence: getRandomArbitrary(monster.defence + 1, monster.defence + 2),
+    //   strength: getRandomArbitrary(monster.strength + 1, monster.strength + 2),
+    //   agility: getRandomArbitrary(monster.agility - 50, monster.agility - 100),
+    //   life: 50,
+    //   armour: getRandomArbitrary(1.05, 1.1),
+    //   weapon: getRandomArbitrary(1.05, 1.1),
+    //   stamina: 100,
+    //   count: 0,
+    // })
   }
 
   // TODO are we reloading all of this?
@@ -362,6 +363,7 @@ function App() {
             playerBeforeCardsPlayed={playerBeforeCardsPlayed}
             player={player}
             nextLevelHandler={nextLevel}
+            setMonsterHandler={setMonster}
           />
         }
       />

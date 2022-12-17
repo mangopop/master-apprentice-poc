@@ -5,4 +5,5 @@ export default interface ILevelProgressionProps {
   nextLevelHandler: (params: Function) => void
   player: ICharacter
   playerBeforeCardsPlayed: ICharacter
+  setMonsterHandler: (params: ICharacter) => void
 }
