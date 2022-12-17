@@ -1,5 +1,5 @@
 // would have to map this on the actual map
-export const arenas = [
+const arenas = [
   { name: 'Mountains', description: 'Home of the Dwarfs', type: 'dwarf' },
   { name: 'Riverdale', description: 'Home of the Elves', type: 'elf' },
   {
@@ -30,6 +30,8 @@ export const arenas = [
     type: 'human',
   },
 ]
+
+export default arenas
 
 // let arenas = [
 //   { name: 'mountains', type: 'human' },

@@ -27,7 +27,13 @@ export function getRandom(value: number): number {
   return Math.round(Math.random() * value)
 }
 
-export function getTypeBonus(types: string[]) {
+export function getTypeBonus(types: string[]):
+  | {
+      strength?: number
+      attack?: number
+      agility?: number
+    }
+  | false {
   const matching = types.every((type) => {
     return type === types[0]
   })
@@ -47,4 +53,6 @@ export function getTypeBonus(types: string[]) {
         return false
     }
   }
+
+  return {}
 }

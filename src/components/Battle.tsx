@@ -7,9 +7,11 @@ import { BsCircle } from 'react-icons/bs'
 import './Battle.css'
 import CardsHand from './Cards/CardsHand'
 import { shuffle } from '../services/utilities'
-import { arenas } from '../data/arena'
+import arenas from '../data/arena'
 import Character from './Character'
 import { getTypeBonus } from '../services/utilities'
+import IBattleProps from '../interfaces/battleProps'
+import ICard from '../interfaces/card'
 
 function Battle({
   level,
@@ -20,15 +22,19 @@ function Battle({
   startGameHandler,
   stopGameHandler,
   started,
-}) {
+}: IBattleProps) {
   // console.log('render battle')
-  const [arena, setArena] = useState('')
-  const [cardsInHand, setCardsInHand] = useState([]) // add rnd 5 cards to hand
-  const [cardsUsed, setCardsUsed] = useState([])
+  const [arena, setArena] = useState({
+    name: 'Mountains',
+    description: 'Home of the Dwarfs',
+    type: 'dwarf',
+  })
+  const [cardsInHand, setCardsInHand] = useState<ICard[]>([]) // add rnd 5 cards to hand
+  const [cardsUsed, setCardsUsed] = useState<ICard[]>([])
   const [cardsDisabled, setCardsDisabled] = useState(false) // start, stop, nextlevel, when 3
 
   let firstGame = true
-  let monsterClone = {}
+  let monsterClone = monster // TODO trying to make TS happy - could cause issues.
 
   useEffect(() => {
     // TODO if any card type matches the arena - boost that card by 20%
@@ -36,17 +42,24 @@ function Battle({
     if (cardsUsed.length === 3) {
       setCardsDisabled(true)
 
-      let typeMatch = []
+      let typeMatch: Array<string> = []
       cardsUsed.forEach((element) => {
-        typeMatch.push(element.type)
+        if (element.type) {
+          typeMatch.push(element.type)
+        }
       })
 
       let bonus = getTypeBonus(typeMatch)
 
       // TODO this will need to reset??
+      type PlayerKey = keyof typeof player
+      type BonusKey = keyof typeof bonus
       if (bonus) {
         let modifier = Object.keys(bonus)[0]
-        bonus = { [modifier]: player[modifier] + bonus[modifier] }
+        bonus = {
+          [modifier]:
+            player[modifier as PlayerKey] + bonus[modifier as BonusKey],
+        }
         setPlayerHandler((player) => {
           return {
             ...player,
@@ -81,7 +94,7 @@ function Battle({
     // TODO should be from cardsOwned - but we need to pick to have that.
     shuffle(ownedCards)
 
-    let copyOwnedCards = cloneDeep(ownedCards)
+    let copyOwnedCards: Array<ICard> = cloneDeep(ownedCards)
     copyOwnedCards.length = 5
     setCardsInHand(copyOwnedCards)
   }
@@ -104,7 +117,7 @@ function Battle({
 
       <h1>Level {level}/20</h1>
       {/* TODO block until fight over */}
-      <Link disabled={started} to={'/train'}>
+      <Link data-disabled={started} to={'/train'}>
         Continue
       </Link>
 

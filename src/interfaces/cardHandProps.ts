@@ -8,6 +8,6 @@ export default interface ICardHandProps {
   setPlayerHandler: (params: any) => void
   cardsDisabled: boolean
   cardsUsed: Array<ICard>
-  setCardsUsedHandler: (params: Function) => void
+  setCardsUsedHandler: (params: any) => void
   player: ICharacter
 }
