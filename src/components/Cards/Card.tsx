@@ -11,7 +11,7 @@ function Card({
   cardsDisabled,
 }: {
   card: ICard
-  cardActionCallback: Function
+  cardActionCallback?: Function
   duplicateCardType?: Boolean
   cardsDisabled?: Boolean
 }) {
@@ -22,7 +22,7 @@ function Card({
       } ${duplicateCardType ? 'tooltip' : ''}`}
       data-disabled={cardsDisabled || card.disabled || duplicateCardType}
       style={{ marginRight: '5px' }}
-      onClick={() => cardActionCallback(card)}
+      onClick={() => (cardActionCallback ? cardActionCallback(card) : null)}
     >
       <h4>{card.name}</h4>
       <h5>

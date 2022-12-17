@@ -4,17 +4,34 @@ import Card from './Card'
 import './Card.css'
 import ICard from '../../interfaces/card'
 import { shuffle } from '../../services/utilities'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-function ChooseCard({ ownedCards }: { ownedCards: Array<ICard> }) {
+function ChooseCard({
+  ownedCards,
+  setOwnedCardsHandler,
+}: {
+  ownedCards: Array<ICard>
+  setOwnedCardsHandler: Function
+}) {
+  const navigate = useNavigate()
+  const [cardsToPick, setCardsToPick] = useState<ICard[]>([])
   const ownedCardsNameArray = ownedCards.map((card) => card.name)
   const remainingCards = AllCards.filter(
     (card) => !ownedCardsNameArray.includes(card.name)
   )
-  shuffle(remainingCards)
-  const cardsToPick = remainingCards.slice(0, 3)
 
-  function pickCard() {
-    // add to owned cards
+  useEffect(() => {
+    setCardsToPick(remainingCards.slice(0, 3))
+  }, [])
+
+  shuffle(remainingCards)
+
+  function pickCard(card: ICard) {
+    setOwnedCardsHandler((ownedCards: Array<ICard>) => [...ownedCards, card])
+    setCardsToPick(cardsToPick.filter((cardTP) => cardTP !== card))
+
+    navigate('/battle')
   }
 
   return (
@@ -24,7 +41,11 @@ function ChooseCard({ ownedCards }: { ownedCards: Array<ICard> }) {
         {cardsToPick.length > 0 &&
           cardsToPick.map((card) => {
             return (
-              <Card key={card.name} card={card} cardActionCallback={pickCard} />
+              <Card
+                key={card.name}
+                card={card}
+                cardActionCallback={() => pickCard(card)}
+              />
             )
           })}
       </div>

@@ -5,10 +5,9 @@ import { BsTriangle } from 'react-icons/bs'
 import { BsSquare } from 'react-icons/bs'
 import { BsCircle } from 'react-icons/bs'
 import './Battle.css'
-import CardsHand from './../components/Cards/CardsHand'
-import { shuffle } from './../services/utilities'
+import CardsHand from './Cards/CardsHand'
+import { shuffle } from '../services/utilities'
 import { arenas } from '../data/arena'
-import AllCards from './Cards/AllCards'
 import Character from './Character'
 import { getTypeBonus } from '../services/utilities'
 
@@ -16,11 +15,10 @@ function Battle({
   level,
   player,
   monster,
+  ownedCards,
   setPlayerHandler,
   startGameHandler,
   stopGameHandler,
-  // cardsDisabled,
-  // cardsInHand,
   started,
 }) {
   // console.log('render battle')
@@ -64,26 +62,28 @@ function Battle({
     monsterClone = cloneDeep(monster)
     setArena(shuffle(arenas)[0])
 
-    cardsInHand.forEach((card) => {
-      card.disabled = false
-    })
+    setCardsDisabled(true)
+    // cardsInHand.forEach((card) => {
+    //   card.disabled = false
+    // })
   }, [])
 
   function startGame() {
     startGameHandler()
-    setUp()
+    setUp() // todo should be in level prog
   }
 
   function setUp() {
     setArena(shuffle(arenas)[0])
     setCardsUsed([])
+    setCardsDisabled(false)
 
     // TODO should be from cardsOwned - but we need to pick to have that.
-    shuffle(AllCards)
+    shuffle(ownedCards)
 
-    let copyAllCards = cloneDeep(AllCards)
-    copyAllCards.length = 5
-    setCardsInHand(copyAllCards)
+    let copyOwnedCards = cloneDeep(ownedCards)
+    copyOwnedCards.length = 5
+    setCardsInHand(copyOwnedCards)
   }
 
   // TODO get some more feedback in here
@@ -121,6 +121,7 @@ function Battle({
 
       <CardsHand
         arena={arena}
+        ownedCards={ownedCards}
         cardsInHand={cardsInHand}
         cardsDisabled={cardsDisabled}
         setPlayerHandler={setPlayerHandler}

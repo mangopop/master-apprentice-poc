@@ -57,10 +57,6 @@ function CardsHand({
       }
     })
 
-    if (card.agility) {
-      const thing = 'test'
-    }
-
     if (duplicatePlay) {
       return
     }
@@ -120,21 +116,11 @@ function CardsHand({
         {cardsUsed.length > 0 &&
           cardsUsed.map(function (card: ICard) {
             return (
-              // <div
-              //   className={'Card Disabled'}
-              //   data-disabled={true}
-              //   key={card.name}
-              //   style={{ marginRight: '5px' }}
-              //   onClick={() => playCard(card)}
-              // >
-              //   <h4>{card.name}</h4>
-              //   <p>{card.description}</p>
-              // </div>
               <Card
+                key={card.name}
                 card={card}
                 duplicateCardType={duplicateCardType}
                 cardsDisabled={cardsDisabled}
-                cardActionCallback={playCard}
               />
             )
           })}

@@ -1,8 +1,21 @@
 import ITrainProps from '../interfaces/trainProps'
 import { Link } from 'react-router-dom'
 
-function Train({ player, setPlayerHandler }: ITrainProps) {
+// TODO have card affected data in here, the player clone isnt working
+
+function Train({
+  player,
+  playerBeforeCardsPlayed,
+  setPlayerHandler,
+}: ITrainProps) {
+
   function trainCharacter(type: string) {
+    // would like to set the player to the clone - but, issues with useEffect loop
+    playerBeforeCardsPlayed.strength += 2
+    playerBeforeCardsPlayed.attack += 2
+    playerBeforeCardsPlayed.defence += 2
+    playerBeforeCardsPlayed.agility += 2
+
     if (player.stamina >= 15) {
       setPlayerHandler((player) => {
         return { ...player, stamina: player.stamina - 15 }
@@ -10,23 +23,26 @@ function Train({ player, setPlayerHandler }: ITrainProps) {
       switch (type) {
         case 'strength':
           setPlayerHandler((player) => {
-            return { ...player, strength: player.strength + 2 }
+            return { ...player, strength: playerBeforeCardsPlayed.strength + 2 }
           })
           break
         case 'attack':
           setPlayerHandler((player) => {
-            return { ...player, attack: player.attack + 2 }
+            return { ...player, attack: playerBeforeCardsPlayed.attack + 2 }
           })
           break
         case 'defence':
           setPlayerHandler((player) => {
-            return { ...player, defence: player.defence + 2 }
+            return { ...player, defence: playerBeforeCardsPlayed.defence + 2 }
           })
           break
         case 'agility':
           if (player.agility > 500) {
             setPlayerHandler((player) => {
-              return { ...player, agility: player.agility - 100 }
+              return {
+                ...player,
+                agility: playerBeforeCardsPlayed.agility - 100,
+              }
             })
           }
           break

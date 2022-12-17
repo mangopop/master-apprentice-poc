@@ -37,8 +37,8 @@ function LevelProgression({
   return (
     <div>
       <h1>Level {level + 1}</h1>
-      <Link onClick={nextLevel} to={`/battle`}>
-        Start Battle
+      <Link onClick={nextLevel} to={`/chooseCard`}>
+        Choose Card
       </Link>
     </div>
   )

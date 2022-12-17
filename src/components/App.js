@@ -10,6 +10,7 @@ import monsterDie from './../sounds/monsterDie.wav'
 import innMusic from './../sounds/medieval-inn-music.mp3'
 import miss1 from './../sounds/miss1.wav'
 import miss2 from './../sounds/miss2.wav'
+import drums from './../sounds/drums.mp3'
 
 import Train from './Train'
 import { getRandomArbitrary } from '../services/utilities'
@@ -32,18 +33,6 @@ let playerStartStats = {
   stamina: 100,
   count: 0,
 }
-
-// let monsterStartStats = {
-//   attack: 3,
-//   defence: 3,
-//   strength: 3,
-//   agility: 2500,
-//   life: 50,
-//   armour: 1.05,
-//   weapon: 1.05,
-//   stamina: 100,
-//   count: 0,
-// }
 
 function randAttackModifier(character) {
   const weapon = character.weapon ? character.weapon : 1
@@ -136,7 +125,8 @@ function App() {
   const [miss1Play] = useSound(miss1, { volume: 0.25 })
   const [miss2Play] = useSound(miss2, { volume: 0.25 })
   const [playerDeathPlay] = useSound(playerDeath, { volume: 0.25 })
-  const [innMusicPlay, innMusicSoundObj] = useSound(innMusic, { volume: 0.25 })
+  const [innMusicPlay, innMusicSoundObj] = useSound(innMusic, { volume: 0.15 })
+  const [drumsPlay, drumsSoundObj] = useSound(drums, { volume: 0.15 })
 
   function applyDamage(wasHit, strike, defenderCallback, type) {
     if (wasHit && strike > 0) {
@@ -279,16 +269,13 @@ function App() {
   function startGame() {
     console.log('game start')
     setStarted(true)
+    drumsPlay()
     innMusicSoundObj.stop()
-
-    // firstGame = false
 
     playerBeforeCardsPlayed = cloneDeep(player)
 
     console.log('playerBeforeCardsPlayed at start', playerBeforeCardsPlayed)
 
-    // setTrainingDisabled(true)
-    // setCardsDisabled(false)
     startTimers()
   }
 
@@ -296,6 +283,7 @@ function App() {
   function stopGame() {
     console.log('stop game')
     innMusicPlay()
+    drumsSoundObj.stop()
     setStarted(false)
     // setCardsDisabled(true)
     clearInterval(playerTimerId)
@@ -312,20 +300,6 @@ function App() {
     // setCardsDisabled(true)
 
     setLevelCount((level) => level + 1)
-    // setMonsterHandler(monsters[level])
-
-    // TODO to remove
-    // setMonster({
-    //   attack: getRandomArbitrary(monster.attack + 1, monster.attack + 2),
-    //   defence: getRandomArbitrary(monster.defence + 1, monster.defence + 2),
-    //   strength: getRandomArbitrary(monster.strength + 1, monster.strength + 2),
-    //   agility: getRandomArbitrary(monster.agility - 50, monster.agility - 100),
-    //   life: 50,
-    //   armour: getRandomArbitrary(1.05, 1.1),
-    //   weapon: getRandomArbitrary(1.05, 1.1),
-    //   stamina: 100,
-    //   count: 0,
-    // })
   }
 
   // TODO are we reloading all of this?
@@ -336,7 +310,12 @@ function App() {
       <Route path="/" element={<Start />} />
       <Route
         path="chooseCard"
-        element={<ChooseCard ownedCards={ownedCards} />}
+        element={
+          <ChooseCard
+            ownedCards={ownedCards}
+            setOwnedCardsHandler={setOwnedCards}
+          />
+        }
       />
       <Route
         path="battle"
@@ -346,6 +325,7 @@ function App() {
             player={player}
             setPlayerHandler={setPlayer}
             monster={monster}
+            ownedCards={ownedCards}
             startGameHandler={startGame}
             stopGameHandler={stopGame}
           />
@@ -353,7 +333,13 @@ function App() {
       />
       <Route
         path="train"
-        element={<Train player={player} setPlayerHandler={setPlayer} />}
+        element={
+          <Train
+            player={player}
+            playerBeforeCardsPlayed={playerBeforeCardsPlayed}
+            setPlayerHandler={setPlayer}
+          />
+        }
       />
       <Route
         path="level"
