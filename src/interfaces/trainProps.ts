@@ -1,3 +1,4 @@
+import ICard from './card'
 import ICharacter from './character'
 
 export default interface ITrainProps {
@@ -6,4 +7,5 @@ export default interface ITrainProps {
   playerBeforeCardsPlayed: ICharacter
   trainingDisabled: boolean
   setPlayerHandler: (params: (params: ICharacter) => void) => void
+  ownedCards: ICard[]
 }

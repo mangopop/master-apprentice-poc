@@ -19,14 +19,16 @@ import Start from './Start'
 import Battle from './Battle'
 import LevelProgression from './LevelProgression'
 import ChooseCard from './Cards/ChooseCard'
+import CardCollection from './Cards/CardCollection'
 import { monsters } from './Cards/Monsters'
 
 let playerBeforeCardsPlayed = {}
 let playerStartStats = {
   attack: 7, // plus weapon is max attack
   defence: 7, // plus defence is max defence, attack must be higher
-  strength: 7, // determines min attack and critical bonus
+  strength: 7, // determines min attack and critical bonus - and use of heavy items
   agility: 2000, // speed of attack
+  magic: 7, // to use spells
   life: 100,
   armour: 1.05, // should be armour class with properties, determines critical bonus
   weapon: 1.05, // should be weapon class with properties
@@ -61,6 +63,7 @@ function getStrikeDamage(
   console.log('ATTACK')
 
   const finalDefence = defender.defence * defender.armour
+  // if strength higher will always get max attack plus strength (from critical)
   let attackMove = getRandomArbitrary(attacker.strength, finalAttack)
   if (attackMove === attacker.attack) {
     console.log('critical attack!')
@@ -176,7 +179,8 @@ function App() {
     if (monster.life < 1) {
       stopGame() // TODO won't stop with the restarts
       if (monster.life < -15) {
-        // TODO death blow bonus!
+        // death blow bonus!
+        console.log('DEATH BLOW')
         setPlayer((player) => {
           return {
             ...player,
@@ -186,6 +190,15 @@ function App() {
         })
       }
 
+      setPlayer((player) => {
+        return {
+          ...player,
+          attack: playerBeforeCardsPlayed.attack,
+          defence: playerBeforeCardsPlayed.defence,
+          strength: playerBeforeCardsPlayed.strength,
+          agility: playerBeforeCardsPlayed.agility,
+        }
+      })
       monsterDiePlay()
       // clearInterval(playerTimerId)
       console.log(`player killed monster in ${player.count} moves`)
@@ -324,10 +337,12 @@ function App() {
             level={levelCount}
             player={player}
             setPlayerHandler={setPlayer}
+            setMonsterHandler={setMonster}
             monster={monster}
             ownedCards={ownedCards}
             startGameHandler={startGame}
             stopGameHandler={stopGame}
+            started={started}
           />
         }
       />
@@ -352,6 +367,10 @@ function App() {
             setMonsterHandler={setMonster}
           />
         }
+      />
+      <Route
+        path="/cardCollection"
+        element={<CardCollection ownedCards={ownedCards} />}
       />
     </Routes>
   )

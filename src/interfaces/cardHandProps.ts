@@ -6,6 +6,7 @@ export default interface ICardHandProps {
   cardsInHand: Array<ICard>
   ownedCards: Array<ICard>
   setPlayerHandler: (params: any) => void
+  setMonsterHandler: (params: (params: ICharacter) => void) => void
   cardsDisabled: boolean
   cardsUsed: Array<ICard>
   setCardsUsedHandler: (params: any) => void

@@ -8,16 +8,17 @@ import { useSound } from 'use-sound'
 import { useEffect, useState } from 'react'
 import Card from './Card'
 
-// TODO this ends as list view and prop drill medium
 function CardsHand({
   arena,
   cardsInHand,
   setPlayerHandler,
+  setMonsterHandler,
   cardsDisabled,
   cardsUsed,
   setCardsUsedHandler,
   player,
 }: ICardHandProps) {
+  // TODO cards are updating player - should be reset on monster death
   const [duplicateCardType, setDuplicateCardType] = useState(false)
   console.log('render cards hand')
 
@@ -104,7 +105,18 @@ function CardsHand({
       }
     }
 
-    setPlayerHandler(update(player, card))
+    // TODO only running 1 type of card might want to run 2?
+    if (card.damage) {
+      setMonsterHandler((monster) => {
+        return {
+          ...monster,
+          life: card.damage ? monster.life - card.damage : monster.life,
+        }
+      })
+    } else {
+      setPlayerHandler(update(player, card))
+    }
+
     card.init()
   }
 

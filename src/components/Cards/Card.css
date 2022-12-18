@@ -1,6 +1,6 @@
 .Card {
-  height: 140px;
-  width: 110px;
+  height: 160px;
+  width: 120px;
   border: solid 1px black;
   padding: 5px;
   margin: 5px;
@@ -29,10 +29,12 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
-  height: 152px;
+  flex-wrap: wrap;
+  height: 180px;
+  margin: 10px;
 }
 
 .CardContainer p {
-  font-size: 12px;
+  font-size: 11px;
   margin: 3px 10px;
 }

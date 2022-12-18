@@ -11,10 +11,7 @@ function Train({
 
   function trainCharacter(type: string) {
     // would like to set the player to the clone - but, issues with useEffect loop
-    playerBeforeCardsPlayed.strength += 2
-    playerBeforeCardsPlayed.attack += 2
-    playerBeforeCardsPlayed.defence += 2
-    playerBeforeCardsPlayed.agility += 2
+    // TODO after player reset on monster death might be able to tidy this
 
     if (player.stamina >= 15) {
       setPlayerHandler((player) => {
@@ -22,26 +19,40 @@ function Train({
       })
       switch (type) {
         case 'strength':
+          playerBeforeCardsPlayed.strength += 2
           setPlayerHandler((player) => {
             return { ...player, strength: playerBeforeCardsPlayed.strength + 2 }
           })
           break
         case 'attack':
+          playerBeforeCardsPlayed.attack += 2
           setPlayerHandler((player) => {
             return { ...player, attack: playerBeforeCardsPlayed.attack + 2 }
           })
           break
         case 'defence':
+          playerBeforeCardsPlayed.defence += 2
           setPlayerHandler((player) => {
             return { ...player, defence: playerBeforeCardsPlayed.defence + 2 }
           })
           break
         case 'agility':
+          playerBeforeCardsPlayed.agility += 2
           if (player.agility > 500) {
             setPlayerHandler((player) => {
               return {
                 ...player,
                 agility: playerBeforeCardsPlayed.agility - 100,
+              }
+            })
+          }
+        case 'magic':
+          playerBeforeCardsPlayed.magic += 2
+          if (player.magic > 500) {
+            setPlayerHandler((player) => {
+              return {
+                ...player,
+                magic: playerBeforeCardsPlayed.magic + 2,
               }
             })
           }
@@ -55,16 +66,21 @@ function Train({
     <div>
       <h1>Train</h1>
       <h4>Stamina / {player.stamina}</h4>
-      <p>Strength / {player.strength}</p>
+      <p>Strength / {playerBeforeCardsPlayed.strength}</p>
       <button onClick={() => trainCharacter('strength')}>Train Strength</button>
-      <p>Attack / {player.attack}</p>
+      <p>Attack / {playerBeforeCardsPlayed.attack}</p>
       <button onClick={() => trainCharacter('attack')}>Train Attack</button>
-      <p>Agility / {player.agility}</p>
+      <p>Agility / {playerBeforeCardsPlayed.agility}</p>
       <button onClick={() => trainCharacter('agility')}>Train Agility</button>
-      <p>Defence / {player.defence}</p>
+      <p>Defence / {playerBeforeCardsPlayed.defence}</p>
       <button onClick={() => trainCharacter('defence')}>Train Defence</button>
+      <p>Magic / {playerBeforeCardsPlayed.magic}</p>
+      <button onClick={() => trainCharacter('magic')}>Train Magic</button>
 
-      <Link to={`/level`}>Next Level</Link>
+      <div>
+        {' '}
+        <Link to={`/level`}>Next Level</Link>
+      </div>
     </div>
   )
 }

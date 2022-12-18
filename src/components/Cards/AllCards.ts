@@ -88,29 +88,32 @@ const AllCards = [
     attack: 5,
     agility: 300,
     weapon: 1.4,
+    requirements: { strength: 15, magic: 0 },
     init: function () {
       this.disabled = true
     },
   },
   {
     name: "Balrog's Sword",
-    description: 'increase attack and reduces agility',
+    description: 'increase attack and reduces agility. Requires 15 Strength',
     disabled: false,
     attack: 5,
     element: 'fire',
     weapon: 1.6,
+    requirements: { strength: 15, magic: 0 },
     init: function () {
       this.disabled = true
     },
   },
   {
     name: 'Axe Of The Dark Mountain',
-    description: 'increase attack and reduces agility',
+    description: 'increase attack and reduces agility. Requires 20 Strength',
     disabled: false,
     type: 'dwarf',
     attack: 5,
     agility: 300,
     weapon: 1.6,
+    requirements: { strength: 20, magic: 0 },
     init: function () {
       this.disabled = true
     },
@@ -120,6 +123,7 @@ const AllCards = [
     description: 'Increase defence slightly',
     disabled: false,
     defence: 3,
+    requirements: { strength: 0, magic: 0 },
     init: function () {
       this.disabled = true
     },
@@ -129,16 +133,18 @@ const AllCards = [
     description: 'Increase defence slightly',
     disabled: false,
     defence: 3,
+    requirements: { strength: 0, magic: 0 },
     init: function () {
       this.disabled = true
     },
   },
   {
     name: 'Plate Armour of Lost Kings',
-    description: 'increase defence and reduces agility',
+    description: 'increase defence and reduces agility. Requires 15 Strength',
     disabled: false,
     defence: 5,
     agility: 300,
+    requirements: { strength: 10, magic: 0 }, // TODO not implemented
     type: 'human',
     init: function () {
       this.disabled = true
@@ -149,6 +155,7 @@ const AllCards = [
     description: 'Bonus to any sharp weapon',
     disabled: false,
     // attack: 5, // TODO not implemented - check for weapon
+    requirements: { strength: 0, magic: 0 },
     init: function () {
       this.disabled = true
     },
@@ -157,10 +164,11 @@ const AllCards = [
     name: 'Fireball',
     description: 'Cast a fireball - 5 damage - then burns for 2 for 5 seconds',
     disabled: false,
-    damage: 5, // TODO not implemented
+    damage: 5,
     duration: 5, // TODO not implemented
     rarity: 5, // TODO not implemented
     element: 'fire',
+    requirements: { strength: 0, magic: 0 },
     init: function () {
       this.disabled = true
     },
@@ -169,8 +177,8 @@ const AllCards = [
     name: 'Immolation',
     description: 'Explosion of fire - 30 damage',
     disabled: false,
-    damage: 30, // TODO not implemented
-    rarity: 5, // TODO not implemented
+    damage: 30,
+    requirements: { strength: 0, magic: 20 }, // TODO not implemented - way too powerful at early stage!
     element: 'fire',
     init: function () {
       this.disabled = true
@@ -180,9 +188,10 @@ const AllCards = [
     name: 'Blizzard',
     description: 'Summon a Blizzard - 5 damage - freeze for 5 seconds',
     disabled: false,
-    damage: 5, // TODO not implemented
+    damage: 5,
     duration: 5, // TODO not implemented
     element: 'ice',
+    requirements: { strength: 0, magic: 0 },
     init: function () {
       this.disabled = true
     },
@@ -192,15 +201,17 @@ const AllCards = [
     description: 'Increase strength by 5',
     disabled: false,
     strength: 5,
+    requirements: { strength: 0, magic: 0 },
     init: function () {
       this.disabled = true
     },
   },
   {
     name: 'health potion',
-    description: 'Add 20 to health',
+    description: 'Add 10 to health',
     disabled: false,
-    life: 15,
+    life: 10,
+    requirements: { strength: 0, magic: 0 },
     init: function () {
       this.disabled = true
     },
@@ -210,6 +221,17 @@ const AllCards = [
     description: 'Poison for 3 every 3 seconds',
     disabled: false,
     poison: 5,
+    requirements: { strength: 0, magic: 0 },
+    init: function () {
+      this.disabled = true
+    },
+  },
+  {
+    name: 'Magic potion',
+    description: 'Magic boost of 10',
+    disabled: false,
+    magic: 10,
+    requirements: { strength: 0, magic: 0 },
     init: function () {
       this.disabled = true
     },
@@ -219,6 +241,7 @@ const AllCards = [
     description: 'Add 20 stamina',
     disabled: false,
     stamina: 20,
+    requirements: { strength: 0, magic: 0 },
     init: function () {
       this.disabled = true
     },

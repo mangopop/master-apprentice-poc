@@ -37,6 +37,14 @@ function LevelProgression({
   return (
     <div>
       <h1>Level {level + 1}</h1>
+      {/* <div id="div1" className="dot pos pos1"></div>
+      <div id="div2" className="dot pos pos2"></div>
+      <div id="div2" className="dot pos pos3"></div>
+
+      <svg width="500" height="500">
+        <line x1="20" y1="20" x2="200" y2="105" stroke="black" />
+        <line x1="210" y1="100" x2="310" y2="300" stroke="black" />
+      </svg> */}
       <Link onClick={nextLevel} to={`/chooseCard`}>
         Choose Card
       </Link>

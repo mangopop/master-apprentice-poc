@@ -9,8 +9,15 @@ export default interface ICard {
   armour?: number
   weapon?: number
   stamina?: number
+  magic?: number
   disabled: boolean
   init: Function
   type?: string
   element?: string
+  damage?: number
+  duration?: number
+  rarity?: number
+  requirements: {
+    [key: string]: number
+  }
 }

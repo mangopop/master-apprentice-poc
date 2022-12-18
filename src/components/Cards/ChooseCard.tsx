@@ -36,7 +36,7 @@ function ChooseCard({
 
   return (
     <div>
-      <h1>Choose Card</h1>
+      <h1>Choose a Card</h1>
       <div className="CardContainer">
         {cardsToPick.length > 0 &&
           cardsToPick.map((card) => {
@@ -49,7 +49,23 @@ function ChooseCard({
             )
           })}
       </div>
-      <Link to={`/battle`}>Fight!</Link>
+      {/* <Link to={`/battle`}>Fight!</Link> */}
+
+      <h1>Cards owned</h1>
+      <div className="CardContainer">
+        {ownedCards.length > 0 &&
+          ownedCards.map((card) => {
+            return <Card key={card.name} card={card} />
+          })}
+      </div>
+
+      <h1>All Cards</h1>
+      <div className="CardContainer">
+        {AllCards.length > 0 &&
+          AllCards.map((card) => {
+            return <Card key={card.name} card={card} />
+          })}
+      </div>
     </div>
   )
 }

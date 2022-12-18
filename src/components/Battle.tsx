@@ -19,11 +19,13 @@ function Battle({
   monster,
   ownedCards,
   setPlayerHandler,
+  setMonsterHandler,
   startGameHandler,
   stopGameHandler,
   started,
 }: IBattleProps) {
   // console.log('render battle')
+  // TODO this needs to reset before choose card
   const [arena, setArena] = useState({
     name: 'Mountains',
     description: 'Home of the Dwarfs',
@@ -37,8 +39,6 @@ function Battle({
   let monsterClone = monster // TODO trying to make TS happy - could cause issues.
 
   useEffect(() => {
-    // TODO if any card type matches the arena - boost that card by 20%
-
     if (cardsUsed.length === 3) {
       setCardsDisabled(true)
 
@@ -91,11 +91,20 @@ function Battle({
     setCardsUsed([])
     setCardsDisabled(false)
 
-    // TODO should be from cardsOwned - but we need to pick to have that.
     shuffle(ownedCards)
 
     let copyOwnedCards: Array<ICard> = cloneDeep(ownedCards)
     copyOwnedCards.length = 5
+    copyOwnedCards.forEach((card) => {
+      if (
+        player.strength > card.requirements.strength &&
+        player.magic > card.requirements.magic
+      ) {
+        card.disabled = false
+      } else {
+        card.disabled = true
+      }
+    })
     setCardsInHand(copyOwnedCards)
   }
 
@@ -103,8 +112,11 @@ function Battle({
   return (
     <div className="Battle">
       <h1>Fight!</h1>
-      <button onClick={startGame}>Start game</button>
-      <button onClick={stopGameHandler}>Stop game</button>
+      {!started && monster.life > 0 && (
+        <button onClick={startGame}>Start game</button>
+      )}
+
+      {started && <button onClick={stopGameHandler}>Stop game</button>}
       {/* <button onClick={resetGame}>Reset game</button> */}
 
       <h2>{arena.name}</h2>
@@ -116,10 +128,7 @@ function Battle({
       </p>
 
       <h1>Level {level}/20</h1>
-      {/* TODO block until fight over */}
-      <Link data-disabled={started} to={'/train'}>
-        Continue
-      </Link>
+      {!started && monster.life < 1 && <Link to={'/train'}>Continue</Link>}
 
       <Character character={player} type={'player'} />
       <Character
@@ -132,16 +141,19 @@ function Battle({
         <button onClick={addHealth}>health</button>
       </div> */}
 
-      <CardsHand
-        arena={arena}
-        ownedCards={ownedCards}
-        cardsInHand={cardsInHand}
-        cardsDisabled={cardsDisabled}
-        setPlayerHandler={setPlayerHandler}
-        setCardsUsedHandler={setCardsUsed}
-        cardsUsed={cardsUsed}
-        player={player}
-      />
+      {started && (
+        <CardsHand
+          arena={arena}
+          ownedCards={ownedCards}
+          cardsInHand={cardsInHand}
+          cardsDisabled={cardsDisabled}
+          setPlayerHandler={setPlayerHandler}
+          setMonsterHandler={setMonsterHandler}
+          setCardsUsedHandler={setCardsUsed}
+          cardsUsed={cardsUsed}
+          player={player}
+        />
+      )}
     </div>
   )
 }

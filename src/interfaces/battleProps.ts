@@ -7,6 +7,7 @@ export default interface IBattleProps {
   monster: ICharacter
   ownedCards: Array<ICard>
   setPlayerHandler: (params: (params: ICharacter) => void) => void
+  setMonsterHandler: (params: (params: ICharacter) => void) => void
   startGameHandler: () => void
   stopGameHandler: () => void
   started: Boolean

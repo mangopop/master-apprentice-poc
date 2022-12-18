@@ -20,6 +20,9 @@ export function shuffle(array: any[]): any[] {
 }
 
 export function getRandomArbitrary(min: number, max: number): number {
+  if (min > max) {
+    min = max
+  }
   return Math.round(Math.random() * (max - min) + min)
 }
 
