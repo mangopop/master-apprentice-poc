@@ -82,7 +82,7 @@
 const AllCards = [
   {
     name: 'Sword of Lost Kings',
-    description: 'increase attack and agility',
+    description: 'Increase attack and agility',
     disabled: false,
     type: 'human',
     attack: 5,

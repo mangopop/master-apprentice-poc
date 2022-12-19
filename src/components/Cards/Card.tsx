@@ -15,14 +15,18 @@ function Card({
   duplicateCardType?: Boolean
   cardsDisabled?: Boolean
 }) {
+  let classNames = `${card.element || ''} ${
+    cardsDisabled || card.disabled ? 'Disabled' : ''
+  } ${duplicateCardType ? 'tooltip' : ''}`
+
   return (
     <div
-      className={`Card ${card.element} ${
-        cardsDisabled || card.disabled ? 'Disabled' : ''
-      } ${duplicateCardType ? 'tooltip' : ''}`}
+      className={`Card${classNames}`}
       data-disabled={cardsDisabled || card.disabled || duplicateCardType}
       style={{ marginRight: '5px' }}
-      onClick={() => (cardActionCallback ? cardActionCallback(card) : null)}
+      onClick={() =>
+        !cardsDisabled && cardActionCallback ? cardActionCallback(card) : null
+      }
     >
       <h4>{card.name}</h4>
       <h5>

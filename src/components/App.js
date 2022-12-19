@@ -102,7 +102,7 @@ function getStrikeDamage(
 
 // TODO when this refactor is working (lol - imagine that), branch off and do it all again in redux!! fucking do it!
 
-// Twe cannot render this all the time (but we have to?) - move the items that should render into components
+// we cannot render this all the time (but we have to?) - move the items that should render into components
 function App() {
   // console.log('render app')
 
@@ -131,6 +131,7 @@ function App() {
   const [innMusicPlay, innMusicSoundObj] = useSound(innMusic, { volume: 0.15 })
   const [drumsPlay, drumsSoundObj] = useSound(drums, { volume: 0.15 })
 
+  // Here so we can use the sounds
   function applyDamage(wasHit, strike, defenderCallback, type) {
     if (wasHit && strike > 0) {
       type === 'monster' ? punchHit2() : punchHit()
