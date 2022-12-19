@@ -21,7 +21,7 @@ function Card({
 
   return (
     <div
-      className={`Card${classNames}`}
+      className={`Card ${classNames}`}
       data-disabled={cardsDisabled || card.disabled || duplicateCardType}
       style={{ marginRight: '5px' }}
       onClick={() =>
