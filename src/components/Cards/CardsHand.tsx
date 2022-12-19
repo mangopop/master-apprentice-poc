@@ -7,6 +7,7 @@ import cardPickUp from './../../sounds/cardPickUp.mp3'
 import { useSound } from 'use-sound'
 import { useEffect, useState } from 'react'
 import Card from './card/Card'
+import { updateWeapon } from '../../services/cardHand.service'
 
 // TODO too many props - all because of state
 function CardsHand({
@@ -87,52 +88,6 @@ function CardsHand({
     setCardsUsedHandler((cardsUsed: Array<ICard>) => [...cardsUsed, card])
 
     // TODO remove cardsInHand from view instead of disabling
-
-    // function calculateSkill(
-    //   cardSkill: number,
-    //   playerSkill: number,
-    //   arenaBoostSKill: number
-    // ) {
-    //   cardSkill
-    //     ? Math.round((playerSkill + cardSkill) * arenaBoostSKill)
-    //     : playerSkill
-    // }
-
-    // TODO add the item bonus - add to weapon
-    // card weapon wasn't working  // maybe just update the players weapon?
-
-    // this should apply the card.weapon update to the player.weapon update
-    function updateWeapon(
-      arenaBoost: number,
-      playerWeapon: number,
-      cardWeapon?: number,
-      cardWeaponBonus?: number
-    ) {
-      let weaponUpdate = 1 // act as base player weapon
-
-      // played item and have existing card weapon add to player.weapon
-      // should not be able to arena boost and play item
-      if (card.requirements.weapon && cardWeaponBonus) {
-        cardsUsed.forEach((cardUsed) => {
-          if (cardUsed.weapon) {
-            // this assumes that playerWeapon was already updated by the cardWeapon
-            weaponUpdate = playerWeapon * cardWeaponBonus // 1 * 1.2(1.2) // 1.3 * 1.2(1.52)
-          }
-        })
-      }
-
-      // if we have card weapon and arena boost apply to weapon
-      if (cardWeapon && arenaBoost) {
-        weaponUpdate = cardWeapon * arenaBoost // 1.5 * 1.25(1.875)
-      }
-
-      if (cardWeapon && !arenaBoost) {
-        weaponUpdate = playerWeapon * cardWeapon
-      }
-
-      return weaponUpdate
-    }
-
     // this is adding permanently (handled - where?)
     const update = (player: ICharacter, card: ICard) => {
       return {
@@ -156,6 +111,8 @@ function CardsHand({
           ? Math.round((player.stamina + card.stamina) * arenaBoost.other)
           : player.stamina,
         weapon: updateWeapon(
+          card,
+          cardsUsed,
           arenaBoost.other,
           player.weapon,
           card.weapon,
@@ -165,7 +122,7 @@ function CardsHand({
       }
     }
 
-    // going to have lot's of function here...
+    // TODO going to have lot's of function here...
     // how can we move these into the card objects
 
     // pause the attack for 5 seconds

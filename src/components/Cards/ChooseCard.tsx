@@ -3,7 +3,7 @@ import AllCards from './AllCards'
 import Card from './card/Card'
 import './card/Card.css'
 import ICard from '../../interfaces/card'
-import { shuffle } from '../../services/utilities'
+import { shuffle } from '../../services/utilities.service'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 

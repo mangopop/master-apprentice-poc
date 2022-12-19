@@ -6,10 +6,10 @@ import { BsSquare } from 'react-icons/bs'
 import { BsCircle } from 'react-icons/bs'
 import './Battle.css'
 import CardsHand from './Cards/CardsHand'
-import { shuffle } from '../services/utilities'
+import { shuffle } from '../services/utilities.service'
 import arenas from '../data/arena'
 import Character from './Character'
-import { getTypeBonus } from '../services/battle'
+import { getTypeBonus } from '../services/battle.service'
 import IBattleProps from '../interfaces/battleProps'
 import ICard from '../interfaces/card'
 
@@ -134,6 +134,8 @@ function Battle({
 
       <h1>Level {level}/20</h1>
       {!started && monster.life < 1 && <Link to={'/train'}>Continue</Link>}
+
+      {/* {<p>Arena Bonus active</p>} */}
 
       <Character character={player} type={'player'} />
       <Character

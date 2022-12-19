@@ -87,7 +87,7 @@ const AllCards = [
     type: 'human',
     agility: 300,
     weapon: 1.5, // this is almost same as attack?
-    requirements: { strength: 6, magic: 0, weapon: false },
+    requirements: { strength: 10, magic: 0, weapon: false },
     init: function () {
       this.disabled = true
     },

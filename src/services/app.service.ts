@@ -1,5 +1,5 @@
 import ICharacter from '../interfaces/character'
-import { getRandomArbitrary } from '../services/utilities'
+import { getRandomArbitrary } from './utilities.service'
 // uses weapon, stamina and attack to determine hit chance
 // the better the weapon and stamina, the better the chance.
 // s10 * w1.3 (13) + (10+10) = 33
