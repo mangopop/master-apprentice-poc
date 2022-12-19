@@ -1,4 +1,4 @@
-import ICard from '../../interfaces/card'
+import ICard from '../../../interfaces/card'
 import './Card.css'
 import { BsTriangle } from 'react-icons/bs'
 import { BsSquare } from 'react-icons/bs'

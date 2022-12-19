@@ -1,12 +1,12 @@
 import '../../tooltip.css'
-import './Card.css'
+import './card/Card.css'
 import ICharacter from '../../interfaces/character'
 import ICard from '../../interfaces/card'
 import ICardHandProps from '../../interfaces/cardHandProps'
 import cardPickUp from './../../sounds/cardPickUp.mp3'
 import { useSound } from 'use-sound'
 import { useEffect, useState } from 'react'
-import Card from './Card'
+import Card from './card/Card'
 
 function CardsHand({
   arena,
