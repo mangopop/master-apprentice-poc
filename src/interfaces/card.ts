@@ -15,6 +15,7 @@ export default interface ICard {
   type?: string
   element?: string
   damage?: number
+  durationDamage?: number
   duration?: number
   rarity?: number
   requirements: {

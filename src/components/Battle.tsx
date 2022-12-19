@@ -22,6 +22,8 @@ function Battle({
   setMonsterHandler,
   startGameHandler,
   stopGameHandler,
+  stopMonsterTimersHandler,
+  startMonsterTimersHandler,
   started,
 }: IBattleProps) {
   // console.log('render battle')
@@ -95,6 +97,8 @@ function Battle({
 
     let copyOwnedCards: Array<ICard> = cloneDeep(ownedCards)
     copyOwnedCards.length = 5
+
+    // TODO might make sense to move this logic to picking card?
     copyOwnedCards.forEach((card) => {
       if (
         player.strength > card.requirements.strength &&
@@ -105,6 +109,7 @@ function Battle({
         card.disabled = true
       }
     })
+
     setCardsInHand(copyOwnedCards)
   }
 
@@ -150,6 +155,8 @@ function Battle({
           setPlayerHandler={setPlayerHandler}
           setMonsterHandler={setMonsterHandler}
           setCardsUsedHandler={setCardsUsed}
+          stopMonsterTimersHandler={stopMonsterTimersHandler}
+          startMonsterTimersHandler={startMonsterTimersHandler}
           cardsUsed={cardsUsed}
           player={player}
         />

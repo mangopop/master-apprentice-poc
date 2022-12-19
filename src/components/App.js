@@ -234,6 +234,9 @@ function App() {
       playerDeathPlay()
       console.log('player killed monster in this moves:', player.count)
     }
+    if (monster.life < 1) {
+      stopMonsterTimers()
+    }
   }, [monster.count])
 
   // TODO  The attack and timer stuff would be so much easier if refactored out somewhere. Maybe just get this comp refactor working first
@@ -293,6 +296,10 @@ function App() {
     startTimers()
   }
 
+  function stopMonsterTimers() {
+    clearInterval(monsterTimerId) // is this not stopping because it's not in useEffect? Stop works in the game?
+  }
+
   // TODO trigger this from battle screen.
   function stopGame() {
     console.log('stop game')
@@ -343,6 +350,8 @@ function App() {
             ownedCards={ownedCards}
             startGameHandler={startGame}
             stopGameHandler={stopGame}
+            startMonsterTimersHandler={startMonsterTimers}
+            stopMonsterTimersHandler={stopMonsterTimers}
             started={started}
           />
         }

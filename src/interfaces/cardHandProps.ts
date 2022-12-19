@@ -7,6 +7,8 @@ export default interface ICardHandProps {
   ownedCards: Array<ICard>
   setPlayerHandler: (params: any) => void
   setMonsterHandler: (params: (params: ICharacter) => void) => void
+  stopMonsterTimersHandler: () => void
+  startMonsterTimersHandler: () => void
   cardsDisabled: boolean
   cardsUsed: Array<ICard>
   setCardsUsedHandler: (params: any) => void

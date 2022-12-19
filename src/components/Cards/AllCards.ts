@@ -162,11 +162,13 @@ const AllCards = [
   },
   {
     name: 'Fireball',
-    description: 'Cast a fireball - 5 damage - then burns for 2 for 5 seconds',
+    description:
+      'Cast a fireball - 5 damage - then burns for 2 for 6 seconds, every 2 seconds',
     disabled: false,
     damage: 5,
-    duration: 5, // TODO not implemented
-    rarity: 5, // TODO not implemented
+    durationDamage: 2, // TODO add to object
+    duration: 6000,
+    rarity: 5, // TODO using magic ability now
     element: 'fire',
     requirements: { strength: 0, magic: 0 },
     init: function () {
@@ -178,7 +180,7 @@ const AllCards = [
     description: 'Explosion of fire - 30 damage',
     disabled: false,
     damage: 30,
-    requirements: { strength: 0, magic: 20 }, // TODO not implemented - way too powerful at early stage!
+    requirements: { strength: 0, magic: 20 },
     element: 'fire',
     init: function () {
       this.disabled = true
@@ -189,9 +191,9 @@ const AllCards = [
     description: 'Summon a Blizzard - 5 damage - freeze for 5 seconds',
     disabled: false,
     damage: 5,
-    duration: 5, // TODO not implemented
+    duration: 2000,
     element: 'ice',
-    requirements: { strength: 0, magic: 0 },
+    requirements: { strength: 0, magic: 5 },
     init: function () {
       this.disabled = true
     },

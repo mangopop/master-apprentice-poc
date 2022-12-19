@@ -10,5 +10,7 @@ export default interface IBattleProps {
   setMonsterHandler: (params: (params: ICharacter) => void) => void
   startGameHandler: () => void
   stopGameHandler: () => void
+  stopMonsterTimersHandler: () => void
+  startMonsterTimersHandler: () => void
   started: Boolean
 }

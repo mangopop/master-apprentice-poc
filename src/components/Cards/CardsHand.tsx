@@ -8,19 +8,37 @@ import { useSound } from 'use-sound'
 import { useEffect, useState } from 'react'
 import Card from './card/Card'
 
+// TODO too many props - all because of state
 function CardsHand({
   arena,
   cardsInHand,
-  setPlayerHandler,
-  setMonsterHandler,
+  player,
   cardsDisabled,
   cardsUsed,
+  setPlayerHandler,
+  setMonsterHandler,
+  stopMonsterTimersHandler,
+  startMonsterTimersHandler,
   setCardsUsedHandler,
-  player,
 }: ICardHandProps) {
-  // TODO cards are updating player - should be reset on monster death
   const [duplicateCardType, setDuplicateCardType] = useState(false)
+  const [spellTimer, setSpellTimer] = useState<NodeJS.Timer>()
+  const [card, setCard] = useState<ICard>()
+  let spellTimerId = null
+
   console.log('render cards hand')
+
+  useEffect(() => {
+    if (spellTimer) {
+      setTimeout(() => {
+        clearInterval(spellTimer)
+      }, card?.duration)
+    }
+
+    return () => {
+      // clearTimeout();
+    }
+  }, [spellTimer])
 
   useEffect(() => {}, [duplicateCardType])
   // TODO checkout useCallback technique out.
@@ -43,6 +61,8 @@ function CardsHand({
     if (card.disabled || cardsDisabled || duplicatePlay) {
       return
     }
+
+    setCard(card)
 
     let arenaBoost = { agility: 1, other: 1 }
 
@@ -103,6 +123,38 @@ function CardsHand({
         weapon: card.weapon ? card.weapon * arenaBoost.other : player.weapon,
         armour: card.armour ? card.armour * arenaBoost.other : player.armour,
       }
+    }
+
+    // going to have lot's of function here...
+    // how can we move these into the card objects
+
+    // TODO add the item bonus - add to weapon
+    if () {
+
+    }
+
+    // pause the attack for 5 seconds
+    if (card.duration && card.element === 'ice') {
+      stopMonsterTimersHandler()
+      setTimeout(() => {
+        startMonsterTimersHandler()
+      }, card.duration)
+    }
+
+    // TODO - TEST - would be extremely helpful to have this tested.
+    if (card.duration && card.element === 'fire') {
+      spellTimerId = setInterval(() => {
+        setMonsterHandler((monster) => {
+          return {
+            ...monster,
+            life: card.durationDamage
+              ? monster.life - card.durationDamage
+              : monster.life,
+          }
+        })
+      }, 2000) // can hardcode the interval for now.
+
+      setSpellTimer(spellTimerId)
     }
 
     // TODO only running 1 type of card might want to run 2?
