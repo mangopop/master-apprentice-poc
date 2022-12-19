@@ -48,14 +48,13 @@ function Train({
           }
         case 'magic':
           playerBeforeCardsPlayed.magic += 2
-          if (player.magic > 500) {
-            setPlayerHandler((player) => {
-              return {
-                ...player,
-                magic: playerBeforeCardsPlayed.magic + 2,
-              }
-            })
-          }
+          setPlayerHandler((player) => {
+            return {
+              ...player,
+              magic: playerBeforeCardsPlayed.magic + 2,
+            }
+          })
+
           break
         default:
           break

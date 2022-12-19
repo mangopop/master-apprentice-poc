@@ -84,6 +84,7 @@ const AllCards = [
     name: 'Sword of Lost Kings',
     description: 'Increase attack and agility',
     disabled: false,
+    attack: 2,
     type: 'human',
     agility: 300,
     weapon: 1.5, // this is almost same as attack?
@@ -102,31 +103,41 @@ const AllCards = [
       this.disabled = true
     },
   },
-  {
-    name: "Balrog's Sword",
-    description: 'increase attack and reduces agility. Requires 15 Strength',
-    disabled: false,
-    attack: 5,
-    element: 'fire',
-    weapon: 1.6,
-    requirements: { strength: 15, magic: 0, weapon: false },
-    init: function () {
-      this.disabled = true
-    },
-  },
   // {
-  //   name: 'Axe Of The Dark Mountain',
-  //   description: 'increase attack and reduces agility. Requires 20 Strength',
+  //   name: "Balrog's Sword",
+  //   description: 'increase attack and reduces agility. Requires 15 Strength',
   //   disabled: false,
-  //   type: 'dwarf',
   //   attack: 5,
-  //   agility: 300,
+  //   element: 'fire',
   //   weapon: 1.6,
-  //   requirements: { strength: 20, magic: 0, weapon: false },
+  //   requirements: { strength: 15, magic: 0, weapon: false },
   //   init: function () {
   //     this.disabled = true
   //   },
   // },
+  {
+    name: 'Axe Of The Dark Mountain',
+    description: 'increase attack and reduces agility. Requires 20 Strength',
+    disabled: false,
+    type: 'dwarf',
+    attack: 5,
+    agility: 300,
+    weapon: 1.6,
+    requirements: { strength: 5, magic: 0, weapon: false },
+    init: function () {
+      this.disabled = true
+    },
+  },
+  {
+    name: 'Magic potion 2',
+    description: 'Magic boost of 20',
+    disabled: false,
+    magic: 20,
+    requirements: { strength: 0, magic: 0, weapon: false },
+    init: function () {
+      this.disabled = true
+    },
+  },
   // {
   //   name: 'Helmet',
   //   description: 'Increase defence slightly',

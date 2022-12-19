@@ -135,6 +135,7 @@ function App() {
           defence: playerBeforeCardsPlayed.defence,
           strength: playerBeforeCardsPlayed.strength,
           agility: playerBeforeCardsPlayed.agility,
+          magic: playerBeforeCardsPlayed.magic,
           weapon: playerBeforeCardsPlayed.weapon,
           defence: playerBeforeCardsPlayed.defence,
         }

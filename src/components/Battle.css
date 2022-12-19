@@ -1,3 +1,18 @@
 .Battle {
   text-align: center;
 }
+
+.alert{
+    padding: 10px;
+    width: 50%;
+    margin: 10px auto;
+    border: 1px solid black;
+}
+
+.arena{
+  background-color: blanchedalmond;
+}
+
+.folklore{
+  background-color: rgb(255, 205, 209);
+}

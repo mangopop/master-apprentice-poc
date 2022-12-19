@@ -5,6 +5,7 @@ export default interface ICardHandProps {
   arena: { name: string; type: string }
   cardsInHand: Array<ICard>
   ownedCards: Array<ICard>
+  arenaBoostHandler: () => void
   setPlayerHandler: (params: any) => void
   setMonsterHandler: (params: (params: ICharacter) => void) => void
   stopMonsterTimersHandler: () => void

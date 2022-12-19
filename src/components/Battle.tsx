@@ -36,6 +36,8 @@ function Battle({
   const [cardsInHand, setCardsInHand] = useState<ICard[]>([]) // add rnd 5 cards to hand
   const [cardsUsed, setCardsUsed] = useState<ICard[]>([])
   const [cardsDisabled, setCardsDisabled] = useState(false) // start, stop, nextlevel, when 3
+  const [arenaBooster, setArenaBooster] = useState(false)
+  const [folkLoreBonus, setFolkLoreBonus] = useState(false)
 
   let firstGame = true
   let monsterClone = monster // TODO trying to make TS happy - could cause issues.
@@ -57,6 +59,7 @@ function Battle({
       type PlayerKey = keyof typeof player
       type BonusKey = keyof typeof bonus
       if (bonus) {
+        setFolkLoreBonus(true)
         let modifier = Object.keys(bonus)[0]
         bonus = {
           [modifier]:
@@ -82,6 +85,10 @@ function Battle({
     //   card.disabled = false
     // })
   }, [])
+
+  function arenaBoost() {
+    setArenaBooster(true)
+  }
 
   function startGame() {
     startGameHandler()
@@ -113,7 +120,6 @@ function Battle({
     setCardsInHand(copyOwnedCards)
   }
 
-  // TODO get some more feedback in here
   return (
     <div className="Battle">
       <h1>Fight!</h1>
@@ -125,17 +131,18 @@ function Battle({
       {/* <button onClick={resetGame}>Reset game</button> */}
 
       <h2>{arena.name}</h2>
+      {arenaBooster && <p className="alert arena">20% Arena bonus active</p>}
       <p>{arena.description} </p>
+
       <p>
         {arena.type === 'dwarf' && <BsSquare />}
         {arena.type === 'elf' && <BsCircle />}
         {arena.type === 'human' && <BsTriangle />}
       </p>
+      {folkLoreBonus && <p className="alert folklore">Folklore bonus active</p>}
 
       <h1>Level {level}/20</h1>
       {!started && monster.life < 1 && <Link to={'/train'}>Continue</Link>}
-
-      {/* {<p>Arena Bonus active</p>} */}
 
       <Character character={player} type={'player'} />
       <Character
@@ -154,6 +161,7 @@ function Battle({
           ownedCards={ownedCards}
           cardsInHand={cardsInHand}
           cardsDisabled={cardsDisabled}
+          arenaBoostHandler={arenaBoost}
           setPlayerHandler={setPlayerHandler}
           setMonsterHandler={setMonsterHandler}
           setCardsUsedHandler={setCardsUsed}

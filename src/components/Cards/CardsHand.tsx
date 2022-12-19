@@ -16,6 +16,7 @@ function CardsHand({
   player,
   cardsDisabled,
   cardsUsed,
+  arenaBoostHandler,
   setPlayerHandler,
   setMonsterHandler,
   stopMonsterTimersHandler,
@@ -69,6 +70,7 @@ function CardsHand({
 
     if (card.type === arena.type) {
       arenaBoost = { agility: 0.9, other: 1.25 }
+      arenaBoostHandler()
     }
 
     // TODO could be better logic
@@ -110,6 +112,9 @@ function CardsHand({
         stamina: card.stamina
           ? Math.round((player.stamina + card.stamina) * arenaBoost.other)
           : player.stamina,
+        magic: card.magic
+          ? Math.round((player.magic + card.magic) * arenaBoost.other)
+          : player.magic,
         weapon: updateWeapon(
           card,
           cardsUsed,
