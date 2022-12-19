@@ -38,7 +38,7 @@ function Character({ character, type, monsterLife }: ICharacterProps) {
           {Object.entries(character).map(([key, value]) => {
             return (
               <li key={key}>
-                {key} : {value} /{' '}
+                {key} : {value}
               </li>
             )
           })}

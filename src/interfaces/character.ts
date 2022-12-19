@@ -10,10 +10,10 @@ export default interface ICharacter {
   abilities?: string[]
   element?: string[]
   life: number
-  armour?: number
-  weapon?: number
+  armour: number
+  weapon: number
   stamina: number
-  count?: number
+  count: number
   critical?: string
   lastAttack?: string
 }

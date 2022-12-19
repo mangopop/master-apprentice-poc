@@ -14,6 +14,7 @@ import drums from './../sounds/drums.mp3'
 
 import Train from './Train'
 import { getRandomArbitrary } from '../services/utilities'
+import { getStrikeDamage, randAttackModifier } from '../services/app'
 import './Battle.css'
 import Start from './Start'
 import Battle from './Battle'
@@ -30,74 +31,10 @@ let playerStartStats = {
   agility: 2000, // speed of attack
   magic: 7, // to use spells
   life: 100,
-  armour: 1.05, // should be armour class with properties, determines critical bonus
-  weapon: 1.05, // should be weapon class with properties
+  armour: 1.0, // should be armour class with properties, determines critical bonus
+  weapon: 1.0, // should be weapon class with properties
   stamina: 100,
   count: 0,
-}
-
-function randAttackModifier(character) {
-  const weapon = character.weapon ? character.weapon : 1
-  const chanceToHit = Math.min(
-    Math.max(character.stamina * weapon + (character.attack + 10), 1),
-    100
-  )
-
-  const randomHitChance = getRandomArbitrary(0, 100)
-  const hit = randomHitChance < chanceToHit
-
-  // console.log(
-  //   `character - randomHitChance: ${randomHitChance}, chance to hit: ${chanceToHit} - ${hit}`
-  // )
-
-  return hit
-}
-
-function getStrikeDamage(
-  attacker,
-  defender,
-  attackerCallback,
-  defenderCallback
-) {
-  const finalAttack = attacker.attack * attacker.weapon
-  console.log('ATTACK')
-
-  const finalDefence = defender.defence * defender.armour
-  // if strength higher will always get max attack plus strength (from critical)
-  let attackMove = getRandomArbitrary(attacker.strength, finalAttack)
-  if (attackMove === attacker.attack) {
-    console.log('critical attack!')
-    // TODO this still might not do damage
-    attackMove += attacker.strength
-    defenderCallback((defender) => {
-      return {
-        ...defender,
-        critical: true,
-      }
-    })
-  } else {
-    defenderCallback((defender) => {
-      return {
-        ...defender,
-        critical: false,
-      }
-    })
-  }
-
-  let blockMove = getRandomArbitrary(finalDefence / 2, finalDefence)
-  if (blockMove === defender.defence) {
-    console.log('critical block!')
-
-    blockMove *= defender.armour
-  }
-  // console.log('attack move', attackMove)
-  // console.log('block move', blockMove)
-  attackerCallback((attacker) => {
-    return { ...attacker, count: attacker.count + 1 }
-  })
-
-  // console.log('damage', strike)
-  return Math.max(0, attackMove - blockMove)
 }
 
 // TODO when this refactor is working (lol - imagine that), branch off and do it all again in redux!! fucking do it!
@@ -198,6 +135,8 @@ function App() {
           defence: playerBeforeCardsPlayed.defence,
           strength: playerBeforeCardsPlayed.strength,
           agility: playerBeforeCardsPlayed.agility,
+          weapon: playerBeforeCardsPlayed.weapon,
+          defence: playerBeforeCardsPlayed.defence,
         }
       })
       monsterDiePlay()
@@ -313,13 +252,6 @@ function App() {
 
   // TODO trigger this from the level progression component
   function nextLevel() {
-    // setUp()
-    // cardsInHand.forEach((card) => {
-    //   card.disabled = false
-    // })
-
-    // setCardsDisabled(true)
-
     setLevelCount((level) => level + 1)
   }
 

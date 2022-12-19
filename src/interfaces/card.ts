@@ -8,6 +8,7 @@ export default interface ICard {
   life?: number
   armour?: number
   weapon?: number
+  weaponBonus?: number
   stamina?: number
   magic?: number
   disabled: boolean
@@ -19,6 +20,6 @@ export default interface ICard {
   duration?: number
   rarity?: number
   requirements: {
-    [key: string]: number
+    [key: string]: number | Boolean
   }
 }

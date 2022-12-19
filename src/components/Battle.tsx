@@ -9,7 +9,7 @@ import CardsHand from './Cards/CardsHand'
 import { shuffle } from '../services/utilities'
 import arenas from '../data/arena'
 import Character from './Character'
-import { getTypeBonus } from '../services/utilities'
+import { getTypeBonus } from '../services/battle'
 import IBattleProps from '../interfaces/battleProps'
 import ICard from '../interfaces/card'
 
