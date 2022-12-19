@@ -63,19 +63,31 @@ function Train({
     }
   }
   return (
-    <div>
+    <div style={{ width: '500px', margin: 'auto' }}>
       <h1>Train</h1>
-      <h4>Stamina / {player.stamina}</h4>
-      <p>Strength / {playerBeforeCardsPlayed.strength}</p>
-      <button onClick={() => trainCharacter('strength')}>Train Strength</button>
-      <p>Attack / {playerBeforeCardsPlayed.attack}</p>
-      <button onClick={() => trainCharacter('attack')}>Train Attack</button>
-      <p>Agility / {playerBeforeCardsPlayed.agility}</p>
-      <button onClick={() => trainCharacter('agility')}>Train Agility</button>
-      <p>Defence / {playerBeforeCardsPlayed.defence}</p>
-      <button onClick={() => trainCharacter('defence')}>Train Defence</button>
-      <p>Magic / {playerBeforeCardsPlayed.magic}</p>
-      <button onClick={() => trainCharacter('magic')}>Train Magic</button>
+      <h4 style={{ textAlign: 'center' }}>Stamina / {player.stamina}</h4>
+      <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+        <p>Strength / {playerBeforeCardsPlayed.strength}</p>
+        <button onClick={() => trainCharacter('strength')}>
+          Train Strength
+        </button>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+        <p>Attack / {playerBeforeCardsPlayed.attack}</p>
+        <button onClick={() => trainCharacter('attack')}>Train Attack</button>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+        <p>Agility / {playerBeforeCardsPlayed.agility}</p>
+        <button onClick={() => trainCharacter('agility')}>Train Agility</button>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+        <p>Defence / {playerBeforeCardsPlayed.defence}</p>
+        <button onClick={() => trainCharacter('defence')}>Train Defence</button>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+        <p>Magic / {playerBeforeCardsPlayed.magic}</p>
+        <button onClick={() => trainCharacter('magic')}>Train Magic</button>
+      </div>
 
       <div>
         {' '}
