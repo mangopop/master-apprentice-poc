@@ -1,10 +1,17 @@
 import ICharacter from '../interfaces/character'
 import { getRandomArbitrary } from './utilities.service'
-// uses weapon, stamina and attack to determine hit chance
+// uses player weapon, stamina and attack to determine hit chance
 // the better the weapon and stamina, the better the chance.
+// ? doesn't take into account the monster
+// s10 * w1 (10) + (10+10) = 30
+// s20 * w1 (10) + (10+10) = 40
+// s30 * w1 (10) + (10+10) = 50
+// s30 * w1.2 (10) + (10+10) = 36
 // s10 * w1.3 (13) + (10+10) = 33
 // s10 * w1.8 (18) + (10+10) = 38
+// bit stuck around this make
 // s50 * w1.2 (60) + (10+10) = 80
+// s70 * w1 (70) + (10+10) = 90
 
 // s90 * w1 (90) + (10+10) = > 100
 export function randAttackModifier(character: ICharacter) {
@@ -17,14 +24,15 @@ export function randAttackModifier(character: ICharacter) {
   const randomHitChance = getRandomArbitrary(0, 100)
   const hit = randomHitChance < chanceToHit
 
-  // console.log(
-  //   `character - randomHitChance: ${randomHitChance}, chance to hit: ${chanceToHit} - ${hit}`
-  // )
+  console.log(
+    `${character.name} - randomHitChance: ${randomHitChance}, chance to hit: ${chanceToHit} - ${hit}`
+  )
 
   return hit
 }
 
-// uses attack, weapon, defence, armour and strength to determine damage.
+// uses player attack, weapon and strength to determine damage.
+// uses monster defence, armour
 export function getStrikeDamage(
   attacker: ICharacter,
   defender: ICharacter,

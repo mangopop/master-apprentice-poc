@@ -53,7 +53,11 @@ function Battle({
         }
       })
 
-      let bonus = getTypeBonus(typeMatch)
+      let bonus = {}
+
+      if (typeMatch.length === 3) {
+        bonus = getTypeBonus(typeMatch)
+      }
 
       // TODO this will need to reset??
       type PlayerKey = keyof typeof player

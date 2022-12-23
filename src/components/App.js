@@ -2,15 +2,17 @@ import { useEffect, useState } from 'react'
 import useSound from 'use-sound'
 import { Route, Routes } from 'react-router-dom'
 import { cloneDeep } from 'lodash'
-import hit3 from './../sounds/hit3.mp3'
-import hit4 from './../sounds/hit4.wav'
-import metal from './../sounds/metal.mp3'
-import playerDeath from './../sounds/playerDeath.wav'
-import monsterDie from './../sounds/monsterDie.wav'
-import innMusic from './../sounds/medieval-inn-music.mp3'
-import miss1 from './../sounds/miss1.wav'
-import miss2 from './../sounds/miss2.wav'
-import drums from './../sounds/drums.mp3'
+import {
+  hit3,
+  hit4,
+  metal,
+  playerDeath,
+  monsterDie,
+  innMusic,
+  miss1,
+  miss2,
+  drums,
+} from '../sounds/index'
 
 import Train from './Train'
 import { getRandomArbitrary } from '../services/utilities.service'
@@ -25,6 +27,7 @@ import { monsters } from './Cards/Monsters'
 
 let playerBeforeCardsPlayed = {}
 let playerStartStats = {
+  name: 'player',
   attack: 7, // plus weapon is max attack
   defence: 7, // plus defence is max defence, attack must be higher
   strength: 7, // determines min attack and critical bonus - and use of heavy items
@@ -115,18 +118,29 @@ function App() {
     }
 
     if (monster.life < 1) {
-      stopGame() // TODO won't stop with the restarts
+      let life = 0
+      let stamina = 20
+      if (player.life < 90) {
+        life = 10
+      }
       if (monster.life < -15) {
         // death blow bonus!
         console.log('DEATH BLOW')
-        setPlayer((player) => {
-          return {
-            ...player,
-            life: player.life + 20,
-            stamina: player.stamina + 20,
-          }
-        })
+        if (player.life < 80) {
+          life = 20
+        }
+        if (player.life < 70) {
+          stamina = 30
+        }
       }
+      stopGame() // TODO won't stop with the restarts
+      setPlayer((player) => {
+        return {
+          ...player,
+          life: player.life + life,
+          stamina: player.stamina + stamina,
+        }
+      })
 
       setPlayer((player) => {
         return {
@@ -137,7 +151,6 @@ function App() {
           agility: playerBeforeCardsPlayed.agility,
           magic: playerBeforeCardsPlayed.magic,
           weapon: playerBeforeCardsPlayed.weapon,
-          defence: playerBeforeCardsPlayed.defence,
         }
       })
       monsterDiePlay()

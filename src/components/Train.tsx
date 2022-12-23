@@ -37,7 +37,7 @@ function Train({
           })
           break
         case 'agility':
-          playerBeforeCardsPlayed.agility += 2
+          playerBeforeCardsPlayed.agility -= 100
           if (player.agility > 500) {
             setPlayerHandler((player) => {
               return {
@@ -46,6 +46,7 @@ function Train({
               }
             })
           }
+          break
         case 'magic':
           playerBeforeCardsPlayed.magic += 2
           setPlayerHandler((player) => {

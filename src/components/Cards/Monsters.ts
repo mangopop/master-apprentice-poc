@@ -92,11 +92,11 @@ export let monsters = [
 
   {
     name: 'Ice Witch',
-    attack: 7,
-    defence: 6,
+    attack: 8,
+    defence: 7,
     strength: 6,
     agility: 2300,
-    abilities: [], // TODO need some magic here
+    abilities: [], // TODO need some magic here, high magic could resist this?
     magic: 0,
     elements: ['ice'],
     weapon: 1.1,
@@ -107,10 +107,10 @@ export let monsters = [
   },
   {
     name: 'Chimera',
-    attack: 7,
+    attack: 8,
     defence: 6,
     strength: 6,
-    agility: 2300,
+    agility: 2000,
     abilities: [],
     magic: 0,
     weapon: 1.1,
@@ -120,7 +120,7 @@ export let monsters = [
     count: 0,
   },
   {
-    name: 'Witch',
+    name: 'Fire Witch',
     attack: 7,
     defence: 6,
     strength: 6,
@@ -143,7 +143,7 @@ export let monsters = [
     magic: 0,
     weapon: 1.1,
     armour: 1.1,
-    life: 65,
+    life: 100,
     stamina: 80,
     count: 0,
   },
