@@ -303,6 +303,8 @@ function App() {
         path="chooseCard"
         element={
           <ChooseCard
+            strength={player.strength}
+            magic={player.magic}
             ownedCards={ownedCards}
             setOwnedCardsHandler={setOwnedCards}
           />

@@ -46,6 +46,7 @@ function Battle({
     if (cardsUsed.length === 3) {
       setCardsDisabled(true)
 
+      // TODO: extract to function
       let typeMatch: Array<string> = []
       cardsUsed.forEach((element) => {
         if (element.type) {
@@ -53,7 +54,7 @@ function Battle({
         }
       })
 
-      let bonus = {}
+      let bonus: false | {} = false
 
       if (typeMatch.length === 3) {
         bonus = getTypeBonus(typeMatch)

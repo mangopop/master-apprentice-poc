@@ -1,8 +1,10 @@
-export function getTypeBonus(types: string[]): {
-  strength?: number
-  attack?: number
-  agility?: number
-} {
+export function getTypeBonus(types: string[]):
+  | {
+      strength?: number
+      attack?: number
+      agility?: number
+    }
+  | false {
   const matching = types.every((type) => {
     return type === types[0]
   })
@@ -19,9 +21,9 @@ export function getTypeBonus(types: string[]): {
         // 3 matching elf items - give 500 agility bonus
         return { agility: -500 }
       default:
-        return {}
+        return false
     }
   }
 
-  return {}
+  return false
 }

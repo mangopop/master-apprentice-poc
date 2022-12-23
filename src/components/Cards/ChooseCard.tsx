@@ -8,9 +8,13 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 function ChooseCard({
+  strength,
+  magic,
   ownedCards,
   setOwnedCardsHandler,
 }: {
+  strength: number
+  magic: number
   ownedCards: Array<ICard>
   setOwnedCardsHandler: Function
 }) {
@@ -18,7 +22,10 @@ function ChooseCard({
   const [cardsToPick, setCardsToPick] = useState<ICard[]>([])
   const ownedCardsNameArray = ownedCards.map((card) => card.name)
   const remainingCards = AllCards.filter(
-    (card) => !ownedCardsNameArray.includes(card.name)
+    (card) =>
+      !ownedCardsNameArray.includes(card.name) &&
+      (card.requirements.strength ?? 0) < strength &&
+      (card.requirements.magic ?? 0) < magic
   )
 
   useEffect(() => {

@@ -88,7 +88,67 @@ const AllCards = [
     type: 'human',
     agility: 300,
     weapon: 1.5, // this is almost same as attack?
-    requirements: { strength: 10, magic: 0, weapon: false },
+    requirements: { strength: 15, magic: 0, weapon: false },
+    init: function () {
+      this.disabled = true
+    },
+  },
+  {
+    name: 'Crown of Lost Kings',
+    description: 'Increase defence',
+    disabled: false,
+    type: 'human',
+    agility: 300,
+    defence: 5, // this is almost same as attack?
+    requirements: { strength: 15, magic: 0, weapon: false },
+    init: function () {
+      this.disabled = true
+    },
+  },
+  {
+    name: 'Chain Mail of Lost Kings',
+    description: 'increase defence and reduces agility. Requires 15 Strength',
+    disabled: false,
+    defence: 5,
+    agility: 300,
+    requirements: { strength: 15, magic: 0, weapon: false }, // TODO not implemented
+    type: 'human',
+    init: function () {
+      this.disabled = true
+    },
+  },
+  {
+    name: 'Axe Of The Dark Mountain',
+    description: 'increase attack and reduces agility. Requires 20 Strength',
+    disabled: false,
+    type: 'dwarf',
+    attack: 7,
+    agility: 400,
+    weapon: 1.6,
+    requirements: { strength: 25, magic: 0, weapon: false },
+    init: function () {
+      this.disabled = true
+    },
+  },
+  {
+    name: 'Tusked Helmet Of The Dark Mountain',
+    description: 'Increase defence',
+    disabled: false,
+    type: 'dwarf',
+    defence: 7, // this is almost same as attack?
+    requirements: { strength: 25, magic: 0, weapon: false },
+    init: function () {
+      this.disabled = true
+    },
+  },
+  {
+    name: 'Plate Armour Of The Dark Mountain',
+    description: 'increase defence and reduces agility. Requires 15 Strength',
+    disabled: false,
+    defence: 7,
+    agility: 400,
+    requirements: { strength: 25, magic: 0, weapon: false }, // TODO not implemented
+    type: 'dwarf',
     init: function () {
       this.disabled = true
     },
@@ -109,25 +169,13 @@ const AllCards = [
     disabled: false,
     attack: 5,
     element: 'fire',
-    weapon: 1.6,
-    requirements: { strength: 15, magic: 0, weapon: false },
-    init: function () {
-      this.disabled = true
-    },
-  },
-  {
-    name: 'Axe Of The Dark Mountain',
-    description: 'increase attack and reduces agility. Requires 20 Strength',
-    disabled: false,
-    type: 'dwarf',
-    attack: 5,
-    agility: 300,
-    weapon: 1.6,
+    weapon: 2,
     requirements: { strength: 20, magic: 0, weapon: false },
     init: function () {
       this.disabled = true
     },
   },
+
   {
     name: 'Magic potion 2',
     description: 'Magic boost of 20',
@@ -152,20 +200,8 @@ const AllCards = [
     name: 'Leather Armour',
     description: 'Increase defence slightly',
     disabled: false,
-    defence: 3,
+    defence: 3, // should this be armour?
     requirements: { strength: 0, magic: 0, weapon: false },
-    init: function () {
-      this.disabled = true
-    },
-  },
-  {
-    name: 'Plate Armour of Lost Kings',
-    description: 'increase defence and reduces agility. Requires 15 Strength',
-    disabled: false,
-    defence: 5,
-    agility: 300,
-    requirements: { strength: 15, magic: 0, weapon: false }, // TODO not implemented
-    type: 'human',
     init: function () {
       this.disabled = true
     },
