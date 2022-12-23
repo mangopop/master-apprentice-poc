@@ -200,9 +200,8 @@ function App() {
       player.attack,
       player.weapon,
       player.strength,
-      monster.attack,
-      monster.weapon,
-      monster.strength,
+      monster.defence,
+      monster.armour,
       setPlayer,
       setMonster
     )
@@ -222,9 +221,8 @@ function App() {
       monster.attack,
       monster.weapon,
       monster.strength,
-      player.attack,
-      player.weapon,
-      player.strength,
+      player.defence,
+      player.armour,
       setMonster,
       setPlayer
     )
