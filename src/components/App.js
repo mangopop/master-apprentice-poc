@@ -196,8 +196,21 @@ function App() {
   // is re-rendering functions bad?
   function attackMonster() {
     console.log('attacking monster', monster)
-    const strike = getStrikeDamage(player, monster, setPlayer, setMonster)
-    const wasHit = randAttackModifier(player)
+    const strike = getStrikeDamage(
+      player.attack,
+      player.weapon,
+      player.strength,
+      monster.attack,
+      monster.weapon,
+      monster.strength,
+      setPlayer,
+      setMonster
+    )
+    const wasHit = randAttackModifier(
+      player.weapon,
+      player.stamina,
+      player.attack
+    )
     applyDamage(wasHit, strike, setMonster, 'monster')
     // cannot clear timers here
     // TODO could get bonus stamina from final blow?
@@ -205,8 +218,21 @@ function App() {
 
   function attackPlayer() {
     console.log('attacking player', player)
-    const strike = getStrikeDamage(monster, player, setMonster, setPlayer)
-    const wasHit = randAttackModifier(monster)
+    const strike = getStrikeDamage(
+      monster.attack,
+      monster.weapon,
+      monster.strength,
+      player.attack,
+      player.weapon,
+      player.strength,
+      setMonster,
+      setPlayer
+    )
+    const wasHit = randAttackModifier(
+      monster.weapon,
+      monster.stamina,
+      monster.attack
+    )
     applyDamage(wasHit, strike, setPlayer, 'player')
   }
 
