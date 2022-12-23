@@ -2,8 +2,8 @@ import * as React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import Card from './Card'
-import cards from './AllCards'
+import Card from './../card/Card'
+import cards from './../AllCards'
 
 describe('Card', () => {
   it('renders Card component', () => {
@@ -34,7 +34,7 @@ describe('Card', () => {
     const user = userEvent.setup()
 
     render(<Card card={cards[0]} cardActionCallback={playCard} />)
-    screen.debug()
+    // screen.debug()
 
     await user.click(screen.getByText('Sword of Lost Kings'))
 

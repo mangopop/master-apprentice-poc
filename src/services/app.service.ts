@@ -53,7 +53,7 @@ export function getStrikeDamage(
   const finalDefence = dDefence * dArmour
   // if strength higher will always get max attack plus strength (from critical)
   let attackMove = getRandomArbitrary(aStrength, finalAttack)
-  console.log(attackMove)
+  // console.log(attackMove)
   if (attackMove === aAttack) {
     console.log('critical attack!')
     // TODO this still might not do damage
@@ -74,7 +74,7 @@ export function getStrikeDamage(
   }
 
   let blockMove = getRandomArbitrary(finalDefence / 2, finalDefence)
-  console.log(blockMove)
+  // console.log(blockMove)
   if (blockMove === dDefence) {
     console.log('critical block!')
 
@@ -86,6 +86,6 @@ export function getStrikeDamage(
     return { ...attacker, count: attacker.count + 1 }
   })
 
-  console.log('damage', attackMove - blockMove)
+  // console.log('damage', attackMove - blockMove)
   return Math.max(0, attackMove - blockMove)
 }
