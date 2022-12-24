@@ -43,22 +43,11 @@ function CardsHand({
   }, [spellTimer])
 
   useEffect(() => {}, [duplicateCardType])
-  // TODO checkout useCallback technique out.
-  //   const handleInputChange = useCallback(
-  //     (event) => {
-  //       setPlayerHandler((player) => {
-  //         return {
-  //           ...player,
-  //           agility: player.agility + 300,
-  //         }
-  //       })
-  //     },
-  //     [onNameChange]
-  //   )
   const [cardPickupPlay] = useSound(cardPickUp, { volume: 0.5 })
 
   let duplicatePlay = false
 
+  // TODO refactor
   function playCard(card: ICard) {
     if (card.disabled || cardsDisabled || duplicatePlay) {
       return
@@ -128,7 +117,10 @@ function CardsHand({
     }
 
     // TODO going to have lot's of function here...
-    // how can we move these into the card objects
+    // how can we move these into the card objects - if not has to be service
+    // would this help talisman?
+    // putting function on the card could duplicate unless helper methods in here?
+    // card.use(monster, setMonsterHandler, stopMonsterTimersHandler, startMonsterTimersHandle, setSpellTimer)
 
     // pause the attack for 5 seconds
     if (card.duration && card.element === 'ice') {

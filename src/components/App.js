@@ -49,6 +49,8 @@ function App() {
   // level and battle
   const [levelCount, setLevelCount] = useState(1)
   const [ownedCards, setOwnedCards] = useState([])
+  // TODO these will be hard to implement!
+  const [ownedTalismanCards, setOwnedTalismanCards] = useState([])
 
   const [player, setPlayer] = useState(playerStartStats)
   const [monster, setMonster] = useState(monsters[0])
@@ -121,7 +123,7 @@ function App() {
       let life = 0
       let stamina = 20
       if (player.life < 90) {
-        life = 10
+        life = 5
       }
       if (monster.life < -15) {
         // death blow bonus!
@@ -307,6 +309,15 @@ function App() {
             magic={player.magic}
             ownedCards={ownedCards}
             setOwnedCardsHandler={setOwnedCards}
+          />
+        }
+      />
+      <Route
+        path="chooseTalismanCard"
+        element={
+          <ChooseCard
+            ownedCards={ownedTalismanCards}
+            setOwnedCardsHandler={setOwnedTalismanCards}
           />
         }
       />

@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import AllCards from './AllCards'
 import Card from './card/Card'
 import './card/Card.css'
@@ -13,19 +12,33 @@ function ChooseCard({
   ownedCards,
   setOwnedCardsHandler,
 }: {
-  strength: number
-  magic: number
+  strength?: number
+  magic?: number
   ownedCards: Array<ICard>
   setOwnedCardsHandler: Function
 }) {
   const navigate = useNavigate()
   const [cardsToPick, setCardsToPick] = useState<ICard[]>([])
   const ownedCardsNameArray = ownedCards.map((card) => card.name)
+
+  function canHaveCard(
+    cardStrength = 0,
+    cardMagic = 0,
+    strength = 0,
+    magic = 0
+  ) {
+    return cardStrength <= strength && cardMagic <= magic
+  }
+
   const remainingCards = AllCards.filter(
     (card) =>
       !ownedCardsNameArray.includes(card.name) &&
-      (card.requirements.strength ?? 0) < strength &&
-      (card.requirements.magic ?? 0) < magic
+      canHaveCard(
+        card.requirements.strength,
+        card.requirements.magic,
+        strength,
+        magic
+      )
   )
 
   useEffect(() => {
@@ -35,8 +48,11 @@ function ChooseCard({
   shuffle(remainingCards)
 
   function pickCard(card: ICard) {
+    // owned card will change in props
     setOwnedCardsHandler((ownedCards: Array<ICard>) => [...ownedCards, card])
     setCardsToPick(cardsToPick.filter((cardTP) => cardTP !== card))
+
+    // TODO if level 5 change to talisman
 
     navigate('/battle')
   }

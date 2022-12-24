@@ -57,7 +57,7 @@ export function getStrikeDamage(
   if (attackMove === aAttack) {
     console.log('critical attack!')
     // TODO this still might not do damage
-    attackMove += aStrength
+    attackMove += aStrength / 2
     defenderCallback((defender) => {
       return {
         ...defender,
@@ -73,6 +73,8 @@ export function getStrikeDamage(
     })
   }
 
+  // TODO can we tie in agility here? Could give an inverse percentage boost?
+  // 2.5 - 5 | 5 - 10
   let blockMove = getRandomArbitrary(finalDefence / 2, finalDefence)
   // console.log(blockMove)
   if (blockMove === dDefence) {

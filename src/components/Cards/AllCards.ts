@@ -165,10 +165,10 @@ const AllCards = [
   },
   {
     name: "Balrog's Sword",
-    description: 'increase attack and reduces agility. Requires 15 Strength',
+    description: 'increase attack and accuracy. Requires 15 Strength',
     disabled: false,
     attack: 5,
-    element: 'fire',
+    element: 'fire', // TODO not implemented
     weapon: 2,
     requirements: { strength: 20, magic: 0, weapon: false },
     init: function () {

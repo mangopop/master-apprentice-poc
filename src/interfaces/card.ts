@@ -20,6 +20,6 @@ export default interface ICard {
   duration?: number
   rarity?: number
   requirements: {
-    [key: string]: number | Boolean
+    [key: string]: number | boolean
   }
 }
