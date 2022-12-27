@@ -1,3 +1,6 @@
+import { Dispatch, SetStateAction } from 'react'
+import ICharacter from './character'
+
 export default interface ICard {
   name: string
   description: string
@@ -8,11 +11,10 @@ export default interface ICard {
   life?: number
   armour?: number
   weapon?: number
-  weaponBonus?: number
+  weaponBonus?: number // normal item card bonus (whetstone)
   stamina?: number
   magic?: number
   disabled: boolean
-  init: Function
   type?: string
   element?: string
   damage?: number
@@ -20,6 +22,14 @@ export default interface ICard {
   duration?: number
   rarity?: number
   requirements: {
-    [key: string]: number | boolean
+    [key: string]: number // weapon number acting as boolean
   }
+  use: (
+    card: ICard,
+    setMonsterHandler: (params: (params: ICharacter) => void) => void,
+    stopMonsterTimersHandler: () => void,
+    startMonsterTimersHandler: () => void,
+    setSpellTimer: Dispatch<SetStateAction<NodeJS.Timer | undefined>>,
+    setPlayerHandler: (params: (params: ICharacter) => void) => void
+  ) => void
 }

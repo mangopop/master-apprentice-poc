@@ -2,7 +2,7 @@ import ICard from '../interfaces/card'
 
 // this should apply the card.weapon update to the player.weapon update
 export function updateWeapon(
-  card: ICard,
+  weaponRequirements: number,
   cardsUsed: ICard[],
   arenaBoost: number,
   playerWeapon: number,
@@ -11,9 +11,13 @@ export function updateWeapon(
 ) {
   let weaponUpdate = 1 // act as base player weapon
 
+  if (!cardWeapon) {
+    return weaponUpdate
+  }
+
   // played item and have existing card weapon add to player.weapon
   // should not be able to arena boost and play item
-  if (card.requirements.weapon && cardWeaponBonus) {
+  if (weaponRequirements && cardWeaponBonus) {
     cardsUsed.forEach((cardUsed) => {
       if (cardUsed.weapon) {
         // this assumes that playerWeapon was already updated by the cardWeapon
@@ -28,8 +32,21 @@ export function updateWeapon(
   }
 
   if (cardWeapon && !arenaBoost) {
-    weaponUpdate = playerWeapon * cardWeapon
+    weaponUpdate = playerWeapon * cardWeapon // check this
   }
 
   return weaponUpdate
+}
+
+export function calculateSkills(
+  cardSkill: any,
+  playerSkill: any,
+  arenaBoost: { agility: number; other: number },
+  arenaBoostType = 'other'
+) {
+  // TODO this isn't get call unless required now - can simplify
+  let arenaBoostSkill =
+    arenaBoostType === 'agility' ? arenaBoost.agility : arenaBoost.other
+
+  return Math.round((playerSkill + cardSkill) * arenaBoostSkill)
 }

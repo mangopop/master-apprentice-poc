@@ -7,9 +7,10 @@ import cardPickUp from './../../sounds/cardPickUp.mp3'
 import { useSound } from 'use-sound'
 import { useEffect, useState } from 'react'
 import Card from './card/Card'
-import { updateWeapon } from '../../services/cardHand.service'
+import { updateWeapon, calculateSkills } from '../../services/cardHand.service'
 
 // TODO too many props - all because of state
+// split this out
 function CardsHand({
   arena,
   cardsInHand,
@@ -26,6 +27,7 @@ function CardsHand({
   const [duplicateCardType, setDuplicateCardType] = useState(false)
   const [spellTimer, setSpellTimer] = useState<NodeJS.Timer>()
   const [card, setCard] = useState<ICard>()
+  const [cardPickupPlay] = useSound(cardPickUp, { volume: 0.5 })
   let spellTimerId = null
 
   console.log('render cards hand')
@@ -43,7 +45,6 @@ function CardsHand({
   }, [spellTimer])
 
   useEffect(() => {}, [duplicateCardType])
-  const [cardPickupPlay] = useSound(cardPickUp, { volume: 0.5 })
 
   let duplicatePlay = false
 
@@ -80,85 +81,66 @@ function CardsHand({
 
     // TODO remove cardsInHand from view instead of disabling
     // this is adding permanently (handled - where?)
-    const update = (player: ICharacter, card: ICard) => {
-      return {
-        ...player,
-        agility: card.agility
-          ? Math.round((player.agility + card.agility) * arenaBoost.agility)
-          : player.agility,
-        attack: card.attack
-          ? Math.round((player.attack + card.attack) * arenaBoost.other)
-          : player.attack,
-        strength: card.strength
-          ? Math.round((player.strength + card.strength) * arenaBoost.other)
-          : player.strength,
-        defence: card.defence
-          ? Math.round((player.defence + card.defence) * arenaBoost.other)
-          : player.defence,
-        life: card.life
-          ? (player.life + card.life) * arenaBoost.other
-          : player.life,
-        stamina: card.stamina
-          ? Math.round((player.stamina + card.stamina) * arenaBoost.other)
-          : player.stamina,
-        magic: card.magic
-          ? Math.round((player.magic + card.magic) * arenaBoost.other)
-          : player.magic,
-        weapon: updateWeapon(
-          card,
-          cardsUsed,
-          arenaBoost.other,
-          player.weapon,
-          card.weapon,
-          card.weaponBonus
-        ), // card.weapon ? card.weapon * arenaBoost.other : player.weapon,
-        armour: card.armour ? card.armour * arenaBoost.other : player.armour,
-      }
-    }
 
-    // TODO going to have lot's of function here...
-    // how can we move these into the card objects - if not has to be service
-    // would this help talisman?
-    // putting function on the card could duplicate unless helper methods in here?
-    // card.use(monster, setMonsterHandler, stopMonsterTimersHandler, startMonsterTimersHandle, setSpellTimer)
-
-    // pause the attack for 5 seconds
-    if (card.duration && card.element === 'ice') {
-      stopMonsterTimersHandler()
-      setTimeout(() => {
-        startMonsterTimersHandler()
-      }, card.duration)
-    }
-
-    // TODO - TEST - would be extremely helpful to have this tested.
-    if (card.duration && card.element === 'fire') {
-      spellTimerId = setInterval(() => {
-        setMonsterHandler((monster) => {
-          return {
-            ...monster,
-            life: card.durationDamage
-              ? monster.life - card.durationDamage
-              : monster.life,
-          }
-        })
-      }, 2000) // can hardcode the interval for now.
-
-      setSpellTimer(spellTimerId)
-    }
+    card.use(
+      card,
+      setMonsterHandler,
+      stopMonsterTimersHandler,
+      startMonsterTimersHandler,
+      setSpellTimer,
+      setPlayerHandler
+    )
 
     // TODO only running 1 type of card might want to run 2?
-    if (card.damage) {
-      setMonsterHandler((monster) => {
-        return {
-          ...monster,
-          life: card.damage ? monster.life - card.damage : monster.life,
+    if (!card.damage) {
+      let characterProperties = {}
+
+      Array(
+        'agility',
+        'attack',
+        'strength',
+        'defence',
+        'life',
+        'stamina',
+        'magic',
+        'armour',
+        'weapon'
+      ).forEach((element) => {
+        if (card[element as keyof typeof card]) {
+          // handle weapon modifier
+          if (element === 'weapon') {
+            Object.assign(characterProperties, {
+              weapon: updateWeapon(
+                card.requirements.weapon,
+                cardsUsed,
+                arenaBoost.other,
+                player.weapon,
+                card.weapon,
+                card.weaponBonus
+              ),
+            })
+          } else {
+            // handle the skill update
+            Object.assign(characterProperties, {
+              [element]: calculateSkills(
+                card[element as keyof typeof card],
+                player[element as keyof typeof player],
+                arenaBoost
+              ),
+            })
+          }
         }
       })
-    } else {
-      setPlayerHandler(update(player, card))
+
+      setPlayerHandler(() => {
+        return {
+          ...player,
+          ...characterProperties,
+        }
+      })
     }
 
-    card.init()
+    card.disabled = true
   }
 
   return (

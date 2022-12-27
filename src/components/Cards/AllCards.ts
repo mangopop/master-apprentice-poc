@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from 'react'
 // const Card = {
 //   name: '',
 //   armour: 0,
@@ -18,6 +19,9 @@
 //   stamina?: number
 //   type?: string
 //   element?: string
+
+import ICard from '../../interfaces/card'
+import ICharacter from '../../interfaces/character'
 
 //   constructor(
 //     name: string,
@@ -79,6 +83,63 @@
 //   300
 // )
 
+// TODO try and use a pattern like strategy or command?
+
+let spellTimerId
+
+function damage(
+  card: ICard,
+  setMonsterHandler: (params: (params: ICharacter) => void) => void
+) {
+  setMonsterHandler((monster) => {
+    return {
+      ...monster,
+      life: card.damage ? monster.life - card.damage : monster.life,
+    }
+  })
+}
+
+function fireball(
+  card: ICard,
+  setMonsterHandler: (params: (params: ICharacter) => void) => void,
+  stopMonsterTimersHandler: Function,
+  startMonsterTimersHandler: Function,
+  setSpellTimer: Dispatch<SetStateAction<NodeJS.Timer | undefined>>,
+  update: Function
+): void {
+  spellTimerId = setInterval(() => {
+    setMonsterHandler((monster) => {
+      return {
+        ...monster,
+        life: card.durationDamage
+          ? monster.life - card.durationDamage
+          : monster.life,
+      }
+    })
+  }, 2000) // can hardcode the interval for now.
+
+  setSpellTimer(spellTimerId)
+
+  damage(card, setMonsterHandler)
+}
+
+function blizzard(
+  this: {
+    duration: number
+  },
+  card: ICard,
+  setMonsterHandler: Function,
+  stopMonsterTimersHandler: Function,
+  startMonsterTimersHandler: Function,
+  setSpellTimer: Function,
+  update: Function
+) {
+  stopMonsterTimersHandler()
+  setTimeout(() => {
+    startMonsterTimersHandler()
+  }, this.duration)
+}
+
 const AllCards = [
   {
     name: 'Sword of Lost Kings',
@@ -88,10 +149,8 @@ const AllCards = [
     type: 'human',
     agility: 300,
     weapon: 1.5, // this is almost same as attack?
-    requirements: { strength: 15, magic: 0, weapon: false },
-    init: function () {
-      this.disabled = true
-    },
+    requirements: { strength: 0, magic: 0, weapon: 0 }, // weapon number acting as boolean
+    use: function () {},
   },
   {
     name: 'Crown of Lost Kings',
@@ -100,10 +159,8 @@ const AllCards = [
     type: 'human',
     agility: 300,
     defence: 5, // this is almost same as attack?
-    requirements: { strength: 15, magic: 0, weapon: false },
-    init: function () {
-      this.disabled = true
-    },
+    requirements: { strength: 15, magic: 0, weapon: 0 },
+    use: function () {},
   },
   {
     name: 'Chain Mail of Lost Kings',
@@ -111,11 +168,9 @@ const AllCards = [
     disabled: false,
     defence: 5,
     agility: 300,
-    requirements: { strength: 15, magic: 0, weapon: false }, // TODO not implemented
+    requirements: { strength: 15, magic: 0, weapon: 0 }, // TODO not implemented
     type: 'human',
-    init: function () {
-      this.disabled = true
-    },
+    use: function () {},
   },
   {
     name: 'Axe Of The Dark Mountain',
@@ -125,10 +180,8 @@ const AllCards = [
     attack: 7,
     agility: 400,
     weapon: 1.6,
-    requirements: { strength: 25, magic: 0, weapon: false },
-    init: function () {
-      this.disabled = true
-    },
+    requirements: { strength: 25, magic: 0, weapon: 0 },
+    use: function () {},
   },
   {
     name: 'Tusked Helmet Of The Dark Mountain',
@@ -136,10 +189,8 @@ const AllCards = [
     disabled: false,
     type: 'dwarf',
     defence: 7, // this is almost same as attack?
-    requirements: { strength: 25, magic: 0, weapon: false },
-    init: function () {
-      this.disabled = true
-    },
+    requirements: { strength: 25, magic: 0, weapon: 0 },
+    use: function () {},
   },
   {
     name: 'Plate Armour Of The Dark Mountain',
@@ -147,21 +198,17 @@ const AllCards = [
     disabled: false,
     defence: 7,
     agility: 400,
-    requirements: { strength: 25, magic: 0, weapon: false }, // TODO not implemented
+    requirements: { strength: 25, magic: 0, weapon: 0 }, // TODO not implemented
     type: 'dwarf',
-    init: function () {
-      this.disabled = true
-    },
+    use: function () {},
   },
   {
     name: 'Whetstone',
     description: 'Bonus to any sharp weapon',
     disabled: false,
     weaponBonus: 1.2,
-    requirements: { strength: 0, magic: 0, weapon: true },
-    init: function () {
-      this.disabled = true
-    },
+    requirements: { strength: 0, magic: 0, weapon: 1 },
+    use: function () {},
   },
   {
     name: "Balrog's Sword",
@@ -170,43 +217,33 @@ const AllCards = [
     attack: 5,
     element: 'fire', // TODO not implemented
     weapon: 2,
-    requirements: { strength: 20, magic: 0, weapon: false },
-    init: function () {
-      this.disabled = true
-    },
+    requirements: { strength: 20, magic: 0, weapon: 0 },
+    use: function () {},
   },
-
   {
     name: 'Magic potion 2',
     description: 'Magic boost of 20',
     disabled: false,
     magic: 20,
-    requirements: { strength: 0, magic: 0, weapon: false },
-    init: function () {
-      this.disabled = true
-    },
+    requirements: { strength: 0, magic: 0, weapon: 0 },
+    use: function () {},
   },
   {
     name: 'Helmet',
     description: 'Increase defence slightly',
     disabled: false,
     defence: 3,
-    requirements: { strength: 0, magic: 0, weapon: false },
-    init: function () {
-      this.disabled = true
-    },
+    requirements: { strength: 0, magic: 0, weapon: 0 },
+    use: function () {},
   },
   {
     name: 'Leather Armour',
     description: 'Increase defence slightly',
     disabled: false,
     defence: 3, // should this be armour?
-    requirements: { strength: 0, magic: 0, weapon: false },
-    init: function () {
-      this.disabled = true
-    },
+    requirements: { strength: 0, magic: 0, weapon: 0 },
+    use: function () {},
   },
-
   {
     name: 'Fireball',
     description:
@@ -216,92 +253,73 @@ const AllCards = [
     durationDamage: 2, // TODO add to object
     duration: 6000,
     element: 'fire',
-    requirements: { strength: 0, magic: 15, weapon: false },
-    init: function () {
-      this.disabled = true
-    },
+    requirements: { strength: 0, magic: 0, weapon: 0 },
+    use: fireball, // TODO needs to call damage
   },
   {
     name: 'Immolation',
     description: 'Explosion of fire - 30 damage',
     disabled: false,
     damage: 30,
-    requirements: { strength: 0, magic: 20, weapon: false },
+    requirements: { strength: 0, magic: 20, weapon: 0 },
     element: 'fire',
-    init: function () {
-      this.disabled = true
-    },
+    use: function () {},
   },
   {
     name: 'Blizzard',
     description: 'Summon a Blizzard - 5 damage - freeze for 5 seconds',
     disabled: false,
-    damage: 5,
+    damage: 5, // TODO needs to call damage
     duration: 5000,
     element: 'ice',
-    requirements: { strength: 0, magic: 15, weapon: false },
-    init: function () {
-      this.disabled = true
-    },
+    requirements: { strength: 0, magic: 0, weapon: 0 },
+    // use could call a function, but that function might not have the callbacks?
+    use: blizzard,
   },
   {
     name: 'steroids',
     description: 'Increase strength by 5',
     disabled: false,
     strength: 5,
-    requirements: { strength: 0, magic: 0, weapon: false },
-    init: function () {
-      this.disabled = true
-    },
+    requirements: { strength: 0, magic: 0, weapon: 0 },
+    use: function () {},
   },
   {
     name: 'health potion',
     description: 'Add 10 to health',
     disabled: false,
     life: 10,
-    requirements: { strength: 0, magic: 0, weapon: false },
-    init: function () {
-      this.disabled = true
-    },
+    requirements: { strength: 0, magic: 0, weapon: 0 },
+    use: function () {},
   },
-  {
-    name: 'Poison potion',
-    description: 'Poison for 3 every 3 seconds',
-    disabled: false,
-    damage: 5,
-    duration: 2000,
-    element: 'poison',
-    requirements: { strength: 0, magic: 0, weapon: false },
-    init: function () {
-      this.disabled = true
-    },
-  },
+  // {
+  //   name: 'Poison potion',
+  //   description: 'Poison for 3 every 3 seconds',
+  //   disabled: false,
+  //   damage: 5,
+  //   duration: 2000,
+  //   element: 'poison',
+  //   requirements: { strength: 0, magic: 0, weapon: 0 },
+  // },
   {
     name: 'Magic potion',
     description: 'Magic boost of 10',
     disabled: false,
     magic: 10,
-    requirements: { strength: 0, magic: 0, weapon: false },
-    init: function () {
-      this.disabled = true
-    },
+    requirements: { strength: 0, magic: 0, weapon: 0 },
+    use: function () {},
   },
   {
     name: 'Stamina potion',
     description: 'Add 20 stamina',
     disabled: false,
     stamina: 20,
-    requirements: { strength: 0, magic: 0, weapon: false },
-    init: function () {
-      this.disabled = true
-    },
+    requirements: { strength: 0, magic: 0, weapon: 0 },
+    use: function () {},
   },
   // {
   //   name: 'fire potion',
   //   disabled: false,
-  //   init: function () {
-  //     this.disabled = true
-  //   },
   // },
   //   {
   //     name: 'Angelina Jolie',

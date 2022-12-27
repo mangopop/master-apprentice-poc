@@ -133,7 +133,6 @@ function Battle({
       )}
 
       {started && <button onClick={stopGameHandler}>Stop game</button>}
-      {/* <button onClick={resetGame}>Reset game</button> */}
 
       <h2>{arena.name}</h2>
       {arenaBooster && <p className="alert arena">20% Arena bonus active</p>}
@@ -155,10 +154,6 @@ function Battle({
         monsterLife={monsterClone.life}
         type={'monster'}
       />
-
-      {/* <div>
-        <button onClick={addHealth}>health</button>
-      </div> */}
 
       {started && (
         <CardsHand
