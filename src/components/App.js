@@ -22,6 +22,7 @@ import Start from './Start'
 import Battle from './Battle'
 import LevelProgression from './LevelProgression'
 import ChooseCard from './Cards/ChooseCard'
+import ChooseTalismanCard from './Cards/talisman/ChooseTalismanCard'
 import CardCollection from './Cards/CardCollection'
 import { monsters } from './Cards/Monsters'
 
@@ -305,6 +306,7 @@ function App() {
         path="chooseCard"
         element={
           <ChooseCard
+            level={levelCount}
             strength={player.strength}
             magic={player.magic}
             ownedCards={ownedCards}
@@ -315,7 +317,7 @@ function App() {
       <Route
         path="chooseTalismanCard"
         element={
-          <ChooseCard
+          <ChooseTalismanCard
             ownedCards={ownedTalismanCards}
             setOwnedCardsHandler={setOwnedTalismanCards}
           />

@@ -35,6 +35,11 @@ export function randAttackModifier(
   return hit
 }
 
+// TODO armour does very little, we could use it to determine chance of block.
+function randDefenceModifier() {
+
+}
+
 // uses player attack, weapon and strength to determine damage.
 // uses monster defence, armour
 export function getStrikeDamage(

@@ -4,18 +4,20 @@ import './card/Card.css'
 import ICard from '../../interfaces/card'
 import { shuffle } from '../../services/utilities.service'
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 function ChooseCard({
   strength,
   magic,
   ownedCards,
   setOwnedCardsHandler,
+  level,
 }: {
-  strength?: number
-  magic?: number
   ownedCards: Array<ICard>
   setOwnedCardsHandler: Function
+  strength?: number
+  magic?: number
+  level?: number
 }) {
   const navigate = useNavigate()
   const [cardsToPick, setCardsToPick] = useState<ICard[]>([])
@@ -53,8 +55,11 @@ function ChooseCard({
     setCardsToPick(cardsToPick.filter((cardTP) => cardTP !== card))
 
     // TODO if level 5 change to talisman
-
-    navigate('/battle')
+    if (level && level % 1 == 0) {
+      navigate('/chooseTalismanCard')
+    } else {
+      navigate('/battle')
+    }
   }
 
   return (
@@ -72,7 +77,8 @@ function ChooseCard({
             )
           })}
       </div>
-      {/* <Link to={`/battle`}>Fight!</Link> */}
+
+      <Link to={`/battle`}>Skip Card</Link>
 
       <h1>Cards owned</h1>
       <div className="CardContainer">
