@@ -29,7 +29,6 @@ export default interface ICard {
     setMonsterHandler: (params: (params: ICharacter) => void) => void,
     stopMonsterTimersHandler: () => void,
     startMonsterTimersHandler: () => void,
-    setSpellTimer: Dispatch<SetStateAction<NodeJS.Timer | undefined>>,
-    setPlayerHandler: (params: (params: ICharacter) => void) => void
+    setSpellTimer: Dispatch<SetStateAction<NodeJS.Timer | undefined>>
   ) => void
 }

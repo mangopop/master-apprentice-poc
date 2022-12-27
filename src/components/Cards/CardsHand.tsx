@@ -1,6 +1,5 @@
 import '../../tooltip.css'
 import './card/Card.css'
-import ICharacter from '../../interfaces/character'
 import ICard from '../../interfaces/card'
 import ICardHandProps from '../../interfaces/cardHandProps'
 import cardPickUp from './../../sounds/cardPickUp.mp3'
@@ -27,10 +26,8 @@ function CardsHand({
   const [duplicateCardType, setDuplicateCardType] = useState(false)
   const [spellTimer, setSpellTimer] = useState<NodeJS.Timer>()
   const [card, setCard] = useState<ICard>()
+  // do we have to import and play sounds here :(
   const [cardPickupPlay] = useSound(cardPickUp, { volume: 0.5 })
-  let spellTimerId = null
-
-  console.log('render cards hand')
 
   useEffect(() => {
     if (spellTimer) {
@@ -87,8 +84,7 @@ function CardsHand({
       setMonsterHandler,
       stopMonsterTimersHandler,
       startMonsterTimersHandler,
-      setSpellTimer,
-      setPlayerHandler
+      setSpellTimer
     )
 
     // TODO only running 1 type of card might want to run 2?

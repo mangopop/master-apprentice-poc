@@ -1,4 +1,6 @@
 import { Dispatch, SetStateAction } from 'react'
+import ICard from '../../interfaces/card'
+import ICharacter from '../../interfaces/character'
 // const Card = {
 //   name: '',
 //   armour: 0,
@@ -19,9 +21,6 @@ import { Dispatch, SetStateAction } from 'react'
 //   stamina?: number
 //   type?: string
 //   element?: string
-
-import ICard from '../../interfaces/card'
-import ICharacter from '../../interfaces/character'
 
 //   constructor(
 //     name: string,
@@ -104,8 +103,7 @@ function fireball(
   setMonsterHandler: (params: (params: ICharacter) => void) => void,
   stopMonsterTimersHandler: Function,
   startMonsterTimersHandler: Function,
-  setSpellTimer: Dispatch<SetStateAction<NodeJS.Timer | undefined>>,
-  update: Function
+  setSpellTimer: Dispatch<SetStateAction<NodeJS.Timer | undefined>>
 ): void {
   spellTimerId = setInterval(() => {
     setMonsterHandler((monster) => {
@@ -131,8 +129,7 @@ function blizzard(
   setMonsterHandler: Function,
   stopMonsterTimersHandler: Function,
   startMonsterTimersHandler: Function,
-  setSpellTimer: Function,
-  update: Function
+  setSpellTimer: Function
 ) {
   stopMonsterTimersHandler()
   setTimeout(() => {
@@ -149,7 +146,7 @@ const AllCards = [
     type: 'human',
     agility: 300,
     weapon: 1.5, // this is almost same as attack?
-    requirements: { strength: 0, magic: 0, weapon: 0 }, // weapon number acting as boolean
+    requirements: { strength: 15, magic: 0, weapon: 0 }, // weapon number acting as boolean
     use: function () {},
   },
   {
@@ -198,7 +195,7 @@ const AllCards = [
     disabled: false,
     defence: 7,
     agility: 400,
-    requirements: { strength: 25, magic: 0, weapon: 0 }, // TODO not implemented
+    requirements: { strength: 25, magic: 0, weapon: 0 }, // TODO not implemented armour
     type: 'dwarf',
     use: function () {},
   },
@@ -253,26 +250,26 @@ const AllCards = [
     durationDamage: 2, // TODO add to object
     duration: 6000,
     element: 'fire',
-    requirements: { strength: 0, magic: 0, weapon: 0 },
-    use: fireball, // TODO needs to call damage
+    requirements: { strength: 0, magic: 15, weapon: 0 },
+    use: fireball,
   },
   {
     name: 'Immolation',
     description: 'Explosion of fire - 30 damage',
     disabled: false,
     damage: 30,
-    requirements: { strength: 0, magic: 20, weapon: 0 },
+    requirements: { strength: 0, magic: 30, weapon: 0 },
     element: 'fire',
-    use: function () {},
+    use: damage,
   },
   {
     name: 'Blizzard',
     description: 'Summon a Blizzard - 5 damage - freeze for 5 seconds',
     disabled: false,
-    damage: 5, // TODO needs to call damage
+    damage: 5,
     duration: 5000,
     element: 'ice',
-    requirements: { strength: 0, magic: 0, weapon: 0 },
+    requirements: { strength: 0, magic: 15, weapon: 0 },
     // use could call a function, but that function might not have the callbacks?
     use: blizzard,
   },
