@@ -47,6 +47,12 @@ let playerStartStats = {
 // we cannot render this all the time (but we have to?) - move the items that should render into components
 function App() {
   console.log('render app')
+  // TODO this needs to reset before choose card
+  const [arena, setArena] = useState({
+    name: 'Mountains',
+    description: 'Home of the Dwarfs',
+    type: 'dwarf',
+  })
 
   // level and battle
   const [levelCount, setLevelCount] = useState(1)
@@ -239,7 +245,9 @@ function App() {
       monster.elements.includes(element)
     )
 
-    if (intersection.length < 1) {
+    // TODO unless the it was fire and and in hell?
+    // TODO unless the it was ice and and in ice caves?
+    if (intersection.length < 1 && !monster.elements.includes(arena)) {
       strike *= 1.2
     }
 
@@ -339,8 +347,10 @@ function App() {
         path="battle"
         element={
           <Battle
+            arena={arena}
             level={levelCount}
             player={player}
+            setArenaHandler={setArena}
             setPlayerHandler={setPlayer}
             setMonsterHandler={setMonster}
             monster={monster}

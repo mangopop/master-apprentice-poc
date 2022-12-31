@@ -16,11 +16,13 @@ import ICard from '../interfaces/card'
 let cardLength = 3
 
 function Battle({
+  arena,
   level,
   player,
   monster,
   ownedCards,
   ownedTalismanCards,
+  setArenaHandler,
   setPlayerHandler,
   setMonsterHandler,
   startGameHandler,
@@ -30,12 +32,7 @@ function Battle({
   started,
 }: IBattleProps) {
   // console.log('render battle')
-  // TODO this needs to reset before choose card
-  const [arena, setArena] = useState({
-    name: 'Mountains',
-    description: 'Home of the Dwarfs',
-    type: 'dwarf',
-  })
+
   const [cardsInHand, setCardsInHand] = useState<ICard[]>([]) // add rnd 5 cards to hand
   const [cardsUsed, setCardsUsed] = useState<ICard[]>([])
   const [cardsDisabled, setCardsDisabled] = useState(false) // start, stop, nextlevel, when 3
@@ -59,7 +56,7 @@ function Battle({
   useEffect(() => {
     firstGame && setUp()
     monsterClone = cloneDeep(monster)
-    setArena(shuffle(arenas)[0])
+    setArenaHandler(shuffle(arenas)[0])
 
     setCardsDisabled(true)
     // cardsInHand.forEach((card) => {
@@ -77,9 +74,11 @@ function Battle({
   }
 
   function setUp() {
-    setArena(shuffle(arenas)[0])
+    setArenaHandler(shuffle(arenas)[0])
     setCardsUsed([])
     setCardsDisabled(false)
+
+    // TODO maybe we can give the monster bonus for arena here?
 
     ownedTalismanCards.forEach((card) => {
       if (card.name === 'Packed neatly') {
