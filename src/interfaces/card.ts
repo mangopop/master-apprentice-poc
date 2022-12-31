@@ -26,6 +26,7 @@ export default interface ICard {
   }
   use: (
     card: ICard,
+    setPlayerHandler: (params: (params: ICharacter) => void) => void,
     setMonsterHandler: (params: (params: ICharacter) => void) => void,
     stopMonsterTimersHandler: () => void,
     startMonsterTimersHandler: () => void,

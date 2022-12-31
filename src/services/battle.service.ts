@@ -1,3 +1,7 @@
+import { Dispatch, SetStateAction } from 'react'
+import ICard from '../interfaces/card'
+import ICharacter from '../interfaces/character'
+
 export function getTypeBonus(types: string[]):
   | {
       strength?: number
@@ -26,4 +30,41 @@ export function getTypeBonus(types: string[]):
   }
 
   return false
+}
+
+export function setBonuses(
+  player: ICharacter,
+  cardsUsed: ICard[],
+  setFolkLoreBonusCallback: Dispatch<SetStateAction<boolean>>,
+  setPlayerHandlerCallback: (param: (param: ICharacter) => void) => void
+) {
+  let typeMatch: Array<string> = []
+  cardsUsed.forEach((element) => {
+    if (element.type) {
+      typeMatch.push(element.type)
+    }
+  })
+
+  let bonus: false | {} = false
+
+  if (typeMatch.length === 3) {
+    bonus = getTypeBonus(typeMatch)
+  }
+
+  // TODO this will need to reset??
+  type PlayerKey = keyof typeof player
+  type BonusKey = keyof typeof bonus
+  if (bonus) {
+    setFolkLoreBonusCallback(true)
+    let modifier = Object.keys(bonus)[0]
+    bonus = {
+      [modifier]: player[modifier as PlayerKey] + bonus[modifier as BonusKey],
+    }
+    setPlayerHandlerCallback((player) => {
+      return {
+        ...player,
+        ...bonus,
+      }
+    })
+  }
 }

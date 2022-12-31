@@ -84,10 +84,9 @@ function CardsHand({
     // TODO remove cardsInHand from view instead of disabling
     // this is adding permanently (handled - where?)
 
-    // TODO should we add element damage
-    // just adjust the stats for round by incresing attack
     card.use(
       card,
+      setPlayerHandler,
       setMonsterHandler,
       stopMonsterTimersHandler,
       startMonsterTimersHandler,

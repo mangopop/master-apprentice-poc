@@ -196,7 +196,6 @@ function App() {
     }
   }, [monster.count])
 
-  // TODO  The attack and timer stuff would be so much easier if refactored out somewhere. Maybe just get this comp refactor working first
   // is re-rendering functions bad?
   function attackMonster() {
     console.log('attacking monster', monster)
@@ -216,12 +215,11 @@ function App() {
     )
     applyDamage(wasHit, strike, setMonster, 'monster')
     // cannot clear timers here
-    // TODO could get bonus stamina from final blow?
   }
 
   function attackPlayer() {
     console.log('attacking player', player)
-    const strike = getStrikeDamage(
+    let strike = getStrikeDamage(
       monster.attack,
       monster.weapon,
       monster.strength,
@@ -230,6 +228,15 @@ function App() {
       setMonster,
       setPlayer
     )
+    // applied after defence
+    const intersection = player.elements.filter((element) =>
+      monster.elements.includes(element)
+    )
+
+    if (intersection.length < 1) {
+      strike *= 5
+    }
+
     const wasHit = randAttackModifier(
       monster.weapon,
       monster.stamina,
@@ -263,7 +270,6 @@ function App() {
     setMonsterTimer(monsterTimer)
   }
 
-  // TODO trigger this from battle screen
   function startGame() {
     console.log('game start')
     setStarted(true)
@@ -281,7 +287,6 @@ function App() {
     clearInterval(monsterTimerId) // is this not stopping because it's not in useEffect? Stop works in the game?
   }
 
-  // TODO trigger this from battle screen.
   function stopGame() {
     console.log('stop game')
     innMusicPlay()
@@ -292,7 +297,6 @@ function App() {
     clearInterval(monsterTimerId)
   }
 
-  // TODO trigger this from the level progression component
   function nextLevel() {
     setLevelCount((level) => level + 1)
   }

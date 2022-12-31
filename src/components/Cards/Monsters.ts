@@ -8,7 +8,7 @@ export let monsters = [
     strength: 5,
     agility: 2300,
     abilities: [],
-    elements: [],
+    elements: ['fire'],
     magic: 0,
     weapon: 1,
     armour: 1,

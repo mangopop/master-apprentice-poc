@@ -9,9 +9,10 @@ import CardsHand from './Cards/CardsHand'
 import { shuffle } from '../services/utilities.service'
 import arenas from '../data/arena'
 import Character from './Character'
-import { getTypeBonus } from '../services/battle.service'
+import { getTypeBonus, setBonuses } from '../services/battle.service'
 import IBattleProps from '../interfaces/battleProps'
 import ICard from '../interfaces/card'
+import { setFlagsFromString } from 'v8'
 
 let cardLength = 3
 
@@ -52,38 +53,7 @@ function Battle({
     // TODO why is this here? could be in cards? We use setup to control the disabling.
     if (cardsUsed.length === cardLength) {
       setCardsDisabled(true)
-
-      // TODO: extract to function
-      let typeMatch: Array<string> = []
-      cardsUsed.forEach((element) => {
-        if (element.type) {
-          typeMatch.push(element.type)
-        }
-      })
-
-      let bonus: false | {} = false
-
-      if (typeMatch.length === 3) {
-        bonus = getTypeBonus(typeMatch)
-      }
-
-      // TODO this will need to reset??
-      type PlayerKey = keyof typeof player
-      type BonusKey = keyof typeof bonus
-      if (bonus) {
-        setFolkLoreBonus(true)
-        let modifier = Object.keys(bonus)[0]
-        bonus = {
-          [modifier]:
-            player[modifier as PlayerKey] + bonus[modifier as BonusKey],
-        }
-        setPlayerHandler((player) => {
-          return {
-            ...player,
-            ...bonus,
-          }
-        })
-      }
+      setBonuses(player, cardsUsed, setFolkLoreBonus, setPlayerHandler)
     }
   }, [cardsUsed])
 
@@ -91,8 +61,6 @@ function Battle({
     firstGame && setUp()
     monsterClone = cloneDeep(monster)
     setArena(shuffle(arenas)[0])
-
-    // TODO could apply monster bonus here?
 
     setCardsDisabled(true)
     // cardsInHand.forEach((card) => {
