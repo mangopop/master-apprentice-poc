@@ -13,6 +13,7 @@ import { getTypeBonus, setBonuses } from '../services/battle.service'
 import IBattleProps from '../interfaces/battleProps'
 import ICard from '../interfaces/card'
 import { setFlagsFromString } from 'v8'
+import ICharacter from '../interfaces/character'
 
 let cardLength = 3
 

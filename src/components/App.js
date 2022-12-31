@@ -46,7 +46,7 @@ let playerStartStats = {
 
 // we cannot render this all the time (but we have to?) - move the items that should render into components
 function App() {
-  // console.log('render app')
+  console.log('render app')
 
   // level and battle
   const [levelCount, setLevelCount] = useState(1)
@@ -190,13 +190,17 @@ function App() {
       stopGame()
       playerDeathPlay()
       console.log('player killed monster in this moves:', player.count)
-    }
-    if (monster.life < 1) {
+    } else if (monster.life < 1) {
       stopMonsterTimers()
+    } else if (started) {
+      clearInterval(monsterTimerId)
+      startMonsterTimers()
     }
   }, [monster.count])
 
   // is re-rendering functions bad?
+  // are we not seeing player update here because this in the the APP?
+  // the character screen is updating ok.
   function attackMonster() {
     console.log('attacking monster', monster)
     const strike = getStrikeDamage(
@@ -205,7 +209,7 @@ function App() {
       player.strength,
       monster.defence,
       monster.armour,
-      setPlayer,
+      setPlayer, // we see updates in the character screen and useEffect
       setMonster
     )
     const wasHit = randAttackModifier(
