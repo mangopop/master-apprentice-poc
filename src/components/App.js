@@ -219,6 +219,8 @@ function App() {
 
   function attackPlayer() {
     console.log('attacking player', player)
+    // TODO card updates not working here :(
+
     let strike = getStrikeDamage(
       monster.attack,
       monster.weapon,
@@ -228,14 +230,16 @@ function App() {
       setMonster,
       setPlayer
     )
-    // applied after defence
-    const intersection = player.elements.filter((element) =>
-      monster.elements.includes(element)
-    )
 
-    if (intersection.length < 1) {
-      strike *= 5
-    }
+    // TODO cannot access the player.element after card play
+    // applied after defence
+    // let intersection = player.elements.filter((element) =>
+    //   monster.elements.includes(element)
+    // )
+
+    // if (intersection.length < 1) {
+    //   strike *= 4 //TODO revert
+    // }
 
     const wasHit = randAttackModifier(
       monster.weapon,

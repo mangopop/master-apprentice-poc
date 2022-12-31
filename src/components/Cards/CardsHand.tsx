@@ -52,6 +52,14 @@ function CardsHand({
 
   // TODO refactor
   function playCard(card: ICard) {
+    // TODO could be better logic
+    cardsUsed.forEach((cardUsed) => {
+      if (cardUsed.hasOwnProperty('weapon') && card.hasOwnProperty('weapon')) {
+        duplicatePlay = true
+        setDuplicateCardType(true)
+      }
+    })
+
     if (card.disabled || cardsDisabled || duplicatePlay) {
       return
     }
@@ -64,34 +72,11 @@ function CardsHand({
       arenaBoost = { agility: 0.9, other: 1.25 }
       arenaBoostHandler()
     }
-
-    // TODO could be better logic
-    cardsUsed.forEach((cardUsed) => {
-      if (cardUsed.hasOwnProperty('weapon') && card.hasOwnProperty('weapon')) {
-        duplicatePlay = true
-        setDuplicateCardType(true)
-      }
-    })
-
-    if (duplicatePlay) {
-      return
-    }
-
+    // TODO remove cardsInHand from view instead of disabling
+    // this is adding permanently (handled - where?)
     cardPickupPlay()
 
     setCardsUsedHandler((cardsUsed: Array<ICard>) => [...cardsUsed, card])
-
-    // TODO remove cardsInHand from view instead of disabling
-    // this is adding permanently (handled - where?)
-
-    card.use(
-      card,
-      setPlayerHandler,
-      setMonsterHandler,
-      stopMonsterTimersHandler,
-      startMonsterTimersHandler,
-      setSpellTimer
-    )
 
     // TODO only running 1 type of card might want to run 2?
     if (!card.damage) {
@@ -143,12 +128,23 @@ function CardsHand({
         }
       })
 
+      // TODO this may overwrite with card use
       setPlayerHandler(() => {
         return {
           ...player,
           ...characterProperties,
         }
       })
+
+      // would like to pass less somehow.
+      card.use(
+        card,
+        setPlayerHandler,
+        setMonsterHandler,
+        stopMonsterTimersHandler,
+        startMonsterTimersHandler,
+        setSpellTimer
+      )
     }
 
     card.disabled = true

@@ -136,7 +136,7 @@ function fireball(
           : monster.life,
       }
     })
-  }, card.duration) // can hardcode the interval for now.
+  }, card.duration)
 
   setSpellTimer(spellTimerId)
 
@@ -160,29 +160,29 @@ function blizzard(
 }
 
 const AllCards = [
-  // {
-  //   name: 'Sword of Lost Kings',
-  //   description: 'Increase attack and agility',
-  //   disabled: false,
-  //   attack: 2,
-  //   type: 'human',
-  //   agility: 300,
-  //   elements: [],
-  //   weapon: 1.5, // this is almost same as attack?
-  //   requirements: { strength: 15, magic: 0, weapon: 0 }, // weapon number acting as boolean
-  //   use: function () {},
-  // },
-  // {
-  //   name: 'Crown of Lost Kings',
-  //   description: 'Increase defence',
-  //   disabled: false,
-  //   type: 'human',
-  //   agility: 300,
-  //   defence: 5, // this is almost same as attack?
-  //   requirements: { strength: 15, magic: 0, weapon: 0 },
-  //   elements: [],
-  //   use: function () {},
-  // },
+  {
+    name: 'Sword of Lost Kings',
+    description: 'Increase attack and agility',
+    disabled: false,
+    attack: 2,
+    type: 'human',
+    agility: 300,
+    elements: [],
+    weapon: 1.5, // this is almost same as attack?
+    requirements: { strength: 15, magic: 0, weapon: 0 }, // weapon number acting as boolean
+    use: function () {},
+  },
+  {
+    name: 'Crown of Lost Kings',
+    description: 'Increase defence',
+    disabled: false,
+    type: 'human',
+    agility: 300,
+    defence: 5, // this is almost same as attack?
+    requirements: { strength: 15, magic: 0, weapon: 0 },
+    elements: [],
+    use: function () {},
+  },
   // {
   //   name: 'Chain Mail of Lost Kings',
   //   description: 'increase defence and reduces agility. Requires 15 Strength',
@@ -257,15 +257,15 @@ const AllCards = [
   //   requirements: { strength: 0, magic: 0, weapon: 0 },
   //   use: function () {},
   // },
-  // {
-  //   name: 'Helmet',
-  //   description: 'Increase defence slightly',
-  //   disabled: false,
-  //   defence: 3,
-  //   elements: [],
-  //   requirements: { strength: 0, magic: 0, weapon: 0 },
-  //   use: function () {},
-  // },
+  {
+    name: 'Helmet',
+    description: 'Increase defence slightly',
+    disabled: false,
+    defence: 3000,
+    elements: [],
+    requirements: { strength: 0, magic: 0, weapon: 0 },
+    use: function () {},
+  },
   // {
   //   name: 'Leather Armour',
   //   description: 'Increase defence slightly',

@@ -8,7 +8,7 @@ export let monsters = [
     strength: 5,
     agility: 2300,
     abilities: [],
-    elements: ['fire'],
+    elements: ['fire'], // adding two does no further damage
     magic: 0,
     weapon: 1,
     armour: 1,
