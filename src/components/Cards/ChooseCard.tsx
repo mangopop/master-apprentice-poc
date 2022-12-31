@@ -55,7 +55,7 @@ function ChooseCard({
     setCardsToPick(cardsToPick.filter((cardTP) => cardTP !== card))
 
     // TODO if level 5 change to talisman
-    if (level && level % 1 == 0) {
+    if (level && level === 1) {
       navigate('/chooseTalismanCard')
     } else {
       navigate('/battle')

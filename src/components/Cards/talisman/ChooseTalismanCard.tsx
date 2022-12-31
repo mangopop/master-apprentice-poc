@@ -4,7 +4,7 @@ import ITalismanCard from '../../../interfaces/talismanCard'
 import './../card/Card.css'
 import { shuffle } from '../../../services/utilities.service'
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
 function ChooseTalismanCard({
   ownedCards,
@@ -29,7 +29,7 @@ function ChooseTalismanCard({
   shuffle(remainingCards)
 
   function pickCard(card: ITalismanCard) {
-    // owned card will change in props
+    // TODO this should trigger app function
     setOwnedCardsHandler((ownedCards: Array<ITalismanCard>) => [
       ...ownedCards,
       card,
@@ -62,6 +62,8 @@ function ChooseTalismanCard({
             return <TalismanCard key={card.name} card={card} />
           })}
       </div>
+
+      <Link to={`/battle`}>Skip Card</Link>
     </div>
   )
 }

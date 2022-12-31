@@ -9,7 +9,7 @@ import Card from './card/Card'
 import { updateWeapon, calculateSkills } from '../../services/cardHand.service'
 
 // TODO too many props - all because of state
-// split this out
+// This is the card 'playing table'
 function CardsHand({
   arena,
   cardsInHand,

@@ -12,21 +12,18 @@ function TalismanCard({
   duplicateCardType?: Boolean
   cardsDisabled?: Boolean
 }) {
-  let classNames = `${cardsDisabled || card.disabled ? 'Disabled' : ''} ${
-    duplicateCardType ? 'tooltip' : ''
-  }`
+  // let classNames = `${duplicateCardType ? 'tooltip' : ''}`
 
   return (
     <div
-      className={`Card ${classNames}`}
-      data-disabled={cardsDisabled || card.disabled || duplicateCardType}
+      className={`Card`}
+      data-disabled={cardsDisabled || duplicateCardType}
       style={{ marginRight: '5px' }}
       onClick={() =>
         !cardsDisabled && cardActionCallback ? cardActionCallback(card) : null
       }
     >
       <h4>{card.name}</h4>
-
       <p>{card.description}</p>
     </div>
   )

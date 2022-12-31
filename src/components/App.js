@@ -50,7 +50,7 @@ function App() {
   // level and battle
   const [levelCount, setLevelCount] = useState(1)
   const [ownedCards, setOwnedCards] = useState([])
-  // TODO these will be hard to implement!
+
   const [ownedTalismanCards, setOwnedTalismanCards] = useState([])
 
   const [player, setPlayer] = useState(playerStartStats)
@@ -314,6 +314,7 @@ function App() {
           />
         }
       />
+      {/* play card will lift state up which can be used in the cardshand through battle, we can modify here?   */}
       <Route
         path="chooseTalismanCard"
         element={
@@ -333,6 +334,8 @@ function App() {
             setMonsterHandler={setMonster}
             monster={monster}
             ownedCards={ownedCards}
+            ownedTalismanCards={ownedTalismanCards}
+            // might need to add in talisman cards here?
             startGameHandler={startGame}
             stopGameHandler={stopGame}
             startMonsterTimersHandler={startMonsterTimers}

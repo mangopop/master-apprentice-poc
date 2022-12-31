@@ -13,11 +13,14 @@ import { getTypeBonus } from '../services/battle.service'
 import IBattleProps from '../interfaces/battleProps'
 import ICard from '../interfaces/card'
 
+let cardLength = 3
+
 function Battle({
   level,
   player,
   monster,
   ownedCards,
+  ownedTalismanCards,
   setPlayerHandler,
   setMonsterHandler,
   startGameHandler,
@@ -42,8 +45,12 @@ function Battle({
   let firstGame = true
   let monsterClone = monster // TODO trying to make TS happy - could cause issues.
 
+  // TODO figure out how to do all the talisman rules
+  // we can't effect on play card? unless we tap in on the play card function?
+
   useEffect(() => {
-    if (cardsUsed.length === 3) {
+    // TODO why is this here? could be in cards? We use setup to control the disabling.
+    if (cardsUsed.length === cardLength) {
       setCardsDisabled(true)
 
       // TODO: extract to function
@@ -104,6 +111,15 @@ function Battle({
     setArena(shuffle(arenas)[0])
     setCardsUsed([])
     setCardsDisabled(false)
+
+    ownedTalismanCards.forEach((card) => {
+      if (card.name === 'Packed neatly') {
+        cardLength = 4
+      }
+      if (card.name === 'Armadillo foot') {
+        //'Defence increases by 50% when life under 5',
+      }
+    })
 
     shuffle(ownedCards)
 
