@@ -6,7 +6,11 @@ import cardPickUp from './../../sounds/cardPickUp.mp3'
 import { useSound } from 'use-sound'
 import { useEffect, useState } from 'react'
 import Card from './card/Card'
-import { updateWeapon, calculateSkills } from '../../services/cardHand.service'
+import {
+  updateWeapon,
+  calculateSkills,
+  getElementBonus,
+} from '../../services/cardHand.service'
 
 // TODO too many props - all because of state
 // This is the card 'playing table'
@@ -14,6 +18,7 @@ function CardsHand({
   arena,
   cardsInHand,
   player,
+  monster,
   cardsDisabled,
   cardsUsed,
   arenaBoostHandler,
@@ -79,6 +84,8 @@ function CardsHand({
     // TODO remove cardsInHand from view instead of disabling
     // this is adding permanently (handled - where?)
 
+    // TODO should we add element damage
+    // just adjust the stats for round by incresing attack
     card.use(
       card,
       setMonsterHandler,
@@ -89,7 +96,7 @@ function CardsHand({
 
     // TODO only running 1 type of card might want to run 2?
     if (!card.damage) {
-      let characterProperties = {}
+      let characterProperties: { attack?: number } = {}
 
       Array(
         'agility',
@@ -101,10 +108,10 @@ function CardsHand({
         'magic',
         'armour',
         'weapon'
-      ).forEach((element) => {
-        if (card[element as keyof typeof card]) {
+      ).forEach((characterProp) => {
+        if (card[characterProp as keyof typeof card]) {
           // handle weapon modifier
-          if (element === 'weapon') {
+          if (characterProp === 'weapon') {
             Object.assign(characterProperties, {
               weapon: updateWeapon(
                 card.requirements.weapon,
@@ -118,12 +125,21 @@ function CardsHand({
           } else {
             // handle the skill update
             Object.assign(characterProperties, {
-              [element]: calculateSkills(
-                card[element as keyof typeof card],
-                player[element as keyof typeof player],
+              [characterProp]: calculateSkills(
+                card[characterProp as keyof typeof card],
+                player[characterProp as keyof typeof player],
+                monster.elements,
+                player.elements,
                 arenaBoost
               ),
             })
+          }
+          if (characterProperties.attack !== undefined) {
+            characterProperties.attack = getElementBonus(
+              player.attack,
+              card.elements,
+              monster.elements
+            )
           }
         }
       })

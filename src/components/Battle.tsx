@@ -92,6 +92,8 @@ function Battle({
     monsterClone = cloneDeep(monster)
     setArena(shuffle(arenas)[0])
 
+    // TODO could apply monster bonus here?
+
     setCardsDisabled(true)
     // cardsInHand.forEach((card) => {
     //   card.disabled = false
@@ -185,6 +187,7 @@ function Battle({
           startMonsterTimersHandler={startMonsterTimersHandler}
           cardsUsed={cardsUsed}
           player={player}
+          monster={monster}
         />
       )}
     </div>

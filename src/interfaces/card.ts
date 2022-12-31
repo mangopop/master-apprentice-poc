@@ -16,7 +16,7 @@ export default interface ICard {
   magic?: number
   disabled: boolean
   type?: string
-  element?: string
+  elements: string[]
   damage?: number
   durationDamage?: number
   duration?: number

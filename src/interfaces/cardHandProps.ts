@@ -14,4 +14,5 @@ export default interface ICardHandProps {
   cardsUsed: Array<ICard>
   setCardsUsedHandler: (params: any) => void
   player: ICharacter
+  monster: ICharacter
 }

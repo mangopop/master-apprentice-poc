@@ -98,13 +98,14 @@ function damage(
   })
 }
 
-function fireball(
+function fireEffect(
   card: ICard,
   setMonsterHandler: (params: (params: ICharacter) => void) => void,
   stopMonsterTimersHandler: Function,
   startMonsterTimersHandler: Function,
   setSpellTimer: Dispatch<SetStateAction<NodeJS.Timer | undefined>>
 ): void {
+  // TODO check monster resistance
   spellTimerId = setInterval(() => {
     setMonsterHandler((monster) => {
       return {
@@ -114,7 +115,29 @@ function fireball(
           : monster.life,
       }
     })
-  }, 2000) // can hardcode the interval for now.
+  }, card.duration) // can hardcode the interval for now.
+
+  setSpellTimer(spellTimerId)
+}
+
+function fireball(
+  card: ICard,
+  setMonsterHandler: (params: (params: ICharacter) => void) => void,
+  stopMonsterTimersHandler: Function,
+  startMonsterTimersHandler: Function,
+  setSpellTimer: Dispatch<SetStateAction<NodeJS.Timer | undefined>>
+): void {
+  // TODO check monster resistance
+  spellTimerId = setInterval(() => {
+    setMonsterHandler((monster) => {
+      return {
+        ...monster,
+        life: card.durationDamage
+          ? monster.life - card.durationDamage
+          : monster.life,
+      }
+    })
+  }, card.duration) // can hardcode the interval for now.
 
   setSpellTimer(spellTimerId)
 
@@ -145,6 +168,7 @@ const AllCards = [
     attack: 2,
     type: 'human',
     agility: 300,
+    elements: [],
     weapon: 1.5, // this is almost same as attack?
     requirements: { strength: 15, magic: 0, weapon: 0 }, // weapon number acting as boolean
     use: function () {},
@@ -157,6 +181,7 @@ const AllCards = [
     agility: 300,
     defence: 5, // this is almost same as attack?
     requirements: { strength: 15, magic: 0, weapon: 0 },
+    elements: [],
     use: function () {},
   },
   {
@@ -167,6 +192,7 @@ const AllCards = [
     agility: 300,
     requirements: { strength: 15, magic: 0, weapon: 0 }, // TODO not implemented
     type: 'human',
+    elements: [],
     use: function () {},
   },
   {
@@ -177,6 +203,7 @@ const AllCards = [
     attack: 7,
     agility: 400,
     weapon: 1.6,
+    elements: [],
     requirements: { strength: 25, magic: 0, weapon: 0 },
     use: function () {},
   },
@@ -185,6 +212,7 @@ const AllCards = [
     description: 'Increase defence',
     disabled: false,
     type: 'dwarf',
+    elements: [],
     defence: 7, // this is almost same as attack?
     requirements: { strength: 25, magic: 0, weapon: 0 },
     use: function () {},
@@ -195,6 +223,7 @@ const AllCards = [
     disabled: false,
     defence: 7,
     agility: 400,
+    elements: [],
     requirements: { strength: 25, magic: 0, weapon: 0 }, // TODO not implemented armour
     type: 'dwarf',
     use: function () {},
@@ -204,24 +233,28 @@ const AllCards = [
     description: 'Bonus to any sharp weapon',
     disabled: false,
     weaponBonus: 1.2,
+    elements: [],
     requirements: { strength: 0, magic: 0, weapon: 1 },
     use: function () {},
   },
   {
     name: "Balrog's Sword",
-    description: 'increase attack and accuracy. Requires 15 Strength',
+    description: 'increase attack and accuracy. Requires 20 Strength',
     disabled: false,
+    duration: 2000,
+    durationDamage: 2,
     attack: 5,
-    element: 'fire', // TODO not implemented
+    elements: ['fire'],
     weapon: 2,
     requirements: { strength: 20, magic: 0, weapon: 0 },
-    use: function () {},
+    use: fireEffect,
   },
   {
     name: 'Magic potion 2',
     description: 'Magic boost of 20',
     disabled: false,
     magic: 20,
+    elements: [],
     requirements: { strength: 0, magic: 0, weapon: 0 },
     use: function () {},
   },
@@ -230,6 +263,7 @@ const AllCards = [
     description: 'Increase defence slightly',
     disabled: false,
     defence: 3,
+    elements: [],
     requirements: { strength: 0, magic: 0, weapon: 0 },
     use: function () {},
   },
@@ -238,6 +272,7 @@ const AllCards = [
     description: 'Increase defence slightly',
     disabled: false,
     defence: 3, // should this be armour?
+    elements: [],
     requirements: { strength: 0, magic: 0, weapon: 0 },
     use: function () {},
   },
@@ -249,7 +284,7 @@ const AllCards = [
     damage: 5,
     durationDamage: 2, // TODO add to object
     duration: 6000,
-    element: 'fire',
+    elements: ['fire'],
     requirements: { strength: 0, magic: 15, weapon: 0 },
     use: fireball,
   },
@@ -259,7 +294,7 @@ const AllCards = [
     disabled: false,
     damage: 30,
     requirements: { strength: 0, magic: 30, weapon: 0 },
-    element: 'fire',
+    elements: ['fire'],
     use: damage,
   },
   {
@@ -268,16 +303,17 @@ const AllCards = [
     disabled: false,
     damage: 5,
     duration: 5000,
-    element: 'ice',
+    elements: ['ice'],
     requirements: { strength: 0, magic: 15, weapon: 0 },
     // use could call a function, but that function might not have the callbacks?
-    use: blizzard,
+    use: function () {},
   },
   {
     name: 'steroids',
     description: 'Increase strength by 5',
     disabled: false,
     strength: 5,
+    elements: [],
     requirements: { strength: 0, magic: 0, weapon: 0 },
     use: function () {},
   },
@@ -286,6 +322,7 @@ const AllCards = [
     description: 'Add 10 to health',
     disabled: false,
     life: 10,
+    elements: [],
     requirements: { strength: 0, magic: 0, weapon: 0 },
     use: function () {},
   },
@@ -303,6 +340,7 @@ const AllCards = [
     description: 'Magic boost of 10',
     disabled: false,
     magic: 10,
+    elements: [],
     requirements: { strength: 0, magic: 0, weapon: 0 },
     use: function () {},
   },
@@ -311,6 +349,7 @@ const AllCards = [
     description: 'Add 20 stamina',
     disabled: false,
     stamina: 20,
+    elements: [],
     requirements: { strength: 0, magic: 0, weapon: 0 },
     use: function () {},
   },

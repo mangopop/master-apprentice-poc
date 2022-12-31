@@ -35,6 +35,7 @@ let playerStartStats = {
   agility: 2000, // speed of attack
   magic: 7, // to use spells
   life: 100,
+  elements: [],
   armour: 1.0, // should be armour class with properties, determines critical bonus
   weapon: 1.0, // should be weapon class with properties
   stamina: 100,

@@ -15,7 +15,9 @@ function Card({
   duplicateCardType?: Boolean
   cardsDisabled?: Boolean
 }) {
-  let classNames = `${card.element || ''} ${
+  let elements = card.elements.join(' ')
+
+  let classNames = `${elements || ''} ${
     cardsDisabled || card.disabled ? 'Disabled' : ''
   } ${duplicateCardType ? 'tooltip' : ''}`
 

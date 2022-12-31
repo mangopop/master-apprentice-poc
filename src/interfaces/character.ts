@@ -8,7 +8,7 @@ export default interface ICharacter {
   agility: number
   magic: number
   abilities?: string[]
-  element?: string[]
+  elements: string[]
   life: number
   armour: number
   weapon: number

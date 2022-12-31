@@ -41,12 +41,33 @@ export function updateWeapon(
 export function calculateSkills(
   cardSkill: any,
   playerSkill: any,
+  monsterElements: string[], // break out the characters to help here
+  playerElements: string[], // break out the characters to help here
   arenaBoost: { agility: number; other: number },
   arenaBoostType = 'other'
 ) {
-  // TODO this isn't get call unless required now - can simplify
   let arenaBoostSkill =
     arenaBoostType === 'agility' ? arenaBoost.agility : arenaBoost.other
 
   return Math.round((playerSkill + cardSkill) * arenaBoostSkill)
+}
+
+export function getElementBonus(
+  playerSkill: any | number,
+  cardElements: string[],
+  monsterElements: string[]
+): number {
+  let result = playerSkill
+  // upgrade the attack skill by 20% if player has element that monster doesn't
+  if (cardElements.length > 0) {
+    const intersection = cardElements.filter((element) =>
+      monsterElements.includes(element)
+    )
+
+    if (intersection.length < 1) {
+      result = playerSkill *= 1.2
+    }
+  }
+
+  return result
 }
