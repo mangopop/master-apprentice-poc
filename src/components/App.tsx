@@ -25,8 +25,9 @@ import ChooseCard from './Cards/ChooseCard'
 import ChooseTalismanCard from './Cards/talisman/ChooseTalismanCard'
 import CardCollection from './Cards/CardCollection'
 import { monsters } from './Cards/Monsters'
+import ICharacter from '../interfaces/character'
 
-let playerBeforeCardsPlayed = {}
+let playerBeforeCardsPlayed: ICharacter
 let playerStartStats = {
   name: 'player',
   attack: 7, // plus weapon is max attack
@@ -64,11 +65,11 @@ function App() {
   const [monster, setMonster] = useState(monsters[0])
 
   // app and battle
-  const [playerTimerId, setPlayerTimer] = useState(null)
-  const [monsterTimerId, setMonsterTimer] = useState(null)
+  const [playerTimerId, setPlayerTimer] = useState<NodeJS.Timer>()
+  const [monsterTimerId, setMonsterTimer] = useState<NodeJS.Timer>()
 
   // just battle? move to battle?
-  const [started, setStarted] = useState(null)
+  const [started, setStarted] = useState(false)
 
   // sounds
   const [punchHit] = useSound(hit3, { volume: 0.25 })
@@ -82,7 +83,12 @@ function App() {
   const [drumsPlay, drumsSoundObj] = useSound(drums, { volume: 0.15 })
 
   // Here so we can use the sounds
-  function applyDamage(wasHit, strike, defenderCallback, type) {
+  function applyDamage(
+    wasHit: boolean,
+    strike: number,
+    defenderCallback: (params: (params: ICharacter) => void) => void,
+    type: string
+  ) {
     if (wasHit && strike > 0) {
       type === 'monster' ? punchHit2() : punchHit()
       defenderCallback((character) => {
@@ -215,15 +221,15 @@ function App() {
       player.strength,
       monster.defence,
       monster.armour,
-      setPlayer, // we see updates in the character screen and useEffect
-      setMonster
+      setPlayerHandler, // we see updates in the character screen and useEffect
+      setMonsterHandler
     )
     const wasHit = randAttackModifier(
       player.weapon,
       player.stamina,
       player.attack
     )
-    applyDamage(wasHit, strike, setMonster, 'monster')
+    applyDamage(wasHit, strike, setMonsterHandler, 'monster')
     // cannot clear timers here
   }
 
@@ -236,8 +242,8 @@ function App() {
       monster.strength,
       player.defence,
       player.armour,
-      setMonster,
-      setPlayer
+      setMonsterHandler,
+      setPlayerHandler
     )
 
     // applied after defence
@@ -245,7 +251,7 @@ function App() {
       monster.elements.includes(element)
     )
 
-    if (intersection.length < 1 && !monster.elements.includes(arena)) {
+    if (intersection.length < 1 && !monster.elements.includes(arena.name)) {
       strike *= 1.2
     }
 
@@ -254,7 +260,7 @@ function App() {
       monster.stamina,
       monster.attack
     )
-    applyDamage(wasHit, strike, setPlayer, 'player')
+    applyDamage(wasHit, strike, setPlayerHandler, 'player')
   }
 
   // TODO refactor into battle?
@@ -266,11 +272,15 @@ function App() {
     startMonsterTimers()
   }
 
-  function setPlayerHandler(arg) {
+  function setArenaHandler(arg: any) {
+    setArena(arg)
+  }
+
+  function setPlayerHandler(arg: any) {
     setPlayer(arg)
   }
 
-  function setMonsterHandler(arg) {
+  function setMonsterHandler(arg: any) {
     setMonster(arg)
   }
 
@@ -365,7 +375,7 @@ function App() {
             arena={arena}
             level={levelCount}
             player={player}
-            setArenaHandler={setArena}
+            setArenaHandler={setArenaHandler}
             setPlayerHandler={setPlayerHandler}
             setMonsterHandler={setMonsterHandler}
             monster={monster}
@@ -386,7 +396,7 @@ function App() {
           <Train
             player={player}
             playerBeforeCardsPlayed={playerBeforeCardsPlayed}
-            setPlayerHandler={setPlayer}
+            setPlayerHandler={setPlayerHandler}
           />
         }
       />
@@ -398,14 +408,14 @@ function App() {
             playerBeforeCardsPlayed={playerBeforeCardsPlayed}
             player={player}
             nextLevelHandler={nextLevel}
-            setMonsterHandler={setMonster}
+            setMonsterHandler={setMonsterHandler}
           />
         }
       />
-      <Route
+      {/* <Route
         path="/cardCollection"
         element={<CardCollection ownedCards={ownedCards} />}
-      />
+      /> */}
     </Routes>
   )
 }

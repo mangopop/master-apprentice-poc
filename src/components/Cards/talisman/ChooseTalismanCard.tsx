@@ -12,7 +12,6 @@ function ChooseTalismanCard({
 }: {
   ownedCards: Array<ITalismanCard>
   setOwnedCardsHandler: Function
-  level: number
 }) {
   const navigate = useNavigate()
   const [cardsToPick, setCardsToPick] = useState<ITalismanCard[]>([])

@@ -163,7 +163,7 @@ function combo(...args: [(params: (params: ICharacter) => void) => void]) {
         agility: agility,
       }
     })
-  }, 3000)
+  }, 1500)
 }
 
 const AllCards = [
