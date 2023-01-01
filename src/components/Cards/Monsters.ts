@@ -21,7 +21,7 @@ export let monsters = [
     attack: 5,
     defence: 3,
     strength: 4,
-    agility: 2000,
+    agility: 1600,
     abilities: [],
     elements: [],
     magic: 0,
@@ -63,7 +63,7 @@ export let monsters = [
   },
   {
     name: 'BOSS - Ork Fire Chief',
-    attack: 7,
+    attack: 8,
     defence: 9,
     strength: 8,
     agility: 2100,
@@ -124,8 +124,8 @@ export let monsters = [
   },
   {
     name: 'Swordsmen',
-    attack: 7,
-    defence: 6,
+    attack: 10,
+    defence: 8,
     strength: 6,
     agility: 1700,
     abilities: [],

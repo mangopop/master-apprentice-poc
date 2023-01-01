@@ -12,8 +12,11 @@ import Character from './Character'
 import { setBonuses } from '../services/battle.service'
 import IBattleProps from '../interfaces/battleProps'
 import ICard from '../interfaces/card'
+import { monsters } from './Cards/Monsters'
+import ICharacter from '../interfaces/character'
 
 let cardLength = 3
+let monsterCopy: ICharacter = monsters[0]
 
 function Battle({
   arena,
@@ -32,6 +35,7 @@ function Battle({
   started,
 }: IBattleProps) {
   // console.log('render battle')
+  monsterCopy = monsters[level - 1]
 
   const [cardsInHand, setCardsInHand] = useState<ICard[]>([]) // add rnd 5 cards to hand
   const [cardsUsed, setCardsUsed] = useState<ICard[]>([])
@@ -40,7 +44,6 @@ function Battle({
   const [folkLoreBonus, setFolkLoreBonus] = useState(false)
 
   let firstGame = true
-  let monsterClone = monster // TODO trying to make TS happy - could cause issues.
 
   // TODO figure out how to do all the talisman rules
   // we can't effect on play card? unless we tap in on the play card function?
@@ -55,7 +58,6 @@ function Battle({
 
   useEffect(() => {
     firstGame && setUp()
-    monsterClone = cloneDeep(monster)
     setArenaHandler(shuffle(arenas)[0])
 
     setCardsDisabled(true)
@@ -74,7 +76,7 @@ function Battle({
   }
 
   function setUp() {
-    setArenaHandler(shuffle(arenas)[0])
+    // setArenaHandler(shuffle(arenas)[0])
     setCardsUsed([])
     setCardsDisabled(false)
 
@@ -135,7 +137,7 @@ function Battle({
       <Character character={player} type={'player'} />
       <Character
         character={monster}
-        monsterLife={monsterClone.life}
+        monsterLife={monsterCopy.life}
         type={'monster'}
       />
 

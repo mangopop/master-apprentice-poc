@@ -261,7 +261,7 @@ const AllCards = [
     name: 'Helmet',
     description: 'Increase defence slightly',
     disabled: false,
-    defence: 3,
+    defence: 2,
     elements: [],
     requirements: { strength: 0, magic: 0, weapon: 0 },
     use: function () {},
@@ -270,7 +270,7 @@ const AllCards = [
     name: 'Leather Armour',
     description: 'Increase defence slightly',
     disabled: false,
-    defence: 3, // should this be armour?
+    defence: 2, // should this be armour?
     elements: [],
     requirements: { strength: 0, magic: 0, weapon: 0 },
     use: function () {},
