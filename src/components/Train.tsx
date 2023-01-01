@@ -21,19 +21,19 @@ function Train({
         case 'strength':
           playerBeforeCardsPlayed.strength += 2
           setPlayerHandler((player) => {
-            return { ...player, strength: playerBeforeCardsPlayed.strength + 2 }
+            return { ...player, strength: playerBeforeCardsPlayed.strength }
           })
           break
         case 'attack':
           playerBeforeCardsPlayed.attack += 2
           setPlayerHandler((player) => {
-            return { ...player, attack: playerBeforeCardsPlayed.attack + 2 }
+            return { ...player, attack: playerBeforeCardsPlayed.attack }
           })
           break
         case 'defence':
           playerBeforeCardsPlayed.defence += 2
           setPlayerHandler((player) => {
-            return { ...player, defence: playerBeforeCardsPlayed.defence + 2 }
+            return { ...player, defence: playerBeforeCardsPlayed.defence }
           })
           break
         case 'agility':
@@ -42,7 +42,7 @@ function Train({
             setPlayerHandler((player) => {
               return {
                 ...player,
-                agility: playerBeforeCardsPlayed.agility - 100,
+                agility: playerBeforeCardsPlayed.agility,
               }
             })
           }
@@ -52,7 +52,7 @@ function Train({
           setPlayerHandler((player) => {
             return {
               ...player,
-              magic: playerBeforeCardsPlayed.magic + 2,
+              magic: playerBeforeCardsPlayed.magic,
             }
           })
 
