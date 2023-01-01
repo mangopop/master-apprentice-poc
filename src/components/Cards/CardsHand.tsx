@@ -4,7 +4,7 @@ import ICard from '../../interfaces/card'
 import ICardHandProps from '../../interfaces/cardHandProps'
 import cardPickUp from './../../sounds/cardPickUp.mp3'
 import { useSound } from 'use-sound'
-import { useEffect, useState } from 'react'
+import { SetStateAction, useEffect, useState } from 'react'
 import Card from './card/Card'
 import {
   updateWeapon,
@@ -50,6 +50,10 @@ function CardsHand({
 
   let duplicatePlay = false
 
+  function setSpellTimerHandler(arg: SetStateAction<NodeJS.Timer | undefined>) {
+    setSpellTimer(arg)
+  }
+
   // TODO refactor
   function playCard(card: ICard) {
     // TODO could be better logic
@@ -79,73 +83,76 @@ function CardsHand({
     setCardsUsedHandler((cardsUsed: Array<ICard>) => [...cardsUsed, card])
 
     // TODO only running 1 type of card might want to run 2?
-    if (!card.damage) {
-      let characterProperties: { attack?: number } = {}
+    // if (!card.damage) {
+    let characterProperties: { attack?: number } = {}
 
-      Array(
-        'agility',
-        'attack',
-        'strength',
-        'defence',
-        'life',
-        'stamina',
-        'magic',
-        'armour',
-        'weapon'
-      ).forEach((characterProp) => {
-        if (card[characterProp as keyof typeof card]) {
-          // handle weapon modifier
-          if (characterProp === 'weapon') {
-            Object.assign(characterProperties, {
-              weapon: updateWeapon(
-                card.requirements.weapon,
-                cardsUsed,
-                arenaBoost.other,
-                player.weapon,
-                card.weapon,
-                card.weaponBonus
-              ),
-            })
-          } else {
-            // handle the skill update
-            Object.assign(characterProperties, {
-              [characterProp]: calculateSkills(
-                card[characterProp as keyof typeof card],
-                player[characterProp as keyof typeof player],
-                monster.elements,
-                player.elements,
-                arenaBoost
-              ),
-            })
-          }
-          if (characterProperties.attack !== undefined) {
-            characterProperties.attack = getElementBonus(
-              player.attack,
-              card.elements,
-              monster.elements
-            )
-          }
+    Array(
+      'agility',
+      'attack',
+      'strength',
+      'defence',
+      'life',
+      'stamina',
+      'magic',
+      'armour',
+      'weapon'
+    ).forEach((characterProp) => {
+      if (card[characterProp as keyof typeof card]) {
+        // handle weapon modifier
+        if (characterProp === 'weapon') {
+          Object.assign(characterProperties, {
+            weapon: updateWeapon(
+              card.requirements.weapon,
+              cardsUsed,
+              arenaBoost.other,
+              player.weapon,
+              card.weapon,
+              card.weaponBonus
+            ),
+          })
+        } else {
+          // handle the skill update
+          Object.assign(characterProperties, {
+            [characterProp]: calculateSkills(
+              card[characterProp as keyof typeof card],
+              player[characterProp as keyof typeof player],
+              monster.elements,
+              player.elements,
+              arenaBoost
+            ),
+          })
         }
-      })
-
-      // TODO this may overwrite with card use
-      setPlayerHandler(() => {
-        return {
-          ...player,
-          ...characterProperties,
+        if (characterProperties.attack !== undefined) {
+          characterProperties.attack = getElementBonus(
+            player.attack,
+            card.elements,
+            monster.elements
+          )
         }
-      })
+      }
+    })
 
-      // would like to pass less somehow.
-      card.use(
-        card,
-        setPlayerHandler,
-        setMonsterHandler,
-        stopMonsterTimersHandler,
-        startMonsterTimersHandler,
-        setSpellTimer
-      )
-    }
+    // TODO this may overwrite with card use
+    setPlayerHandler(() => {
+      return {
+        ...player,
+        ...characterProperties,
+      }
+    })
+
+    let args = [
+      setPlayerHandler,
+      setMonsterHandler,
+      stopMonsterTimersHandler,
+      startMonsterTimersHandler,
+      setSpellTimerHandler,
+    ]
+    let filteredArgs = args.filter((functionEl) => {
+      return card.usedFunctions.includes(functionEl.name)
+    })
+
+    card.use(...filteredArgs)
+    // }
 
     card.disabled = true
   }

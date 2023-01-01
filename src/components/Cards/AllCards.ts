@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction } from 'react'
 import ICard from '../../interfaces/card'
 import ICharacter from '../../interfaces/character'
+
 // const Card = {
 //   name: '',
 //   armour: 0,
@@ -84,7 +85,7 @@ import ICharacter from '../../interfaces/character'
 
 // TODO try and use a pattern like strategy or command?
 
-let spellTimerId
+let spellTimerId: any = null
 
 function damage(
   card: ICard,
@@ -99,14 +100,9 @@ function damage(
 }
 
 function immunity(
-  card: ICard,
-  setPlayerHandler: (params: (params: ICharacter) => void) => void,
-  setMonsterHandler: (params: (params: ICharacter) => void) => void,
-  stopMonsterTimersHandler: Function,
-  startMonsterTimersHandler: Function,
-  setSpellTimer: Dispatch<SetStateAction<NodeJS.Timer | undefined>>
+  ...args: [(params: (params: ICharacter) => void) => void]
 ): void {
-  setPlayerHandler((player) => {
+  args[0]((player) => {
     let elements = player.elements.includes('fire')
       ? player.elements
       : [...player.elements, 'fire']
@@ -119,162 +115,184 @@ function immunity(
 }
 
 function fireball(
-  card: ICard,
-  setPlayerHandler: (params: (params: ICharacter) => void) => void,
-  setMonsterHandler: (params: (params: ICharacter) => void) => void,
-  stopMonsterTimersHandler: Function,
-  startMonsterTimersHandler: Function,
-  setSpellTimer: Dispatch<SetStateAction<NodeJS.Timer | undefined>>
-): void {
+  this: ICard,
+  ...args: [
+    (params: (params: ICharacter) => void) => void,
+    Dispatch<SetStateAction<NodeJS.Timer | undefined>>
+  ]
+) {
   // TODO check monster resistance
   spellTimerId = setInterval(() => {
-    setMonsterHandler((monster) => {
+    args[0]((monster) => {
       return {
         ...monster,
-        life: card.durationDamage
-          ? monster.life - card.durationDamage
+        life: this.durationDamage
+          ? monster.life - this.durationDamage
           : monster.life,
       }
     })
-  }, card.duration)
+  }, this.duration)
 
-  setSpellTimer(spellTimerId)
+  // TODO needs new param for interval
+  args[1](spellTimerId) // we clear this in cardsHand useEffect, using duration
 
-  damage(card, setMonsterHandler)
+  damage(this, args[0])
 }
 
-function blizzard(
-  this: {
-    duration: number
-  },
-  card: ICard,
-  setMonsterHandler: Function,
-  stopMonsterTimersHandler: Function,
-  startMonsterTimersHandler: Function,
-  setSpellTimer: Function
-) {
-  stopMonsterTimersHandler()
+function blizzard(this: ICard, ...args: [() => void, () => void]) {
+  args[0]()
   setTimeout(() => {
-    startMonsterTimersHandler()
+    args[1]()
   }, this.duration)
+}
+
+function combo(...args: [(params: (params: ICharacter) => void) => void]) {
+  let agility = 0
+  args[0]((player) => {
+    agility = player.agility
+    return {
+      ...player,
+      agility: 500,
+    }
+  })
+
+  setTimeout(() => {
+    args[0]((player) => {
+      return {
+        ...player,
+        agility: agility,
+      }
+    })
+  }, 3000)
 }
 
 const AllCards = [
   {
-    name: 'Sword of Lost Kings',
-    description: 'Increase attack and agility',
+    name: 'Combo',
+    description: 'Attack twice',
     disabled: false,
     attack: 2,
-    type: 'human',
-    agility: 300,
+    duration: 300,
     elements: [],
-    weapon: 1.5, // this is almost same as attack?
-    requirements: { strength: 15, magic: 0, weapon: 0 }, // weapon number acting as boolean
-    use: function () {},
+    requirements: { strength: 0, magic: 0, weapon: 0 }, // weapon number acting as boolean
+    usedFunctions: ['setPlayerHandler'],
+    use: combo,
   },
-  {
-    name: 'Crown of Lost Kings',
-    description: 'Increase defence',
-    disabled: false,
-    type: 'human',
-    agility: 300,
-    defence: 5, // this is almost same as attack?
-    requirements: { strength: 15, magic: 0, weapon: 0 },
-    elements: [],
-    use: function () {},
-  },
-  {
-    name: 'Chain Mail of Lost Kings',
-    description: 'increase defence and reduces agility. Requires 15 Strength',
-    disabled: false,
-    defence: 5,
-    agility: 300,
-    requirements: { strength: 15, magic: 0, weapon: 0 }, // TODO not implemented
-    type: 'human',
-    elements: [],
-    use: function () {},
-  },
-  {
-    name: 'Axe Of The Dark Mountain',
-    description: 'increase attack and reduces agility. Requires 20 Strength',
-    disabled: false,
-    type: 'dwarf',
-    attack: 7,
-    agility: 400,
-    weapon: 1.6,
-    elements: [],
-    requirements: { strength: 25, magic: 0, weapon: 0 },
-    use: function () {},
-  },
-  {
-    name: 'Tusked Helmet Of The Dark Mountain',
-    description: 'Increase defence',
-    disabled: false,
-    type: 'dwarf',
-    elements: [],
-    defence: 7, // this is almost same as attack?
-    requirements: { strength: 25, magic: 0, weapon: 0 },
-    use: function () {},
-  },
-  {
-    name: 'Plate Armour Of The Dark Mountain',
-    description: 'increase defence and reduces agility. Requires 15 Strength',
-    disabled: false,
-    defence: 7,
-    agility: 400,
-    elements: [],
-    requirements: { strength: 25, magic: 0, weapon: 0 }, // TODO not implemented armour
-    type: 'dwarf',
-    use: function () {},
-  },
-  {
-    name: 'Whetstone',
-    description: 'Bonus to any sharp weapon',
-    disabled: false,
-    weaponBonus: 1.2,
-    elements: [],
-    requirements: { strength: 0, magic: 0, weapon: 1 },
-    use: function () {},
-  },
-  {
-    name: "Balrog's Sword",
-    description: 'increase attack and accuracy. Requires 20 Strength',
-    disabled: false,
-    duration: 2000,
-    durationDamage: 2,
-    attack: 5, // TODO not used?
-    elements: ['fire'],
-    weapon: 2,
-    requirements: { strength: 20, magic: 0, weapon: 0 },
-    use: function () {},
-  },
-  {
-    name: 'Magic potion 2',
-    description: 'Magic boost of 20',
-    disabled: false,
-    magic: 20,
-    elements: [],
-    requirements: { strength: 0, magic: 0, weapon: 0 },
-    use: function () {},
-  },
-  {
-    name: 'Helmet',
-    description: 'Increase defence slightly',
-    disabled: false,
-    defence: 2,
-    elements: [],
-    requirements: { strength: 0, magic: 0, weapon: 0 },
-    use: function () {},
-  },
-  {
-    name: 'Leather Armour',
-    description: 'Increase defence slightly',
-    disabled: false,
-    defence: 2, // should this be armour?
-    elements: [],
-    requirements: { strength: 0, magic: 0, weapon: 0 },
-    use: function () {},
-  },
+  // {
+  //   name: 'Sword of Lost Kings',
+  //   description: 'Increase attack and agility',
+  //   disabled: false,
+  //   attack: 2,
+  //   type: 'human',
+  //   agility: 300,
+  //   elements: [],
+  //   weapon: 1.5, // this is almost same as attack?
+  //   requirements: { strength: 15, magic: 0, weapon: 0 }, // weapon number acting as boolean
+  //   use: function () {},
+  // },
+  // {
+  //   name: 'Crown of Lost Kings',
+  //   description: 'Increase defence',
+  //   disabled: false,
+  //   type: 'human',
+  //   agility: 300,
+  //   defence: 5, // this is almost same as attack?
+  //   requirements: { strength: 15, magic: 0, weapon: 0 },
+  //   elements: [],
+  //   use: function () {},
+  // },
+  // {
+  //   name: 'Chain Mail of Lost Kings',
+  //   description: 'increase defence and reduces agility. Requires 15 Strength',
+  //   disabled: false,
+  //   defence: 5,
+  //   agility: 300,
+  //   requirements: { strength: 15, magic: 0, weapon: 0 }, // TODO not implemented
+  //   type: 'human',
+  //   elements: [],
+  //   use: function () {},
+  // },
+  // {
+  //   name: 'Axe Of The Dark Mountain',
+  //   description: 'increase attack and reduces agility. Requires 20 Strength',
+  //   disabled: false,
+  //   type: 'dwarf',
+  //   attack: 7,
+  //   agility: 400,
+  //   weapon: 1.6,
+  //   elements: [],
+  //   requirements: { strength: 25, magic: 0, weapon: 0 },
+  //   use: function () {},
+  // },
+  // {
+  //   name: 'Tusked Helmet Of The Dark Mountain',
+  //   description: 'Increase defence',
+  //   disabled: false,
+  //   type: 'dwarf',
+  //   elements: [],
+  //   defence: 7, // this is almost same as attack?
+  //   requirements: { strength: 25, magic: 0, weapon: 0 },
+  //   use: function () {},
+  // },
+  // {
+  //   name: 'Plate Armour Of The Dark Mountain',
+  //   description: 'increase defence and reduces agility. Requires 15 Strength',
+  //   disabled: false,
+  //   defence: 7,
+  //   agility: 400,
+  //   elements: [],
+  //   requirements: { strength: 25, magic: 0, weapon: 0 }, // TODO not implemented armour
+  //   type: 'dwarf',
+  //   use: function () {},
+  // },
+  // {
+  //   name: 'Whetstone',
+  //   description: 'Bonus to any sharp weapon',
+  //   disabled: false,
+  //   weaponBonus: 1.2,
+  //   elements: [],
+  //   requirements: { strength: 0, magic: 0, weapon: 1 },
+  //   use: function () {},
+  // },
+  // {
+  //   name: "Balrog's Sword",
+  //   description: 'increase attack and accuracy. Requires 20 Strength',
+  //   disabled: false,
+  //   duration: 2000,
+  //   durationDamage: 2,
+  //   attack: 5, // TODO not used?
+  //   elements: ['fire'],
+  //   weapon: 2,
+  //   requirements: { strength: 20, magic: 0, weapon: 0 },
+  //   use: function () {},
+  // },
+  // {
+  //   name: 'Magic potion 2',
+  //   description: 'Magic boost of 20',
+  //   disabled: false,
+  //   magic: 20,
+  //   elements: [],
+  //   requirements: { strength: 0, magic: 0, weapon: 0 },
+  //   use: function () {},
+  // },
+  // {
+  //   name: 'Helmet',
+  //   description: 'Increase defence slightly',
+  //   disabled: false,
+  //   defence: 2,
+  //   elements: [],
+  //   requirements: { strength: 0, magic: 0, weapon: 0 },
+  //   use: function () {},
+  // },
+  // {
+  //   name: 'Leather Armour',
+  //   description: 'Increase defence slightly',
+  //   disabled: false,
+  //   defence: 2, // should this be armour?
+  //   elements: [],
+  //   requirements: { strength: 0, magic: 0, weapon: 0 },
+  //   use: function () {},
+  // },
   {
     name: 'Fireball',
     description:
@@ -282,92 +300,93 @@ const AllCards = [
     disabled: false,
     damage: 5,
     durationDamage: 2, // TODO add to object
-    duration: 6000,
+    duration: 5000,
     elements: ['fire'],
-    requirements: { strength: 0, magic: 15, weapon: 0 },
+    usedFunctions: ['card', 'setMonsterHandler', 'setSpellTimerHandler'],
+    requirements: { strength: 0, magic: 0, weapon: 0 },
     use: fireball,
   },
-  {
-    name: 'Immolation',
-    description: 'Explosion of fire - 30 damage',
-    disabled: false,
-    damage: 30,
-    requirements: { strength: 0, magic: 30, weapon: 0 },
-    elements: ['fire'],
-    use: damage,
-  },
-  {
-    name: 'Blizzard',
-    description: 'Summon a Blizzard - 5 damage - freeze for 5 seconds',
-    disabled: false,
-    damage: 5,
-    duration: 5000,
-    elements: ['ice'],
-    requirements: { strength: 0, magic: 15, weapon: 0 },
-    // use could call a function, but that function might not have the callbacks?
-    use: function () {},
-  },
-  {
-    name: 'steroids',
-    description: 'Increase strength by 5',
-    disabled: false,
-    strength: 5,
-    elements: [],
-    requirements: { strength: 0, magic: 0, weapon: 0 },
-    use: function () {},
-  },
-  {
-    name: 'health potion',
-    description: 'Add 10 to health',
-    disabled: false,
-    life: 10,
-    elements: [],
-    requirements: { strength: 0, magic: 0, weapon: 0 },
-    use: function () {},
-  },
   // {
-  //   name: 'Poison potion',
-  //   description: 'Poison for 3 every 3 seconds',
+  //   name: 'Immolation',
+  //   description: 'Explosion of fire - 30 damage',
+  //   disabled: false,
+  //   damage: 30,
+  //   requirements: { strength: 0, magic: 30, weapon: 0 },
+  //   elements: ['fire'],
+  //   use: damage,
+  // },
+  // {
+  //   name: 'Blizzard',
+  //   description: 'Summon a Blizzard - 5 damage - freeze for 5 seconds',
   //   disabled: false,
   //   damage: 5,
-  //   duration: 2000,
-  //   element: 'poison',
-  //   requirements: { strength: 0, magic: 0, weapon: 0 },
+  //   duration: 5000,
+  //   elements: ['ice'],
+  //   requirements: { strength: 0, magic: 15, weapon: 0 },
+  //   // use could call a function, but that function might not have the callbacks?
+  //   use: function () {},
   // },
-  {
-    name: 'Magic potion',
-    description: 'Magic boost of 10',
-    disabled: false,
-    magic: 10,
-    elements: [],
-    requirements: { strength: 0, magic: 0, weapon: 0 },
-    use: function () {},
-  },
-  {
-    name: 'Stamina potion',
-    description: 'Add 20 stamina',
-    disabled: false,
-    stamina: 20,
-    elements: [],
-    requirements: { strength: 0, magic: 0, weapon: 0 },
-    use: function () {},
-  },
-  {
-    name: 'Potion of fire immunity',
-    description: 'Immune to fire',
-    disabled: false,
-    elements: ['fire'], // TODO add to player
-    requirements: { strength: 0, magic: 0, weapon: 0 },
-    use: immunity,
-  },
-  {
-    name: 'Potion of ice immunity',
-    description: 'Immune to fire',
-    disabled: false,
-    elements: ['ice'], // TODO add to player
-    requirements: { strength: 0, magic: 0, weapon: 0 },
-    use: immunity,
-  },
+  // {
+  //   name: 'steroids',
+  //   description: 'Increase strength by 5',
+  //   disabled: false,
+  //   strength: 5,
+  //   elements: [],
+  //   requirements: { strength: 0, magic: 0, weapon: 0 },
+  //   use: function () {},
+  // },
+  // {
+  //   name: 'health potion',
+  //   description: 'Add 10 to health',
+  //   disabled: false,
+  //   life: 10,
+  //   elements: [],
+  //   requirements: { strength: 0, magic: 0, weapon: 0 },
+  //   use: function () {},
+  // },
+  // // {
+  // //   name: 'Poison potion',
+  // //   description: 'Poison for 3 every 3 seconds',
+  // //   disabled: false,
+  // //   damage: 5,
+  // //   duration: 2000,
+  // //   element: 'poison',
+  // //   requirements: { strength: 0, magic: 0, weapon: 0 },
+  // // },
+  // {
+  //   name: 'Magic potion',
+  //   description: 'Magic boost of 10',
+  //   disabled: false,
+  //   magic: 10,
+  //   elements: [],
+  //   requirements: { strength: 0, magic: 0, weapon: 0 },
+  //   use: function () {},
+  // },
+  // {
+  //   name: 'Stamina potion',
+  //   description: 'Add 20 stamina',
+  //   disabled: false,
+  //   stamina: 20,
+  //   elements: [],
+  //   requirements: { strength: 0, magic: 0, weapon: 0 },
+  //   use: function () {},
+  // },
+  // {
+  //   name: 'Potion of fire immunity',
+  //   description: 'Immune to fire',
+  //   disabled: false,
+  //   elements: ['fire'], // TODO add to player
+  //   requirements: { strength: 0, magic: 0, weapon: 0 },
+  //   use: immunity,
+  // },
+  // {
+  //   name: 'Potion of ice immunity',
+  //   description: 'Immune to fire',
+  //   disabled: false,
+  //   elements: ['ice'], // TODO add to player
+  //   requirements: { strength: 0, magic: 0, weapon: 0 },
+  //   use: immunity,
+  // },
   // {
   //   name: 'fire potion',
   //   disabled: false,

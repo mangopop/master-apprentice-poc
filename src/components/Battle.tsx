@@ -66,6 +66,17 @@ function Battle({
     // })
   }, [])
 
+  useEffect(() => {
+    if (arena.name === 'Tall grass fields' && monster.agility > 1500) {
+      setMonsterHandler((monster) => {
+        return {
+          ...monster,
+          agility: (monster.agility -= 300),
+        }
+      })
+    }
+  }, [arena])
+
   function arenaBoost() {
     setArenaBooster(true)
   }
@@ -76,11 +87,8 @@ function Battle({
   }
 
   function setUp() {
-    // setArenaHandler(shuffle(arenas)[0])
     setCardsUsed([])
     setCardsDisabled(false)
-
-    // TODO maybe we can give the monster bonus for arena here?
 
     ownedTalismanCards.forEach((card) => {
       if (card.name === 'Packed neatly') {

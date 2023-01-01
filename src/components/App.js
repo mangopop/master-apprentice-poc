@@ -46,7 +46,7 @@ let playerStartStats = {
 
 // we cannot render this all the time (but we have to?) - move the items that should render into components
 function App() {
-  console.log('render app')
+  // console.log('render app')
   // TODO this needs to reset before choose card
   const [arena, setArena] = useState({
     name: 'Mountains',
@@ -245,8 +245,6 @@ function App() {
       monster.elements.includes(element)
     )
 
-    // TODO unless the it was fire and and in hell?
-    // TODO unless the it was ice and and in ice caves?
     if (intersection.length < 1 && !monster.elements.includes(arena)) {
       strike *= 1.2
     }
@@ -266,6 +264,14 @@ function App() {
   function startTimers() {
     startPlayerTimers()
     startMonsterTimers()
+  }
+
+  function setPlayerHandler(arg) {
+    setPlayer(arg)
+  }
+
+  function setMonsterHandler(arg) {
+    setMonster(arg)
   }
 
   function startPlayerTimers() {
@@ -293,6 +299,15 @@ function App() {
     playerBeforeCardsPlayed = cloneDeep(player)
 
     console.log('playerBeforeCardsPlayed at start', playerBeforeCardsPlayed)
+
+    // if (arena.name === 'Tall grass fields' && monster.agility > 1300) {
+    //   setMonster((monster) => {
+    //     return {
+    //       ...monster,
+    //       agility: (monster.agility -= 300),
+    //     }
+    //   })
+    // }
 
     startTimers()
   }
@@ -351,8 +366,8 @@ function App() {
             level={levelCount}
             player={player}
             setArenaHandler={setArena}
-            setPlayerHandler={setPlayer}
-            setMonsterHandler={setMonster}
+            setPlayerHandler={setPlayerHandler}
+            setMonsterHandler={setMonsterHandler}
             monster={monster}
             ownedCards={ownedCards}
             ownedTalismanCards={ownedTalismanCards}

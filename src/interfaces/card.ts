@@ -24,12 +24,22 @@ export default interface ICard {
   requirements: {
     [key: string]: number // weapon number acting as boolean
   }
+  usedFunctions: string[]
   use: (
-    card: ICard,
-    setPlayerHandler: (params: (params: ICharacter) => void) => void,
-    setMonsterHandler: (params: (params: ICharacter) => void) => void,
-    stopMonsterTimersHandler: () => void,
-    startMonsterTimersHandler: () => void,
-    setSpellTimer: Dispatch<SetStateAction<NodeJS.Timer | undefined>>
+    card?: any,
+    setPlayerHandler?: any,
+    setMonsterHandler?: any,
+    stopMonsterTimersHandler?: () => void,
+    startMonsterTimersHandler?: () => void,
+    setSpellTimer?: Dispatch<SetStateAction<NodeJS.Timer | undefined>>
   ) => void
+  // use: (
+  //   card?: ICard,
+  //   setPlayerHandler?: (params: (params: ICharacter) => void) => void,
+  //   setMonsterHandler?: (params: (params: ICharacter) => void) => void,
+  //   stopMonsterTimersHandler?: () => void,
+  //   startMonsterTimersHandler?: () => void,
+  //   setSpellTimer?: Dispatch<SetStateAction<NodeJS.Timer | undefined>>
+  // ) => void
+  // use: (params: any) => void
 }
