@@ -57,6 +57,7 @@ function CardsHand({
   // TODO refactor
   function playCard(card: ICard) {
     // TODO could be better logic
+    // TODO need to do the same for armour
     cardsUsed.forEach((cardUsed) => {
       if (cardUsed.hasOwnProperty('weapon') && card.hasOwnProperty('weapon')) {
         duplicatePlay = true

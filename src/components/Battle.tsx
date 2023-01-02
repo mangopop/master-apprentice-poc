@@ -107,7 +107,7 @@ function Battle({
     // TODO might make sense to move this logic to picking card?
     copyOwnedCards.forEach((card) => {
       if (
-        player.strength > card.requirements.strength &&
+        player.strength >= card.requirements.strength &&
         player.magic > card.requirements.magic
       ) {
         card.disabled = false
@@ -119,6 +119,22 @@ function Battle({
     setCardsInHand(copyOwnedCards)
   }
 
+  function replenishStamina() {
+    setMonsterHandler((monster) => {
+      return {
+        ...monster,
+        stamina: (monster.stamina = 100),
+      }
+    })
+
+    setPlayerHandler((player) => {
+      return {
+        ...player,
+        stamina: (player.stamina = 100),
+      }
+    })
+  }
+
   return (
     <div className="Battle">
       <h1>Fight!</h1>
@@ -127,6 +143,9 @@ function Battle({
       )}
 
       {started && <button onClick={stopGameHandler}>Stop game</button>}
+      {!started && (
+        <button onClick={replenishStamina}>Replenish stamina</button>
+      )}
 
       <h2>{arena.name}</h2>
       {arenaBooster && <p className="alert arena">20% Arena bonus active</p>}
