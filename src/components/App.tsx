@@ -26,6 +26,7 @@ import ChooseTalismanCard from './Cards/talisman/ChooseTalismanCard'
 import CardCollection from './Cards/CardCollection'
 import { monsters } from './Cards/Monsters'
 import ICharacter from '../interfaces/character'
+import BattleLog from './BattleLog'
 
 let playerBeforeCardsPlayed: ICharacter
 let playerStartStats = {
@@ -70,6 +71,9 @@ function App() {
 
   // just battle? move to battle?
   const [started, setStarted] = useState(false)
+
+  const [playerStrike, setPlayerStrike] = useState(0)
+  const [monsterStrike, setMonsterStrike] = useState(0)
 
   // sounds
   const [punchHit] = useSound(hit3, { volume: 0.25 })
@@ -215,6 +219,7 @@ function App() {
   // the character screen is updating ok.
   function attackMonster() {
     console.log('attacking monster', monster)
+
     const strike = getStrikeDamage(
       player.attack,
       player.weapon,
@@ -224,6 +229,7 @@ function App() {
       setPlayerHandler, // we see updates in the character screen and useEffect
       setMonsterHandler
     )
+    setMonsterStrike(strike)
     const wasHit = randAttackModifier(
       player.weapon,
       player.stamina,
@@ -245,6 +251,8 @@ function App() {
       setMonsterHandler,
       setPlayerHandler
     )
+
+    setPlayerStrike(strike)
 
     // applied after defence
     let intersection = player.elements.filter((element) =>
@@ -301,6 +309,8 @@ function App() {
   }
 
   function startGame() {
+    setPlayerStrike(0)
+    setMonsterStrike(0)
     console.log('game start')
     setStarted(true)
     drumsPlay()
@@ -340,83 +350,91 @@ function App() {
     setLevelCount((level) => level + 1)
   }
 
+  const battleLog = (
+    <BattleLog playerStrike={playerStrike} monsterStrike={monsterStrike} />
+  )
+
   // TODO are we reloading all of this?
   // Do we have, level progression doesn't share state so that shouldn't.
   // Even though we don't see the others they probably will.
   return (
-    <Routes>
-      <Route path="/" element={<Start />} />
-      <Route
-        path="chooseCard"
-        element={
-          <ChooseCard
-            level={levelCount}
-            strength={player.strength}
-            magic={player.magic}
-            ownedCards={ownedCards}
-            setOwnedCardsHandler={setOwnedCards}
-          />
-        }
-      />
-      {/* play card will lift state up which can be used in the cardshand through battle, we can modify here?   */}
-      <Route
-        path="chooseTalismanCard"
-        element={
-          <ChooseTalismanCard
-            ownedCards={ownedTalismanCards}
-            setOwnedCardsHandler={setOwnedTalismanCards}
-          />
-        }
-      />
-      <Route
-        path="battle"
-        element={
-          <Battle
-            arena={arena}
-            level={levelCount}
-            player={player}
-            setArenaHandler={setArenaHandler}
-            setPlayerHandler={setPlayerHandler}
-            setMonsterHandler={setMonsterHandler}
-            monster={monster}
-            ownedCards={ownedCards}
-            ownedTalismanCards={ownedTalismanCards}
-            // might need to add in talisman cards here?
-            startGameHandler={startGame}
-            stopGameHandler={stopGame}
-            startMonsterTimersHandler={startMonsterTimers}
-            stopMonsterTimersHandler={stopMonsterTimers}
-            started={started}
-          />
-        }
-      />
-      <Route
-        path="train"
-        element={
-          <Train
-            player={player}
-            playerBeforeCardsPlayed={playerBeforeCardsPlayed}
-            setPlayerHandler={setPlayerHandler}
-          />
-        }
-      />
-      <Route
-        path="level"
-        element={
-          <LevelProgression
-            level={levelCount}
-            playerBeforeCardsPlayed={playerBeforeCardsPlayed}
-            player={player}
-            nextLevelHandler={nextLevel}
-            setMonsterHandler={setMonsterHandler}
-          />
-        }
-      />
-      {/* <Route
+    <>
+      <Routes>
+        <Route path="/" element={<Start />} />
+        <Route
+          path="chooseCard"
+          element={
+            <ChooseCard
+              level={levelCount}
+              strength={player.strength}
+              magic={player.magic}
+              ownedCards={ownedCards}
+              setOwnedCardsHandler={setOwnedCards}
+            />
+          }
+        />
+        {/* play card will lift state up which can be used in the cardshand through battle, we can modify here?   */}
+        <Route
+          path="chooseTalismanCard"
+          element={
+            <ChooseTalismanCard
+              ownedCards={ownedTalismanCards}
+              setOwnedCardsHandler={setOwnedTalismanCards}
+            />
+          }
+        />
+        <Route
+          path="battle"
+          element={
+            <Battle
+              battleLog={battleLog}
+              arena={arena}
+              level={levelCount}
+              player={player}
+              setArenaHandler={setArenaHandler}
+              setPlayerHandler={setPlayerHandler}
+              setMonsterHandler={setMonsterHandler}
+              monster={monster}
+              ownedCards={ownedCards}
+              ownedTalismanCards={ownedTalismanCards}
+              // might need to add in talisman cards here?
+              startGameHandler={startGame}
+              stopGameHandler={stopGame}
+              startMonsterTimersHandler={startMonsterTimers}
+              stopMonsterTimersHandler={stopMonsterTimers}
+              started={started}
+            />
+          }
+        />
+        <Route
+          path="train"
+          element={
+            <Train
+              player={player}
+              playerBeforeCardsPlayed={playerBeforeCardsPlayed}
+              setPlayerHandler={setPlayerHandler}
+            />
+          }
+        />
+        <Route
+          path="level"
+          element={
+            <LevelProgression
+              level={levelCount}
+              playerBeforeCardsPlayed={playerBeforeCardsPlayed}
+              player={player}
+              nextLevelHandler={nextLevel}
+              setMonsterHandler={setMonsterHandler}
+            />
+          }
+        />
+        {/* <Route
         path="/cardCollection"
         element={<CardCollection ownedCards={ownedCards} />}
       /> */}
-    </Routes>
+      </Routes>
+      {/* <BattleLog playerStrike={playerStrike} monsterStrike={monsterStrike} /> */}
+    </>
   )
 }
 

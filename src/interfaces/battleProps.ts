@@ -1,8 +1,11 @@
+import { AnyMxRecord } from 'dns'
+import { ReactComponentElement, ReactElement } from 'react'
 import ICard from './card'
 import ICharacter from './character'
 import ITalismanCard from './talismanCard'
 
 export default interface IBattleProps {
+  battleLog: ReactElement
   arena: {
     name: string
     description: string

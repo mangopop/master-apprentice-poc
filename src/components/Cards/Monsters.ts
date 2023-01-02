@@ -123,11 +123,11 @@ export let monsters = [
     count: 0,
   },
   {
-    name: 'Swordsmen',
+    name: 'Dual wielding Swordsmen',
     attack: 10,
     defence: 8,
     strength: 6,
-    agility: 1700,
+    agility: 1300,
     abilities: [],
     elements: [],
     magic: 0,

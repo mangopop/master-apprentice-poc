@@ -19,6 +19,7 @@ let cardLength = 3
 let monsterCopy: ICharacter = monsters[0]
 
 function Battle({
+  battleLog,
   arena,
   level,
   player,
@@ -90,6 +91,7 @@ function Battle({
     setCardsUsed([])
     setCardsDisabled(false)
 
+    // TODO need to keep this logic together as much as can, can't find anything!
     ownedTalismanCards.forEach((card) => {
       if (card.name === 'Packed neatly') {
         cardLength = 4
@@ -136,56 +138,56 @@ function Battle({
   }
 
   return (
-    <div className="Battle">
-      <h1>Fight!</h1>
-      {!started && monster.life > 0 && (
-        <button onClick={startGame}>Start game</button>
-      )}
+    <>
+      <div className="Battle">
+        <h1>Fight!</h1>
+        {!started && monster.life > 0 && (
+          <button onClick={startGame}>Start game</button>
+        )}
+        {started && <button onClick={stopGameHandler}>Stop game</button>}
+        {!started && (
+          <button onClick={replenishStamina}>Replenish stamina</button>
+        )}
+        <h2>{arena.name}</h2>
+        {arenaBooster && <p className="alert arena">20% Arena bonus active</p>}
+        <p>{arena.description} </p>
+        <p>
+          {arena.type === 'dwarf' && <BsSquare />}
+          {arena.type === 'elf' && <BsCircle />}
+          {arena.type === 'human' && <BsTriangle />}
+        </p>
+        {folkLoreBonus && (
+          <p className="alert folklore">Folklore bonus active</p>
+        )}
+        <h1>Level {level}/20</h1>
+        {!started && monster.life < 1 && <Link to={'/train'}>Continue</Link>}
 
-      {started && <button onClick={stopGameHandler}>Stop game</button>}
-      {!started && (
-        <button onClick={replenishStamina}>Replenish stamina</button>
-      )}
-
-      <h2>{arena.name}</h2>
-      {arenaBooster && <p className="alert arena">20% Arena bonus active</p>}
-      <p>{arena.description} </p>
-
-      <p>
-        {arena.type === 'dwarf' && <BsSquare />}
-        {arena.type === 'elf' && <BsCircle />}
-        {arena.type === 'human' && <BsTriangle />}
-      </p>
-      {folkLoreBonus && <p className="alert folklore">Folklore bonus active</p>}
-
-      <h1>Level {level}/20</h1>
-      {!started && monster.life < 1 && <Link to={'/train'}>Continue</Link>}
-
-      <Character character={player} type={'player'} />
-      <Character
-        character={monster}
-        monsterLife={monsterCopy.life}
-        type={'monster'}
-      />
-
-      {started && (
-        <CardsHand
-          arena={arena}
-          ownedCards={ownedCards}
-          cardsInHand={cardsInHand}
-          cardsDisabled={cardsDisabled}
-          arenaBoostHandler={arenaBoost}
-          setPlayerHandler={setPlayerHandler}
-          setMonsterHandler={setMonsterHandler}
-          setCardsUsedHandler={setCardsUsed}
-          stopMonsterTimersHandler={stopMonsterTimersHandler}
-          startMonsterTimersHandler={startMonsterTimersHandler}
-          cardsUsed={cardsUsed}
-          player={player}
-          monster={monster}
+        <Character character={player} type={'player'} />
+        <Character
+          character={monster}
+          monsterLife={monsterCopy.life}
+          type={'monster'}
         />
-      )}
-    </div>
+        {battleLog}
+        {started && (
+          <CardsHand
+            arena={arena}
+            ownedCards={ownedCards}
+            cardsInHand={cardsInHand}
+            cardsDisabled={cardsDisabled}
+            arenaBoostHandler={arenaBoost}
+            setPlayerHandler={setPlayerHandler}
+            setMonsterHandler={setMonsterHandler}
+            setCardsUsedHandler={setCardsUsed}
+            stopMonsterTimersHandler={stopMonsterTimersHandler}
+            startMonsterTimersHandler={startMonsterTimersHandler}
+            cardsUsed={cardsUsed}
+            player={player}
+            monster={monster}
+          />
+        )}
+      </div>
+    </>
   )
 }
 
