@@ -8,8 +8,8 @@ function BattleLog({
   return (
     <div>
       <h4>BattleLog</h4>
-      <div>Player damaged for: {playerStrike}</div>
-      <div>Monster damaged for: {monsterStrike}</div>
+      <div>P dam.: {playerStrike}</div>
+      <div>M dam.: {monsterStrike}</div>
     </div>
   )
 }

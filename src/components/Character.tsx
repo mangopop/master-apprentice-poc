@@ -16,7 +16,7 @@ function Character({ character, type, monsterLife }: ICharacterProps) {
   }
 
   return (
-    <>
+    <div style={{ margin: '10px 50px', border: '1px solid black' }}>
       <ProgressBar bgcolor={'#6a1b9a'} completed={life.toString()} />
       <div style={{ margin: '20px', display: 'flex' }}>
         <div
@@ -59,7 +59,7 @@ function Character({ character, type, monsterLife }: ICharacterProps) {
           </ul>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 

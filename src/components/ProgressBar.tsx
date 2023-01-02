@@ -8,7 +8,7 @@ const ProgressBar = ({
   const containerStyles = {
     height: 20,
     backgroundColor: '#e0e0de',
-    margin: 50,
+    margin: 20,
   }
 
   const fillerStyles = {

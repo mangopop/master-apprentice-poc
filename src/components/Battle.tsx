@@ -140,34 +140,50 @@ function Battle({
   return (
     <>
       <div className="Battle">
-        <h1>Fight!</h1>
-        {!started && monster.life > 0 && (
-          <button onClick={startGame}>Start game</button>
-        )}
-        {started && <button onClick={stopGameHandler}>Stop game</button>}
-        {!started && (
-          <button onClick={replenishStamina}>Replenish stamina</button>
-        )}
-        <h2>{arena.name}</h2>
-        {arenaBooster && <p className="alert arena">20% Arena bonus active</p>}
-        <p>{arena.description} </p>
-        <p>
-          {arena.type === 'dwarf' && <BsSquare />}
-          {arena.type === 'elf' && <BsCircle />}
-          {arena.type === 'human' && <BsTriangle />}
-        </p>
-        {folkLoreBonus && (
-          <p className="alert folklore">Folklore bonus active</p>
-        )}
-        <h1>Level {level}/20</h1>
-        {!started && monster.life < 1 && <Link to={'/train'}>Continue</Link>}
+        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+          <div>
+            <h1>Fight!</h1>
+            {!started && monster.life > 0 && (
+              <button onClick={startGame}>Start game</button>
+            )}
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {started && <button onClick={stopGameHandler}>Stop game</button>}
+              {!started && (
+                <button onClick={replenishStamina}>Replenish stamina</button>
+              )}
+              {!started && monster.life < 1 && (
+                <Link to={'/train'}>Continue</Link>
+              )}
+            </div>
+          </div>
+          <div> {battleLog}</div>
+          <div>
+            <h2>{arena.name}</h2>
+            {arenaBooster && (
+              <p className="alert arena">20% Arena bonus active</p>
+            )}
+            <p>{arena.description} </p>
+            <p>
+              {arena.type === 'dwarf' && <BsSquare />}
+              {arena.type === 'elf' && <BsCircle />}
+              {arena.type === 'human' && <BsTriangle />}
+            </p>
+            {folkLoreBonus && (
+              <p className="alert folklore">Folklore bonus active</p>
+            )}
+          </div>
+          <div>
+            <h1>Level {level}/20</h1>
+          </div>
+        </div>
+
         <Character character={player} type={'player'} />
         <Character
           character={monster}
           monsterLife={monsterCopy.life}
           type={'monster'}
         />
-        {battleLog}
+
         {started && (
           <CardsHand
             arena={arena}
