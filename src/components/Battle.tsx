@@ -161,7 +161,6 @@ function Battle({
         )}
         <h1>Level {level}/20</h1>
         {!started && monster.life < 1 && <Link to={'/train'}>Continue</Link>}
-
         <Character character={player} type={'player'} />
         <Character
           character={monster}
